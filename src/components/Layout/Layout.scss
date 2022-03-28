@@ -1,0 +1,11 @@
+.Layout{
+    display: flex;
+    flex-direction: column;
+
+    .layout-body-component {
+        margin-top: 5rem;
+        min-height: calc(100vh - 5rem);
+    
+       
+      }
+}

@@ -1,0 +1,25 @@
+.UK{
+    background: #e3f2fd;
+    padding: 3rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+
+    .image-wrapper{
+        width:30%;
+        display: flex;
+        justify-content: center;
+        img{
+            display: flex;
+            height: 300px;
+            object-fit: scale-down;
+           }
+    }
+
+    .content-wrapper{
+        width: 70%;
+    }
+   
+}

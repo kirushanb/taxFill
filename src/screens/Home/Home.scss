@@ -1,0 +1,9 @@
+.Home{
+    display: flex;
+    flex-direction: column;
+    height: 90vh;
+    .loading{
+        height: 50vh;
+        margin: auto;
+    }
+}

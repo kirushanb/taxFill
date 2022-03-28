@@ -1,0 +1,53 @@
+.Login{
+    .loading{
+        height: 50%
+    }
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    background: #202332;
+    .login-form{
+        align-self: center;
+        .home{
+            margin-left: -1rem;
+            color: #49c68d;
+        }
+    form{
+        border-radius: 1rem;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 2rem;
+        width: 30rem;
+        align-self: center;
+        padding: 3rem;
+
+        .title{
+            align-self: center;
+        }
+        input{
+            width: 100% !important;
+        }
+
+        .signup-link{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: baseline;
+            gap: 1rem;
+
+            a{
+                margin-top: -0.2rem;
+                text-decoration: underline;
+                color: #202332;
+            }
+        }
+
+        .button{
+            margin-top: -2rem;
+        }
+    }
+}
+}

@@ -1,0 +1,108 @@
+.OTP{
+    .loading{
+        height: 50vh;
+        margin: auto;
+    }
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-content: center;
+    height: 100vh;
+    background: #202332;
+    
+    width: 100%;
+    .tax-logo{
+        width: 60%;
+        box-sizing: border-box;
+        height: 90%;
+        margin: 2rem 2rem 2rem 3rem;
+    }
+    .container{
+        width: 50%;
+        margin: 2rem 6rem 2rem 2rem;
+        background: white;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        max-height: fit-content;
+        align-self: center;
+        padding: 2rem;
+        box-sizing: border-box;
+        justify-content: center;
+        text-align: center;
+        .otp-input{
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+        .MuiAvatar-root{
+            align-self: center;
+            background-color: #202332;
+        }
+
+        .signup-link{
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: baseline;
+            gap: 0.5rem;
+
+            a{
+                margin-top: -0.2rem;
+                text-decoration: underline;
+                color: #202332;
+            }
+        }
+    }
+    @media screen and (max-width: 1100px) {
+        input{
+            margin: 0.1rem !important;
+           
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        // height: 130vh;
+        input{
+            margin: 0.1rem !important;
+           
+        }
+        .container{
+            width: 100%;
+            margin: 0;
+            justify-content: center;
+        }
+        .tax-logo {
+            width: 50%;
+            box-sizing: border-box;
+            height: 40%;
+            margin: 0;
+        }
+    }
+
+    @media screen and (max-width: 320px) {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        // height: 130vh;
+        input{
+            margin: 0.1rem !important;
+            width: 2rem !important;
+        }
+        .container{
+            width: 100%;
+            margin: 0;
+        }
+        .tax-logo {
+            width: 50%;
+            box-sizing: border-box;
+            height: 40%;
+            margin: 0;
+        }
+    }
+}

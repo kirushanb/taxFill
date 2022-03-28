@@ -1,0 +1,33 @@
+.Footer{
+    background:#202332;
+    padding: 3rem 10rem;
+    display: flex;
+    flex-direction: row;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    .item{
+        border-radius: 1rem;
+        background: white;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        // width: 10rem;
+        padding: 2rem;
+        box-sizing: border-box;
+        width: 300px;
+        .logo{
+           
+            height: 100px;
+           
+           
+        }
+        .title.is-5{
+            margin-top: 1rem;
+            text-align: center;
+            height:2rem
+        }
+    }
+}

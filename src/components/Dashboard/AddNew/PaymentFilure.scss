@@ -1,0 +1,22 @@
+.Result {
+    margin-top: 50px;
+    text-align: center;
+    animation: fade 200ms ease-out;
+  }
+  
+  .ResultTitle {
+    color: #2a2d3e;
+    font-weight: 500;
+    margin-bottom: 8px;
+    font-size: 25px;
+    text-align: center;
+  }
+  
+  .ResultMessage {
+    color: green;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 25px;
+    line-height: 1.6em;
+    text-align: center;
+  }

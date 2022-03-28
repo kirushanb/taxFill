@@ -1,0 +1,66 @@
+    .content-wrapper{   
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-top: 1rem;
+        width: 100%;
+        overflow-x: auto;
+        padding: 1rem 3rem;
+
+    .cards-grid{
+        display: grid;
+        // flex-direction: row;
+        align-self: center;
+        justify-content: center;
+        grid-template-columns: auto auto auto auto;
+        gap: 2rem;
+        // gap: 2rem;
+        
+        
+        .single-card{
+            box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+            background-color: white;
+            box-sizing: border-box;
+            padding: 2rem 0rem;
+            // border: 2px solid black;
+            border-radius: 1rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 16rem;
+            .icon{
+                 
+                border-radius: 0.5rem;
+                color: #2797ff;
+                background: rgb(39,151,255,0.5);
+                padding: 1rem;
+                
+            }
+            .sigle-card-content{
+                margin-top: 2rem;
+                text-align: center;
+            }
+            .list{
+                display: flex;
+                flex-direction: column;
+                .icon-text{
+                    align-items: center;
+                }
+                .subtitle{
+                    margin-top: 0;
+                    display: block;
+                }
+                .icon{
+                    border-radius: 0;
+                    color: #2797ff;
+                    background: transparent;
+                    padding: 0rem;
+                    
+                }
+                
+            }
+
+        }
+    }
+}

@@ -1,0 +1,51 @@
+.Hero{
+    width: 100%;
+    height: calc(100vh - 5rem);;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    .tax-logo{
+        width: 50%;
+        box-sizing: border-box;
+        height: 90%;
+    }
+
+    .content{
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 50%;
+        .subtitle{
+            margin-top: 0.5rem;
+            display: block;
+        }
+        .icon-text{
+            align-self: flex-start;
+        }
+
+        .icon{
+            color: #01796b;
+        }
+        .list{
+            display: flex;
+            flex-direction: column;
+            .icon-text{
+                align-items: center;
+            }
+            .subtitle{
+                margin-top: 0;
+                display: block;
+            }
+            
+        }
+        .button{
+            margin-top: 1rem;
+            width: 50%;
+            p{
+                margin-bottom: 0;
+            }
+        }
+    }
+
+}

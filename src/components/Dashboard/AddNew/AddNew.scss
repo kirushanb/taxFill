@@ -1,0 +1,13 @@
+.AddNew{
+    height: 80vh;
+    padding: 1rem 7rem;
+    box-sizing: border-box;
+    width: 100%;
+    @media screen and (max-width: 1240px) {
+        padding: 0;
+    }
+}
+
+// MuiPaper-root MuiPaper-elevation MuiPaper-elevation0 MuiAccordion-root Mui-expanded css-1fjvggn-MuiPaper-root-MuiAccordion-root{
+//     width: fit-content !important;
+// }

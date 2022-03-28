@@ -1,0 +1,102 @@
+
+
+
+
+.StepWizard{
+    .second-accordian{
+        display: flex;
+        flex-direction: row;
+        gap: 1rem;
+        
+        .title.is-6{
+            margin: 0;
+           
+        }
+        .free{
+            color: green;
+        }
+        .cost{
+            color: darkred;
+        }
+        
+    }
+    
+    .box{
+        margin: 1rem;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    
+    .icon-text{
+        align-self: center;
+    }
+    
+    .title.is-5{
+        margin:0 1rem 0 0;
+    }
+    .title.is-6{
+        margin:0 1rem 0 0;
+        &.free{
+            color: green;
+        }
+    }
+    .icon{
+        svg{
+          
+        }
+    }
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: center;
+    height: 80vh;
+    .loading{
+        height: 50vh;
+        margin: auto;
+    }
+    .cart{
+        display: flex;
+        align-items: flex-end;
+    }
+    .message{
+       
+         width: 25rem;
+         .message-header{
+             display: flex;
+             justify-content: center;
+             background-color: #2a2d3e;
+         }
+         .message-body{
+            background-color: #ffe089;
+             
+            .total-wrapper{
+                display: flex;
+                flex-direction: column;
+                .total{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    margin: 0.5rem 0;
+                 }
+                 .total-last{
+                    display: flex;
+                    flex-direction: row;
+                    justify-content: space-between;
+                    margin: 1rem 0;
+                    border-top: 1px solid black !important;
+                    padding-top: 1rem;
+                 }
+            }
+             
+             
+         }
+    }
+
+    @media screen and (max-width: 1240px) {
+        display: flex;
+        flex-direction: column;
+        height: auto;
+        width: 100%;
+    }
+}

@@ -1,12 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import 'bulma/css/bulma.css'
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from './context/AuthProvider';
+import { CookiesProvider } from "react-cookie";
 ReactDOM.render(
   <React.StrictMode>
+    <BrowserRouter>
+    <CookiesProvider>
+    <AuthProvider>
     <App />
+    </AuthProvider>
+    </CookiesProvider>
+    </BrowserRouter>
+   
   </React.StrictMode>,
   document.getElementById('root')
 );

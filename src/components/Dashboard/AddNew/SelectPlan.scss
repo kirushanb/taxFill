@@ -1,0 +1,48 @@
+.SelectPlan{
+        display: grid;
+        // flex-direction: row;
+        align-self: center;
+        justify-content: center;
+        grid-template-columns: auto auto auto;
+        gap: 2rem;
+        height: 60vh;
+        width: 100%;
+        // .loading-plan{
+        //     height: 10vh;
+        //     margin: auto;
+        // }
+    .card{
+        width: 15rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        box-sizing: border-box;
+        .icon-text{
+            display: flex;
+            justify-content: flex-start;
+            width: 100%;
+            padding: 1rem 0 0 1rem;
+        }
+    }
+
+    @media screen and (max-width: 768px) {
+        display: grid;
+        // flex-direction: row;
+        align-self: center;
+        justify-content: center;
+        grid-template-columns: auto auto;
+        gap: 1rem;
+    }
+
+
+    @media screen and (max-width: 425px) {
+        display: grid;
+        // flex-direction: row;
+        align-self: center;
+        justify-content: center;
+        grid-template-columns: auto;
+        gap: 1rem;
+    }
+}

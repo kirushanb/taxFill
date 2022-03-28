@@ -1,0 +1,32 @@
+.css-cvumne-MuiDrawer-docked .MuiDrawer-paper {
+    border: #2a2d3e;
+}
+
+.css-1vnry7f-MuiButtonBase-root-MuiListItemButton-root.Mui-selected{
+    background-color: rgba(1,121,107,0.4) !important;
+}
+
+.header-button{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+}
+
+.data-table{
+    padding: 1rem;
+    margin-top: 0;
+   
+}
+
+.modal-close{
+    top:75px
+}
+
+.modal-content{
+    background: white;
+    margin-top: 4rem;
+    width: 1270px;
+}
+

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Employment.scss";
+import "./Pension.scss";
 import PhoneInput from "react-phone-input-2";
 import TextField from "@mui/material/TextField";
 import AddIcon from "@mui/icons-material/Add";
@@ -55,7 +55,7 @@ const Input = styled("input")({
   display: "none",
 });
 
-const Employment = () => {
+const Pension = () => {
   let navigate = useNavigate();
   const [overallexpenseValue, setOverallexpensesValue] = React.useState("");
   
@@ -83,19 +83,19 @@ const Employment = () => {
 
 
   const validationSchema = Yup.object().shape({
-    employerName: Yup.string().required("Employer name must not be empty."),
+    pensionProvider: Yup.string().required("Pension provider name must not be empty."),
     payee: Yup.string().required("Payee Ref Number must not be empty."),
-    incomeFrom:Yup.number().required("Income from P60/P45 must not be empty."),
-    taxFrom: Yup.number().required("Tax from P60/P45 must not be empty"),
+    pensionFrom:Yup.number().required("Pension from P60 must not be empty."),
+    taxFrom: Yup.number().required("Tax from P60 must not be empty"),
   });
 
   const formOptions = {
     mode: "onChange",
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      employerName: "",
+      pensionProvider: "",
       payee: "",
-      incomeFrom: "",
+      pensionFrom: "",
       taxFrom: "",
     },
   };
@@ -115,13 +115,13 @@ const Employment = () => {
   
     setLoading(true);
     try {
-      const response = await axiosPrivate.post("/EmploymentDetail",
+      const response = await axiosPrivate.post("/Pension",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            employeeName: data.employerName,
+            pensionProvider: data.pensionProvider,
             paye: data.payee,
-            incomeFromP60_P45: data.incomeFrom,
-            taxFromP60_P45: data.taxFrom,
+            pensionFromP60: data.pensionFrom,
+            taxFromP60: data.taxFrom,
             overallExpenses: overallexpenseValue,
             expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
               return({description:n.description,amount:parseInt(n.amount)})
@@ -130,13 +130,12 @@ const Employment = () => {
               return({url:n})})]
           }
       );
-
       setLoading(false);
-      toast.success("Employment Details Saved Successfully");
       reset();
      setExpensesList([{description: "",
      amount: "",}])
      setLoading(false);
+     toast.success("Pension Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
           if(params.orderId){
@@ -153,7 +152,6 @@ const Employment = () => {
        
     
     } catch (err) {
-     
       // if (!err?.response) {
       //     setErrMsg('No Server Response');
       // } else if (err.response?.status === 400) {
@@ -173,13 +171,13 @@ const Employment = () => {
     
     setLoading(true);
     try {
-      const response = await axiosPrivate.post("/EmploymentDetail",
+      const response = await axiosPrivate.post("/Pension",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            employeeName: data.employerName,
+            pensionProvider: data.pensionProvider,
             paye: data.payee,
-            incomeFromP60_P45: data.incomeFrom,
-            taxFromP60_P45: data.taxFrom,
+            pensionFromP60: data.pensionFrom,
+            taxFromP60: data.taxFrom,
             overallExpenses: overallexpenseValue,
             expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
               return({description:n.description,amount:parseInt(n.amount)})
@@ -195,7 +193,7 @@ const Employment = () => {
      setExpensesList([{description: "",
      amount: "",}])
      setLoading(false);
-     toast.success("Employment Details Saved Successfully")
+     toast.success("Pension Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
     } catch (err) {
@@ -260,7 +258,7 @@ const Employment = () => {
   }
 
   return (
-    <div className="Employment">
+    <div className="Pension">
        {isLoading 
      ? 
      <CircularProgress />
@@ -282,31 +280,30 @@ const Employment = () => {
             {/* <Typography component="h1" variant="h5">
                 Sign up
               </Typography> */}
-            <p className="title is-3">Employment Details</p>
+            <p className="title is-3">Pension Income</p>
             <Box sx={{ mt: 1 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12}>
                   <InputLabel
-                    htmlFor="employer"
+                    htmlFor="pensionProvider"
                     required
                     sx={{ fontWeight: "bold" }}
                   >
-                    Employment
+                    Pension provider
                   </InputLabel>
                   <TextField
-                    name="employerName"
+                    name="pensionProvider"
                     required
                     fullWidth
-                    id="employerName"
-                    //   label="Enter your employer name"
-                    placeholder="Enter your employer name"
+                    id="pensionProvider"
+                    placeholder="Enter your pension provider name"
                     autoFocus
                     error={errors.employerName?.message}
-                    {...register("employerName")}
+                    {...register("pensionProvider")}
                   />
 
                   <Typography variant="body2" color="error" align="left">
-                    {errors.employerName?.message}
+                    {errors.pensionProvider?.message}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12}>
@@ -331,22 +328,22 @@ const Employment = () => {
                 </Grid>
                 <Grid item xs={12} sm={12}>
                   <InputLabel
-                    htmlFor="payee"
+                    htmlFor="pensionFrom"
                     required
                     sx={{ fontWeight: "bold" }}
                   >
-                    Income from P60/P45
+                    Pension from P60
                   </InputLabel>
                   <TextField
                     required
                     fullWidth
-                    id="incomeFrom"
-                    name="incomeFrom"
-                    {...register("incomeFrom")}
-                    placeholder="Income from P60/P45"
+                    id="pensionFrom"
+                    name="pensionFrom"
+                    {...register("pensionFrom")}
+                    placeholder="Pension from P60"
                   />
                   <Typography variant="body2" color="error" align="left">
-                    {errors.incomeFrom?.message}
+                    {errors.pensionFrom?.message}
                   </Typography>
                 </Grid>
                 <Grid item xs={12} sm={12}>
@@ -355,7 +352,7 @@ const Employment = () => {
                     required
                     sx={{ fontWeight: "bold" }}
                   >
-                    Tax from P60/P45
+                    Tax from P60
                   </InputLabel>
                   <TextField
                     required
@@ -363,7 +360,7 @@ const Employment = () => {
                     id="taxFrom"
                     name="taxFrom"
                     {...register("taxFrom")}
-                    placeholder="Tax from P60/P45"
+                    placeholder="Tax from P60"
                   />
                   <Typography variant="body2" color="error" align="left">
                     {errors.taxFrom?.message}
@@ -497,4 +494,4 @@ const Employment = () => {
   );
 };
 
-export default Employment;
+export default Pension;

@@ -12,6 +12,8 @@ import * as Yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SaveIcon from "@mui/icons-material/Save";
 import Files from "react-files";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   Avatar,
   Box,
@@ -49,6 +51,7 @@ import UploadFiles from "./UploadFiles";
 import axios from "axios";
 import { useCookies } from "react-cookie";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import AutoFillForm from "../../Address/AutoFillForm";
 
 const getMonths = (fromDate, toDate) => {
   const fromYear = fromDate.getFullYear();
@@ -79,6 +82,7 @@ const SelfEmployment = () => {
   const [overallexpenses, setOverallexpenses] = React.useState(false);
   const [startDate, setStartDate] = React.useState("");
   const [endDate, setEndDate] = React.useState("");
+  const [address, setAddress] = React.useState("");
   const [monthsList, setMonthsList] = React.useState([]);
   const axiosPrivate = useAxiosPrivate();
   const [expensesList, setExpensesList] = React.useState([{
@@ -139,7 +143,7 @@ const SelfEmployment = () => {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
             businessName: data.businessName,
             descriptionOfBusiness: data.descriptionOfBusiness,
-            address: data.address,
+            address: JSON.stringify(address ?? {}),
             postalCode: data.postalCode,
             accountingPeriodFrom: startDate,
             accountPeriodTo: endDate,
@@ -159,7 +163,9 @@ const SelfEmployment = () => {
       reset();
      setExpensesList([{description: "",
      amount: "",}])
+     setAddress("");
      setLoading(false);
+     toast.success("Self Employment Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
       if(params.orderId){
@@ -186,6 +192,7 @@ const SelfEmployment = () => {
       // }
       // errRef.current.focus();
       setLoading(false);
+      toast.error(err);
     }
   };
 
@@ -198,7 +205,7 @@ const SelfEmployment = () => {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
             businessName: data.businessName,
             descriptionOfBusiness: data.descriptionOfBusiness,
-            address: data.address,
+            address: JSON.stringify(address ?? {}),
             postalCode: data.postalCode,
             accountingPeriodFrom: startDate,
             accountPeriodTo: endDate,
@@ -221,7 +228,9 @@ const SelfEmployment = () => {
      setExpensesList([{description: "",
      amount: "",}])
      setLoading(false);
+     toast.success("Self Employment Details Saved Successfully");
      setUrls([]);
+     setAddress("");
      setOverallexpensesValue("");
     } catch (err) {
       // if (!err?.response) {
@@ -235,6 +244,7 @@ const SelfEmployment = () => {
       // }
       // errRef.current.focus();
       setLoading(false);
+      toast.error(err);
     }
   };
   
@@ -295,6 +305,11 @@ const handleInputMonth = (i, event) => {
     setOverallexpensesValue(e.target.value);
   }
 
+  const handleAddress = (value) => {
+    setAddress(value);
+    setValue("address",JSON.stringify(value));
+   }
+
   return (
     <div className="SelfEmployment">
       {isLoading
@@ -302,6 +317,7 @@ const handleInputMonth = (i, event) => {
      <CircularProgress />
      :
       <form >
+        <ToastContainer />
         <Container component="main" maxWidth="lg">
           <Box
             sx={{
@@ -365,15 +381,16 @@ const handleInputMonth = (i, event) => {
                     {errors.descriptionOfBusiness?.message}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={6}>
+                <Grid item xs={12} sm={6} >
                   <InputLabel
                     htmlFor="address"
                     required
                     sx={{ fontWeight: "bold" }}
+                   
                   >
                     Address
                   </InputLabel>
-                  <TextField
+                  {/* <TextField
                     required
                     fullWidth
                     multiline
@@ -382,7 +399,8 @@ const handleInputMonth = (i, event) => {
                     name="address"
                     {...register("address")}
                     placeholder="Enter your business address"
-                  />
+                  /> */}
+                  <AutoFillForm handleAddress={handleAddress}/>
                   <Typography variant="body2" color="error" align="left">
                     {errors.address?.message}
                   </Typography>

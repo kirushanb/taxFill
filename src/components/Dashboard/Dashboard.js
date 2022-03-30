@@ -27,7 +27,8 @@ import AddNew from "./AddNew/AddNew";
 import { useNavigate } from "react-router-dom";
 import PieChartComponent from "./PieChartComponent";
 import { useCookies } from "react-cookie";
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 function Copyright(props) {
   return (
     <Typography
@@ -122,16 +123,19 @@ function DashboardContent() {
   }
 
   const handleLogout = () => {
+    // toast("User Logged Out Successfully");
     setAuth({});
     setCookie("user", "", {
       path: "/"
     });
    window.location.href='/'
   }
+  
  
   return (
     <>
       <Box sx={{ display: "flex" }}>
+      <ToastContainer />
         <CssBaseline />
         <AppBar
           position="absolute"
@@ -267,6 +271,8 @@ function DashboardContent() {
                   </div>
                   <div className="data-table">
                     <DataTable />
+                    
+                    
                     {/* <div className={`modal ${modal?"is-active":""}`}>
                       <div className="modal-background"  onClick={()=>setModal(false)}></div>
                       <div className="modal-content">

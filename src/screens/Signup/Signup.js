@@ -34,6 +34,7 @@ import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocomplet
 
 import useAuth from "../../hooks/useAuth";
 import axios from "axios";
+import AutoFillForm from "../../components/Address/AutoFillForm";
 
 
 
@@ -42,6 +43,7 @@ const Signup = () => {
   let navigate = useNavigate();
   const [phonenumber, setPhonenumber] = React.useState("");
   const [uTRNumber, setuTRNumber] = React.useState("");
+  const [address, setAddress] = React.useState("");
   const [checked, setChecked] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
   const [password, setPassword] = React.useState("");
@@ -142,7 +144,7 @@ const Signup = () => {
                 dob: data.dob,
                 nI_Number: data.nINumber,
                 utR_Number: data.uTRNumber?data.uTRNumber.replace(/\s/g, ''):data.uTRNumber,
-                address: data.address,
+                address: JSON.stringify(address ?? {}),
                 email: data.email,
                 phoneNumber: data.phone,
                 status: 1,
@@ -187,6 +189,11 @@ const Signup = () => {
     setShowConfirmPassword(!showConfirmPassword)
    };
 
+   const handleAddress = (value) => {
+    setAddress(value);
+  
+   }
+
   return (
     <div className="Signup">
       <div className="login-form">
@@ -200,7 +207,7 @@ const Signup = () => {
           </div>
        
 
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className='signup-form'>
           <Container component="main" maxWidth="lg">
             <Box
               sx={{
@@ -335,12 +342,12 @@ const Signup = () => {
   onPlaceSelected={(place) => console.log(place)}
 /> */}
                     
-                    <InputLabel htmlFor="address">
+                    {/* <InputLabel htmlFor="address">
                         Address
-                      </InputLabel>
-                     <input className="address-input" ref={ref}></input>
+                      </InputLabel> */}
+                     {/* <input className="address-input" ref={ref}></input> */}
 
-                    
+                     <AutoFillForm handleAddress={handleAddress}/>
                     
                     <Typography variant="body2" color="error" align="left">
                       {errors.address?.message}

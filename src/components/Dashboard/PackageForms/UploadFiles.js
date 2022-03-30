@@ -5,7 +5,8 @@ import { Button, CircularProgress } from '@mui/material';
 import './UploadFiles.scss'
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 const UploadFiles = (props) => {
   const {
     files,
@@ -46,10 +47,11 @@ const UploadFiles = (props) => {
         props.handleUpload(responseAll.map(l=>l.data.result.imageURL));
         
         setLoading(false)
-       
+        toast.success('File Uploaded Successfully');
       } catch (error) {
         console.error('Failed to submit files.');
         setLoading(false);
+        toast.error(error);
       }
       
      
@@ -68,7 +70,7 @@ const UploadFiles = (props) => {
      
       <>
       <div >
-        
+      <ToastContainer />
         {/* Provide a drop zone and an alternative button inside it to upload files. */}
         <div
          className="form-container"

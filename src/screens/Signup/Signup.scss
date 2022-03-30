@@ -16,7 +16,7 @@
             margin-left: -1rem;
             color: #49c68d;
         }
-    form{
+    .signup-form{
         border-radius: 1rem;
         background: white;
         display: flex;
@@ -25,7 +25,8 @@
         width: 50rem;
         align-self: center;
         padding: 2rem 1rem;
-
+        overflow-y: auto;
+        height: 80vh;
         .address-input{
             padding: 16.5px 14px;
             height: 5rem;

@@ -39,6 +39,14 @@
         display: flex;
         justify-content: flex-end;
     }
+    .tag{
+        padding: 1rem;
+        margin: 0.5rem;
+        .icon-delete{
+            margin-left: 0.5rem;
+            cursor: pointer;
+        }
+    }
     
 }
 .UploadFiles:hover{

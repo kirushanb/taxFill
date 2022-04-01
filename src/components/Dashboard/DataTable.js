@@ -79,7 +79,7 @@ export default function DataTable() {
     setPage(0);
   };
 const handleOnClickAddData = (id) => {
-  console.log(id)
+  
   navigate(`/select/${id}`)
 }
   React.useEffect(()=>{
@@ -89,7 +89,7 @@ const handleOnClickAddData = (id) => {
       try {
          
           const response = await axiosPrivate.get('https://tax.api.cyberozunu.com/api/v1.1/Order');
-         console.log(response)
+       
          setRows([...response.data.result.data.map(n=>createData(n.serialNo,n.createdOn,n.selectedPackages.map(p=>" "+p.package.name).join(","),<button  onClick={()=>handleOnClickAddData(n.id)} key={n.serialNo} className="button is-info"><AddchartIcon />Add Data</button>))])
          setLoading(false)
       } catch (err) {

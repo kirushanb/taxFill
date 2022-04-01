@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
-import { Formik } from 'formik';
+import { Formik, validateYupSchema } from 'formik';
 import {
   Box,
   Button,
@@ -35,11 +35,13 @@ const AutoFillForm = ({
     }
     const results = await GoogleAutoCompelete(searchValue.target.value);
     if (results) {
+      console.log(results);
       setAddresses(results);
     }
   }
 
   const changeAddress = async (value, setFieldValue) => {
+
         let result = null;
         for(let x = 0; x < addresses.length; x++){
           if(value === addresses[x].description){
@@ -65,7 +67,7 @@ const AutoFillForm = ({
         }
         if(!city){
           for(let i = 0; i < result.address_components.length; i++){
-            if(result.address_components[i].types[0] === 'administrative_area_level_2'){
+            if(result.address_components[i].types[0] === 'postal_town'){
                 city = result.address_components[i].long_name;
             }
           }
@@ -87,6 +89,7 @@ const AutoFillForm = ({
           }
         }
     setFieldValue('stateOfAddress', state!==null?state:'');
+       
         handleAddress(formRef?.current?.values);
   }
 
@@ -177,7 +180,7 @@ const AutoFillForm = ({
                       error={Boolean(touched.stateOfAddress && errors.stateOfAddress)}
                       fullWidth
                       helperText={touched.stateOfAddress && errors.stateOfAddress}
-                      label="State (Administrative Area)"
+                      label="County"
                       name="stateOfAddress"
                       onBlur={handleBlur}
                       onChange={(e)=>{handleChange(e); handlechangeWhenAdress();}}
@@ -190,7 +193,7 @@ const AutoFillForm = ({
                       error={Boolean(touched.zipCode && errors.zipCode)}
                       fullWidth
                       helperText={touched.zipCode && errors.zipCode}
-                      label="Zip Code"
+                      label="Post Code"
                       name="zipCode"
                       onBlur={handleBlur}
                       onChange={(e)=>{handleChange(e); handlechangeWhenAdress();}}

@@ -21,7 +21,7 @@ const SelectPlan = (props) => {
     
   // }, [loading]);
 
-  useEffect(() => {
+  useEffect(async() => {
    
     // let isMounted = true;
     // const controller = new AbortController();
@@ -52,7 +52,7 @@ const SelectPlan = (props) => {
       }
     };
 
-    getUsers();
+    await getUsers();
    
     // return () => {
     //   isMounted = false;

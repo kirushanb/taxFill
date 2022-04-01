@@ -93,9 +93,9 @@ export default function StepWizard() {
 
 
   const handleSelect = (selected) => {
-  
+   
     setPrice(selected.reduce((previousValue, currentValue) => previousValue + currentValue.price,
-    price))
+    0));
     setSelectedlist(selected)
   }
 
@@ -105,7 +105,7 @@ export default function StepWizard() {
   }
 
   const handleCheckout = async() => {
-    if(selectedlist.length===0){
+    if(selectedlist.length === 0){
       return
     }else if(!checkedEmail && !checkedSMS){
       return
@@ -129,6 +129,8 @@ export default function StepWizard() {
       setCookie("payment", {response:response?.data.result.response,selectedlist:selectedlist,checkedEmail,checkedSMS}, {
         path: "/"
       });
+      setPrice(0);
+      setSelectedlist([]);
       //console.log(JSON.stringify(response));
       const url = response?.data.result.response.url;
       window.location.href=url;
@@ -188,11 +190,7 @@ export default function StepWizard() {
                     <h6 className="title is-6 free">Free of cost</h6>
                   </div>
                 }
-                onChange={(e)=>{setCheckedEmail(e.target.checked)
-                        setCheckedSMS(!e.target.checked)
-                        if(checkedSMS){
-                          handleAddAmount(-5)
-                        }
+                onChange={(e)=>{setCheckedEmail(e.target.checked);
                 }}
               />
               <FormControlLabel
@@ -203,12 +201,12 @@ export default function StepWizard() {
                     <h6 className="title is-6 cost">{"+£5"}</h6>
                   </div>
                 }
-                onChange={(e)=>{setCheckedSMS(e.target.checked)
-                          setCheckedEmail(!e.target.checked)
+                onChange={(e)=>{setCheckedSMS(e.target.checked);
+                         
                     if(e.target.checked){
-                      handleAddAmount(+5)
+                      handleAddAmount(+5);
                     }else{
-                      handleAddAmount(-5)
+                      handleAddAmount(-5);
                     }
                  
                 }}

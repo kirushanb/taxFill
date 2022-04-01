@@ -366,12 +366,12 @@ const Pension = () => {
                     {errors.taxFrom?.message}
                   </Typography>
                 </Grid>
-                <Grid item xs={12} sm={12}>
+                {/* <Grid item xs={12} sm={12}>
                   <InputLabel htmlFor="payee" sx={{ fontWeight: "600" }}>
                     Expenses
                   </InputLabel>
-                </Grid>
-                <Grid item xs={12} sm={12}>
+                </Grid> */}
+                {/* <Grid item xs={12} sm={12}>
                   <InputLabel
                     htmlFor="payee"
                     required
@@ -393,8 +393,8 @@ const Pension = () => {
                   <Typography variant="body2" color="error" align="left">
                     {errors.taxFrom?.message}
                   </Typography>
-                </Grid>
-                {expensesList.map((field, idx) => (
+                </Grid> */}
+                {/* {expensesList.map((field, idx) => (
                   <React.Fragment key={field+"-"+idx}>
                     <Grid item xs={12} sm={5.5}>
                       <InputLabel htmlFor="payee" required>
@@ -469,7 +469,7 @@ const Pension = () => {
                       )}
                     </Grid>
                   </React.Fragment>
-                ))}
+                ))} */}
                 <Grid item xs={12} sm={12}>
                   <UploadFiles handleUpload={handleUpload}/>
                 </Grid>

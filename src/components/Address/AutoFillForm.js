@@ -35,7 +35,7 @@ const AutoFillForm = ({
     }
     const results = await GoogleAutoCompelete(searchValue.target.value);
     if (results) {
-      console.log(results);
+     
       setAddresses(results);
     }
   }

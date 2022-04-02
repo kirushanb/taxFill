@@ -100,7 +100,7 @@ function DashboardContent() {
   const [modal, setModal] = React.useState(false);
   const navigate = useNavigate();
 
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [cookies, setCookie, removeCookie] = useCookies(["user"]);
 
 
   const handleChange = (event) => {
@@ -130,6 +130,15 @@ function DashboardContent() {
     });
    window.location.href='/'
   }
+  React.useEffect( () => {
+   
+    if(cookies.order){
+      removeCookie("order");
+   
+    }
+   
+
+  },[])
   
  
   return (

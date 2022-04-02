@@ -138,17 +138,32 @@ const Pension = () => {
      toast.success("Pension Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
-          if(params.orderId){
-            navigate('/account');
-          }else{
-            const filtered = cookies.order.selectedPackages.filter(n=> n.package.name !== "Employment");
-            if(filtered.length>0){
-              navigate(`/${(filtered[0].package.name).toLowerCase().replace(/\s/g, '')}`)
-            }else{
-              navigate('/account');
-            }
-          }
+     if(params.orderId){
+      navigate('/account');
+    }else{
+      if(cookies.order.selectedPackages.length>1){
        
+        const filteredEmployement = cookies.order.selectedPackages.filter(n=> n.package.name === "Pension Income");
+       
+        filteredEmployement[0].package.recordsAdded = true;
+        
+        const filteredOther= cookies.order.selectedPackages.filter(n=> n.package.name !== "Pension Income");
+        const filtered = filteredOther.filter(n=> n.package.recordsAdded===false);
+        
+        setCookie("order", {oderId:cookies.order.oderId,selectedPackages:{...filteredOther,...filteredEmployement}}, {
+          path: "/"
+        });
+        
+        if(filtered.length>0){  
+          navigate(`/${(filtered[0].package.name).toLowerCase().replace(/\s/g, '')}`)
+        }else{
+          navigate('/account');
+        }
+      }else{
+        navigate('/account');
+      }
+      
+    }
        
     
     } catch (err) {

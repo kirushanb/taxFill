@@ -122,7 +122,7 @@ const Employment = () => {
             paye: data.payee,
             incomeFromP60_P45: data.incomeFrom,
             taxFromP60_P45: data.taxFrom,
-            overallExpenses: overallexpenseValue,
+            overallExpenses: overallexpenseValue?parseInt(overallexpenseValue):0,
             expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
               return({description:n.description,amount:parseInt(n.amount)})
             })],
@@ -139,15 +139,32 @@ const Employment = () => {
      setLoading(false);
      setUrls([]);
      setOverallexpensesValue("");
+          
           if(params.orderId){
             navigate('/account');
           }else{
-            const filtered = cookies.order.selectedPackages.filter(n=> n.package.name !== "Employment");
-            if(filtered.length>0){
-              navigate(`/${(filtered[0].package.name).toLowerCase().replace(/\s/g, '')}`)
+            if(cookies.order.selectedPackages.length>1){
+             
+              const filteredEmployement = cookies.order.selectedPackages.filter(n=> n.package.name === "Employment");
+             
+              filteredEmployement[0].package.recordsAdded = true;
+              
+              const filteredOther= cookies.order.selectedPackages.filter(n=> n.package.name !== "Employment");
+              const filtered = filteredOther.filter(n=> n.package.recordsAdded===false);
+              
+              setCookie("order", {oderId:cookies.order.oderId,selectedPackages:{...filteredOther,...filteredEmployement}}, {
+                path: "/"
+              });
+              
+              if(filtered.length>0){  
+                navigate(`/${(filtered[0].package.name).toLowerCase().replace(/\s/g, '')}`)
+              }else{
+                navigate('/account');
+              }
             }else{
               navigate('/account');
             }
+            
           }
        
        

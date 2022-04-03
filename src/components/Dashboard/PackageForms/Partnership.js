@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./SelfEmployment.scss";
+import "./Partnership.scss";
 import PhoneInput from "react-phone-input-2";
 import TextField from "@mui/material/TextField";
 import AddIcon from "@mui/icons-material/Add";
@@ -76,7 +76,7 @@ const Input = styled("input")({
   display: "none",
 });
 
-const SelfEmployment = () => {
+const Partnership = () => {
   let navigate = useNavigate();
  
   const [overallexpenses, setOverallexpenses] = React.useState(false);
@@ -90,9 +90,15 @@ const SelfEmployment = () => {
     description: "",
     amount: 0,
   }]);
-  const [totalTurnover, setTotalTurnover] = React.useState("");
+  const [partnershipList, setPartnershipList] = React.useState([{
+    fullName: "",
+    share: "",
+  }]);
+  const [netProfit, setNetProfit] = React.useState("");
   const params = useParams();
   const [overallexpenseValue, setOverallexpensesValue] = React.useState("");
+  const [totalTurnover, setTotalTurnover] = React.useState("");
+  
   const [cookies, setCookie] = useCookies();
   const [urls, setUrls] = useState([]);
   const [isLoading, setLoading] = React.useState(false);
@@ -106,18 +112,17 @@ const SelfEmployment = () => {
   
 
   const validationSchema = Yup.object().shape({
-    businessName: Yup.string().required("Business name must not be empty."),
+    partnershipName: Yup.string().required("Partnership name must not be empty."),
     descriptionOfBusiness:Yup.string().required("Description of your business must not be empty."),
     address: Yup.string().required("Business address must not be empty."),
     totalTurnover: Yup.string().required("Total turnover must not be empty"),
-   
   });
 
   const formOptions = {
     mode: "onChange",
     resolver: yupResolver(validationSchema),
     defaultValues: {
-      businessName: "",
+      partnershipName: "",
       descriptionOfBusiness: "",
       address: "",
       totalTurnover: "",
@@ -140,23 +145,25 @@ const SelfEmployment = () => {
   
     setLoading(true);
     try {
-      const response = await axiosPrivate.post("https://tax.api.cyberozunu.com/api/SelfEmployment",
+      const response = await axiosPrivate.post("https://tax.api.cyberozunu.com/api/v1.1/Partnership",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            name: data.businessName,
+            name: data.partnershipName,
             descriptionOfBusiness: data.descriptionOfBusiness,
             address: JSON.stringify(address ?? {}),
             postalCode: data.postalCode,
             accountingPeriodFrom: startDate,
             accountPeriodTo: endDate,
-            totalTurnOver: data.totalTurnover,
+            totalTurnOver: totalTurnover?parseInt(totalTurnover):0,
             turnOver: [...monthsList.map(n=>{
               return({month:mL[n.month],amount:parseInt(n.amount)})
             })],
-            overallExpenses: overallexpenseValue,
-            expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
+            overallExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+            expenses: [...expensesList.map(n=>{
               return({description:n.description,amount:parseInt(n.amount)})
             })],
+            shares: [...partnershipList.map(n=>{ return({name: n.fullName,percentage:parseInt(n.share)})
+          })],
             attachments:[...urls.map(n=>{ 
               return({url:n})})]
           }
@@ -165,9 +172,11 @@ const SelfEmployment = () => {
       reset();
      setExpensesList([{description: "",
      amount: "",}])
+     setPartnershipList([{fullName: "",share:""}]); 
+      setNetProfit("");
      setAddress("");
      setLoading(false);
-     toast.success("Self Employment Details Saved Successfully");
+     toast.success("Partnership Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
      setTotalTurnover("");
@@ -176,11 +185,11 @@ const SelfEmployment = () => {
       }else{
         if(cookies.order.selectedPackages.length>1){
          
-          const filteredEmployement = cookies.order.selectedPackages.filter(n=> n.package.name === "Self employment");
+          const filteredEmployement = cookies.order.selectedPackages.filter(n=> n.package.name === "Partnership");
          
           filteredEmployement[0].package.recordsAdded = true;
           
-          const filteredOther= cookies.order.selectedPackages.filter(n=> n.package.name !== "Self employment");
+          const filteredOther= cookies.order.selectedPackages.filter(n=> n.package.name !== "Partnership");
           const filtered = filteredOther.filter(n=> n.package.recordsAdded===false);
           
           setCookie("order", {oderId:cookies.order.oderId,selectedPackages:{...filteredOther,...filteredEmployement}}, {
@@ -218,39 +227,40 @@ const SelfEmployment = () => {
     setLoading(true);
   
     try {
-      const response = await axiosPrivate.post("https://tax.api.cyberozunu.com/api/SelfEmployment",
-          {
-            orderId: params.orderId?params.orderId: cookies.order.oderId,
-            name: data.businessName,
-            descriptionOfBusiness: data.descriptionOfBusiness,
-            address: JSON.stringify(address ?? {}),
-            postalCode: data.postalCode,
-            accountingPeriodFrom: startDate,
-            accountPeriodTo: endDate,
-            totalTurnOver: data.totalTurnover,
-            turnOver: [...monthsList.map(n=>{
-              return({month:mL[n.month],amount:parseInt(n.amount)})
-            })],
-            overallExpenses: overallexpenseValue,
-            expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
-              return({description:n.description,amount:parseInt(n.amount)})
-            })],
-            attachments:[...urls.map(n=>{ 
-              return({url:n})})]
-          }
-      );
-      
-     
-      
+      const response = await axiosPrivate.post("https://tax.api.cyberozunu.com/api/v1.1/Partnership",
+      {
+        orderId: params.orderId?params.orderId: cookies.order.oderId,
+        name: data.partnershipName,
+        descriptionOfBusiness: data.descriptionOfBusiness,
+        address: JSON.stringify(address ?? {}),
+        postalCode: data.postalCode,
+        accountingPeriodFrom: startDate,
+        accountPeriodTo: endDate,
+        totalTurnOver: totalTurnover?parseInt(totalTurnover):0,
+        turnOver: [...monthsList.map(n=>{
+          return({month:mL[n.month],amount:parseInt(n.amount)})
+        })],
+        overallExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        expenses: [...expensesList.map(n=>{
+          return({description:n.description,amount:parseInt(n.amount)})
+        })],
+        shares: [...partnershipList.map(n=>{ return({name: n.fullName,percentage:parseInt(n.share)})
+      })],
+        attachments:[...urls.map(n=>{ 
+          return({url:n})})]
+      }
+  );
      reset();
      setExpensesList([{description: "",
      amount: "",}])
      setLoading(false);
-     toast.success("Self Employment Details Saved Successfully");
+     toast.success("Partnership Details Saved Successfully");
      setUrls([]);
      setAddress("");
      setOverallexpensesValue("");
-     setTotalTurnover("");
+      setPartnershipList([{fullName: "",share:""}]); 
+      setNetProfit("");
+      setTotalTurnover("");
     } catch (err) {
       // if (!err?.response) {
       //     setErrMsg('No Server Response');
@@ -277,6 +287,7 @@ const handleInputMonth = (i, event) => {
       setTotalTurnover(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0))
       setValue("totalTurnover",values.reduce((acc, curr) => acc + parseInt(curr.amount), 0));
     }
+  
 }
 
 
@@ -287,14 +298,22 @@ function handleChangeInput(i, event) {
   setExpensesList(values);
   if(value){
     setOverallexpenses(true);
-   
     setOverallexpensesValue(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0));
-   
+    setNetProfit(parseInt(totalTurnover) - parseInt(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)));
+    
   }else{
    
     setOverallexpenses(false);
     
   }
+}
+
+function handleChangeInputPartnership(i, event) {
+  const values = [...partnershipList];
+  const { name, value } = event.target;
+  values[i][name] = value;
+  setPartnershipList(values);
+  
 }
 
 function handleAddInput() {
@@ -308,6 +327,15 @@ function handleAddInput() {
 
 }
 
+function handleAddInputPartnerShip() {
+  const values = [...partnershipList];
+  values.push({
+    fullName: "",
+    share: "",
+  });
+  setPartnershipList(values);
+}
+
 function handleRemoveInput(i) {
   const values = [...expensesList];
   values.splice(i, 1);
@@ -316,12 +344,22 @@ function handleRemoveInput(i) {
 
 }
 
+function handleRemoveInputPartnership(i) {
+  const values = [...partnershipList];
+  values.splice(i, 1);
+  setPartnershipList(values);
 
+ 
+
+}
 
 const handleOverallExpenses = (e) => {
   setOverallexpensesValue(e.target.value);
+  
+
   if(e.target.value){
     setExpenseListHide(true);
+    setNetProfit(parseInt(totalTurnover) - parseInt(e.target.value));
   }else{
     setExpenseListHide(false);
   }
@@ -338,7 +376,7 @@ const handleOverallExpenses = (e) => {
   const handleEndDate = (e) => {
     setEndDate(e.target.value)
     setMonthsList(getMonths(new Date(startDate),new Date(e.target.value)))
-    console.log(getMonths(new Date(startDate),new Date(e.target.value)))
+    
   }
 
   const handleUpload = (urlsComming) => {
@@ -351,13 +389,19 @@ const handleOverallExpenses = (e) => {
     setAddress(value);
     setValue("address",JSON.stringify(value));
    }
+
    const handleTotalTurnover = (e) =>{
     setValue("totalTurnover",e.target.value);
     setTotalTurnover(e.target.value);
    }
 
+   const handleCalculateProfit = (share) =>{
+    const profit = netProfit * (share/100);
+    return profit;
+   }
+
   return (
-    <div className="SelfEmployment">
+    <div className="Partnership">
       {isLoading
      ? 
      <CircularProgress />
@@ -379,31 +423,30 @@ const handleOverallExpenses = (e) => {
             {/* <Typography component="h1" variant="h5">
                 Sign up
               </Typography> */}
-            <p className="title is-3">Self Employment Details</p>
+            <p className="title is-3">Partnership</p>
             <Box sx={{ mt: 1 }}>
               <Grid container spacing={3}>
                 <Grid item xs={12} sm={12}>
                   <InputLabel
-                    htmlFor="employer"
+                    htmlFor="partnershipName"
                     required
                     sx={{ fontWeight: "bold" }}
                   >
-                    Business Name
+                    Partnership Name
                   </InputLabel>
                   <TextField
-                    name="businessName"
+                    name="partnershipName"
                     required
                     fullWidth
-                    id="businessName"
-                    //   label="Enter your employer name"
-                    placeholder="Enter your business name"
+                    id="partnershipName"
+                    placeholder="Enter your partnership name"
                     autoFocus
-                    error={errors.firstName?.message}
-                    {...register("businessName")}
+                    error={errors.partnershipName?.message}
+                    {...register("partnershipName")}
                   />
 
                   <Typography variant="body2" color="error" align="left">
-                    {errors.businessName?.message}
+                    {errors.partnershipName?.message}
                   </Typography>
                 </Grid>
                 
@@ -413,7 +456,7 @@ const handleOverallExpenses = (e) => {
                     required
                     sx={{ fontWeight: "bold" }}
                   >
-                    Description of business
+                    Nature of business
                   </InputLabel>
                   <TextField
                     required
@@ -421,7 +464,7 @@ const handleOverallExpenses = (e) => {
                     id="descriptionOfBusiness"
                     name="descriptionOfBusiness"
                     {...register("descriptionOfBusiness")}
-                    placeholder="Describe your business"
+                    placeholder="Describe your nature of business"
                   />
                   <Typography variant="body2" color="error" align="left">
                     {errors.descriptionOfBusiness?.message}
@@ -451,6 +494,80 @@ const handleOverallExpenses = (e) => {
                     {errors.address?.message}
                   </Typography>
                 </Grid>
+                <Grid item xs={12} sm={12}>
+                  <InputLabel htmlFor="payee" sx={{ fontWeight: "600" }}>
+                    Partnership Details
+                  </InputLabel>
+                </Grid>
+                
+                {partnershipList.map((field, idx) => (
+                  <React.Fragment key={field+"-"+idx}>
+                    <Grid item xs={12} sm={5.5}>
+                      <InputLabel htmlFor="payee" required>
+                        Full Name
+                      </InputLabel>
+                      <TextField
+                        required
+                        fullWidth
+                        id="fullName"
+                        name="fullName"
+                        value={field.fullName}
+                        // {...register("description")}
+                        onChange={(e) => handleChangeInputPartnership(idx, e)}
+                        placeholder="Full Name"
+                       
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={5.5}>
+                      <InputLabel htmlFor="payee" required>
+                        Share of profit (%) 
+                      </InputLabel>
+                      <TextField
+                        required
+                        fullWidth
+                        id="share"
+                        name="share"
+                        value={field.share}
+                        type="share"
+                        onChange={(e) => handleChangeInputPartnership(idx, e)}
+                        placeholder="Share of profit (%)"
+                        
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={1}>
+                      {idx === 0 ? (
+                        <Fab
+                          onClick={ handleAddInputPartnerShip
+                          }
+                          color="primary"
+                          size="small"
+                          aria-label="add"
+                          sx={{
+                            background: "#49c68d",
+                            alignSelf: "center",
+                            marginTop: "1.8rem",
+                          }}
+                        >
+                          <AddIcon />
+                        </Fab>
+                      ) : (
+                        <Fab
+                          onClick={()=>handleRemoveInputPartnership(idx)}
+                          color="primary"
+                          size="small"
+                          aria-label="add"
+                          sx={{
+                            background: "#49c68d",
+                            alignSelf: "center",
+                            marginTop: "1.8rem",
+                          }}
+                        >
+                          <RemoveIcon />
+                        </Fab>
+                      )}
+                    </Grid>
+                  </React.Fragment>
+                ))}
                 <Grid item xs={12} sm={12}>
                   <InputLabel htmlFor="payee" sx={{ fontWeight: "600" }}>
                     Accounting period
@@ -653,7 +770,7 @@ const handleOverallExpenses = (e) => {
                         </Fab>
                       ) : (
                         <Fab
-                          onClick={()=>handleRemoveInput(idx)}
+                          onClick={handleRemoveInput}
                           color="primary"
                           size="small"
                           aria-label="add"
@@ -667,6 +784,60 @@ const handleOverallExpenses = (e) => {
                         </Fab>
                       )}
                     </Grid>
+                  </React.Fragment>
+                ))}
+                <Grid item xs={12} sm={12}>
+                  <InputLabel
+                    htmlFor="payee"
+                    // required
+                    sx={{ fontWeight: "bold" }}
+                  >
+                    Net Profit
+                  </InputLabel>
+                  <TextField
+                    
+                    fullWidth
+                    id="netProfit"
+                    name="netProfit"
+                    type={"number"}
+                    value={netProfit}
+                    placeholder="Net Profit"
+                    disabled={true}
+                  />
+                </Grid>
+                {partnershipList.map((field, idx) => (
+                  <React.Fragment key={field+"-"+idx}>
+                    <Grid item xs={12} sm={6}>
+                      <InputLabel htmlFor="payee" >
+                        Partner
+                      </InputLabel>
+                      <TextField
+                        required
+                        fullWidth
+                        id="fullName"
+                        name="fullName"
+                        value={field.fullName}
+                        placeholder="Full Name"
+                       disabled={true}
+                      />
+                    </Grid>
+                    <Grid item xs={12} sm={6}>
+                      <InputLabel htmlFor="payee" >
+                        Profit
+                      </InputLabel>
+                      <TextField
+                        required
+                        fullWidth
+                        id="share"
+                        name="share"
+                        value={handleCalculateProfit(field.share)}
+                        type="share"
+                        placeholder="Share of profit (%)"
+                        disabled={true}
+                        
+                      />
+                    </Grid>
+                   
                   </React.Fragment>
                 ))}
                 <Grid item xs={12} sm={12}>
@@ -693,4 +864,4 @@ const handleOverallExpenses = (e) => {
   );
 };
 
-export default SelfEmployment;
+export default Partnership;

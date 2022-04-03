@@ -65,12 +65,13 @@ const Employment = () => {
 
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [overallexpenses, setOverallexpenses] = React.useState(false);
+  const [expenseListHide, setExpenseListHide] = React.useState(false);
   
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setLoading] = React.useState(false);
   const [expensesList, setExpensesList] = React.useState([{
     description: "",
-    amount: "",
+    amount: 0,
   }]);
   const params = useParams();
   const [cookies, setCookie] = useCookies();
@@ -85,8 +86,8 @@ const Employment = () => {
   const validationSchema = Yup.object().shape({
     employerName: Yup.string().required("Employer name must not be empty."),
     payee: Yup.string().required("Payee Ref Number must not be empty."),
-    incomeFrom:Yup.number().required("Income from P60/P45 must not be empty."),
-    taxFrom: Yup.number().required("Tax from P60/P45 must not be empty"),
+    incomeFrom:Yup.string().required("Income from P60/P45 must not be empty."),
+    taxFrom: Yup.string().required("Tax from P60/P45 must not be empty"),
   });
 
   const formOptions = {
@@ -118,7 +119,7 @@ const Employment = () => {
       const response = await axiosPrivate.post("/EmploymentDetail",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            employeeName: data.employerName,
+            name: data.employerName,
             paye: data.payee,
             incomeFromP60_P45: data.incomeFrom,
             taxFromP60_P45: data.taxFrom,
@@ -193,7 +194,7 @@ const Employment = () => {
       const response = await axiosPrivate.post("/EmploymentDetail",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            employeeName: data.employerName,
+            name: data.employerName,
             paye: data.payee,
             incomeFromP60_P45: data.incomeFrom,
             taxFromP60_P45: data.taxFrom,
@@ -246,9 +247,14 @@ const Employment = () => {
     values[i][name] = value;
     setExpensesList(values);
     if(value){
-      setOverallexpenses(true)
+      setOverallexpenses(true);
+     
+      setOverallexpensesValue(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0));
+     
     }else{
-      setOverallexpenses(false)
+     
+      setOverallexpenses(false);
+      
     }
   }
 
@@ -256,16 +262,19 @@ const Employment = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: "",
+      amount: 0,
     });
     setExpensesList(values);
+    setOverallexpensesValue(expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0));
+
   }
 
   function handleRemoveInput(i) {
     const values = [...expensesList];
-   
     values.splice(i, 1);
     setExpensesList(values);
+    setOverallexpensesValue(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0));
+
   }
 
   const handleUpload = (urlsComming) => {
@@ -274,6 +283,11 @@ const Employment = () => {
 
   const handleOverallExpenses = (e) => {
     setOverallexpensesValue(e.target.value);
+    if(e.target.value){
+      setExpenseListHide(true);
+    }else{
+      setExpenseListHide(false);
+    }
   }
 
   return (
@@ -360,6 +374,7 @@ const Employment = () => {
                     id="incomeFrom"
                     name="incomeFrom"
                     {...register("incomeFrom")}
+                    type='number'
                     placeholder="Income from P60/P45"
                   />
                   <Typography variant="body2" color="error" align="left">
@@ -380,6 +395,7 @@ const Employment = () => {
                     id="taxFrom"
                     name="taxFrom"
                     {...register("taxFrom")}
+                    type='number'
                     placeholder="Tax from P60/P45"
                   />
                   <Typography variant="body2" color="error" align="left">
@@ -429,7 +445,7 @@ const Employment = () => {
                         // {...register("description")}
                         onChange={(e) => handleChangeInput(idx, e)}
                         placeholder="Description"
-                        disabled={overallexpenseValue?true:false}
+                        disabled={expenseListHide}
                       />
                       <Typography variant="body2" color="error" align="left">
                         {errors.lastName?.message}
@@ -450,7 +466,7 @@ const Employment = () => {
                         onChange={(e) => handleChangeInput(idx, e)}
                         // {...register("amount")}
                         placeholder="Amount"
-                        disabled={overallexpenseValue?true:false}
+                        disabled={expenseListHide}
                       />
                       <Typography variant="body2" color="error" align="left">
                         {errors.lastName?.message}
@@ -474,7 +490,7 @@ const Employment = () => {
                         </Fab>
                       ) : (
                         <Fab
-                          onClick={handleRemoveInput}
+                          onClick={()=>handleRemoveInput(idx)}
                           color="primary"
                           size="small"
                           aria-label="add"

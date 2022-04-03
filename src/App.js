@@ -18,6 +18,7 @@ import SelectPackage from "./components/Dashboard/SelectPackage/SelectPackage";
 import Employment from "./components/Dashboard/PackageForms/Employment";
 import SelfEmployment from "./components/Dashboard/PackageForms/SelfEmployment";
 import Pension from "./components/Dashboard/PackageForms/Pension";
+import Partnership from "./components/Dashboard/PackageForms/Partnership";
 
 
 function App() {
@@ -161,6 +162,27 @@ function App() {
           />
         </Route>
         <Route path="*" element={<Navigate to="/pensionincome" replace />} />
+      </Route>
+
+      <Route path="*" element={<RequireAuth />}>
+        <Route
+          path="partnership"
+          element={
+            <Layout>
+              <Partnership />
+            </Layout>
+          }
+        >
+          <Route
+            path=":orderId"
+            element={
+              <Layout>
+                <Partnership />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route path="*" element={<Navigate to="/partnership" replace />} />
       </Route>
     </Routes>
   );

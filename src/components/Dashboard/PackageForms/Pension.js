@@ -85,8 +85,8 @@ const Pension = () => {
   const validationSchema = Yup.object().shape({
     pensionProvider: Yup.string().required("Pension provider name must not be empty."),
     payee: Yup.string().required("Payee Ref Number must not be empty."),
-    pensionFrom:Yup.number().required("Pension from P60 must not be empty."),
-    taxFrom: Yup.number().required("Tax from P60 must not be empty"),
+    pensionFrom:Yup.string().required("Pension from P60 must not be empty."),
+    taxFrom: Yup.string().required("Tax from P60 must not be empty"),
   });
 
   const formOptions = {
@@ -118,7 +118,7 @@ const Pension = () => {
       const response = await axiosPrivate.post("/Pension",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            pensionProvider: data.pensionProvider,
+            name: data.pensionProvider,
             paye: data.payee,
             pensionFromP60: data.pensionFrom,
             taxFromP60: data.taxFrom,
@@ -189,7 +189,7 @@ const Pension = () => {
       const response = await axiosPrivate.post("/Pension",
           {
             orderId: params.orderId?params.orderId: cookies.order.oderId,
-            pensionProvider: data.pensionProvider,
+            name: data.pensionProvider,
             paye: data.payee,
             pensionFromP60: data.pensionFrom,
             taxFromP60: data.taxFrom,
@@ -354,6 +354,7 @@ const Pension = () => {
                     fullWidth
                     id="pensionFrom"
                     name="pensionFrom"
+                    type={"number"}
                     {...register("pensionFrom")}
                     placeholder="Pension from P60"
                   />
@@ -374,6 +375,7 @@ const Pension = () => {
                     fullWidth
                     id="taxFrom"
                     name="taxFrom"
+                    type={"number"}
                     {...register("taxFrom")}
                     placeholder="Tax from P60"
                   />

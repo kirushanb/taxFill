@@ -10,7 +10,7 @@
   left: 0;
   background-color: #2a2d3e;
   width: 100%;
-  z-index: 10; // otherwise form fields get above it
+  z-index: 1060; // otherwise form fields get above it
 
   .desktop {
     display: flex;

@@ -19,6 +19,7 @@ import Employment from "./components/Dashboard/PackageForms/Employment";
 import SelfEmployment from "./components/Dashboard/PackageForms/SelfEmployment";
 import Pension from "./components/Dashboard/PackageForms/Pension";
 import Partnership from "./components/Dashboard/PackageForms/Partnership";
+import EditPackage from "./components/Dashboard/EditPackage/EditPackage";
 
 
 function App() {
@@ -100,7 +101,17 @@ function App() {
         <Route path="*" element={<Navigate to="/select" replace />} />
       </Route>
       {/* <Route path="/select" element={<Layout><SelectPackage /></Layout>} /> */}
-
+      <Route element={<RequireAuth />}>
+          <Route
+            path="/edit/:orderId"
+            element={
+              <Layout>
+                <EditPackage />
+              </Layout>
+            }
+          />
+       
+      </Route>
       <Route path="*" element={<RequireAuth />}>
         <Route
           path="employment"

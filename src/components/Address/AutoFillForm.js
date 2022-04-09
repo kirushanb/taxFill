@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import * as Yup from 'yup';
-import { Formik, validateYupSchema } from 'formik';
+import { Formik, useFormik, validateYupSchema } from 'formik';
 import {
   Box,
   Button,
@@ -11,14 +11,15 @@ import {
 import Autocomplete from '@mui/material/Autocomplete';
 import GoogleAutoCompelete from './GoogleAutoCompelete';
 import GetPostalCode from './GetPostalCode';
+import { getQueryStringParam } from '../Dashboard/PackageForms/Employment';
 
 
 const AutoFillForm = ({
     handleAddress,
+    addressComingFrom,
   className,
   setData,
   data,
-  projectId,
   ...rest
 }) => {
   const [addresses, setAddresses] = useState([]);
@@ -88,7 +89,7 @@ const AutoFillForm = ({
             }
           }
         }
-    setFieldValue('stateOfAddress', state!==null?state:'');
+      setFieldValue('stateOfAddress', state!==null?state:'');
        
         handleAddress(formRef?.current?.values);
   }
@@ -103,10 +104,37 @@ const AutoFillForm = ({
     window.document.querySelector('input[name="city"]').setAttribute('aria-autocomplete', 'off');
     window.document.querySelector('input[name="stateOfAddress"]').setAttribute('autocomplete', 'disable');
     window.document.querySelector('input[name="stateOfAddress"]').setAttribute('aria-autocomplete', 'off');
+    
+    const packageId = getQueryStringParam("packageId");
+    if(packageId){
+      if(formRef.current){
+        
+        formRef.current.setFieldValue(
+          "companyAddress",
+          addressComingFrom.companyAddress
+        );
+        formRef.current.setFieldValue(
+          "zipCode",
+          addressComingFrom.zipCode
+        );
+        formRef.current.setFieldValue(
+          "city",
+          addressComingFrom.city
+        );
+        formRef.current.setFieldValue(
+          "stateOfAddress",
+          addressComingFrom.stateOfAddress
+        );
+      }
+      
+    }
   }, []);
+
+  
+  
   return (
     <Formik
-        innerRef={formRef}
+      innerRef={formRef}
       enableReinitialize={true}
       initialValues={{
         companyAddress: '',
@@ -154,6 +182,7 @@ const AutoFillForm = ({
                     <Autocomplete
                       options={addresses.map((option) => option.description)}
                       // closeIcon= { () => { return; } }
+                      value={values.companyAddress}
                       onInputChange={(event, value) => { changeAddress(value, setFieldValue); }}
                       autoComplete={false}
                       renderInput={(params) => (

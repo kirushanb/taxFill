@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./Pension.scss";
 import PhoneInput from "react-phone-input-2";
 import TextField from "@mui/material/TextField";
@@ -51,6 +51,7 @@ import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import { useCookies } from "react-cookie";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getQueryStringParam } from "./Employment";
 const Input = styled("input")({
   display: "none",
 });
@@ -61,13 +62,13 @@ const Pension = () => {
   
   const [urls, setUrls] = useState([]);
  
-  const [showPassword, setShowPassword] = React.useState(false);
-
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  
   const [overallexpenses, setOverallexpenses] = React.useState(false);
   
   const axiosPrivate = useAxiosPrivate();
   const [isLoading, setLoading] = React.useState(false);
+  const [expenseListHide, setExpenseListHide] = React.useState(false);
+
   const [expensesList, setExpensesList] = React.useState([{
     description: "",
     amount: "",
@@ -99,6 +100,7 @@ const Pension = () => {
       taxFrom: "",
     },
   };
+  const packageId = getQueryStringParam("packageId");
 
   const {
     register,
@@ -111,33 +113,89 @@ const Pension = () => {
   } = useForm(formOptions);
   const { errors } = formState;
 
+
+  const postCall = (data) => {
+    const response =  axiosPrivate.post("/Pension", {
+      orderId: params.orderId?params.orderId: cookies.order.oderId,
+      name: data.pensionProvider,
+      paye: data.payee,
+      pensionFromP60: data.pensionFrom,
+      taxFromP60: data.taxFrom,
+      totalExpenses: overallexpenseValue
+        ? parseInt(overallexpenseValue)
+        : 0,
+      expenses: expensesList.length===0
+        ? []
+        : expensesList.length===1 && expensesList[0].amount===0?[]: 
+        [
+            ...expensesList.map((n) => {
+              return {
+                description: n.description,
+                amount: parseInt(n.amount),
+              };
+            }),
+          ],
+      attachments: [
+        ...urls.map((n) => {
+          return { url: n };
+        }),
+      ],
+    });
+
+    return response;
+  }
+
+  const putCall = (data) => {
+    const response =  axiosPrivate.put("/Pension", {
+      id: packageId,
+      orderId: params.orderId,
+      name: data.pensionProvider,
+      paye: data.payee,
+      pensionFromP60: data.pensionFrom,
+      taxFromP60: data.taxFrom,
+      totalExpenses: overallexpenseValue
+        ? parseInt(overallexpenseValue)
+        : 0,
+      expenses: expensesList.length===0
+        ? []
+        : expensesList.length===1 && expensesList[0].amount===0?[]: 
+        [
+            ...expensesList.map((n) => {
+              return {
+                id: n.id,
+                description: n.description,
+                amount: parseInt(n.amount),
+              };
+            }),
+          ],
+      attachments: [
+        ...urls.map((n) => {
+          return { id:n.id, url: n.url };
+        }),
+      ],
+    });
+
+    return response;
+  }
+
   const onSubmit = async (data) => {
   
     setLoading(true);
     try {
-      const response = await axiosPrivate.post("/Pension",
-          {
-            orderId: params.orderId?params.orderId: cookies.order.oderId,
-            name: data.pensionProvider,
-            paye: data.payee,
-            pensionFromP60: data.pensionFrom,
-            taxFromP60: data.taxFrom,
-            overallExpenses: overallexpenseValue,
-            expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
-              return({description:n.description,amount:parseInt(n.amount)})
-            })],
-            attachments:[...urls.map(n=>{ 
-              return({url:n})})]
-          }
-      );
+      const response = packageId? await putCall(data): await postCall(data);
       setLoading(false);
       reset();
      setExpensesList([{description: "",
      amount: "",}])
      setLoading(false);
-     toast.success("Pension Details Saved Successfully");
+     toast.success(packageId?"Pension Details Edited Successfully":"Pension Details Saved Successfully");
      setUrls([]);
      setOverallexpensesValue("");
+     if(packageId){
+      navigate('/account');
+     }else{
+      navigate('/account');
+     
      if(params.orderId){
       navigate('/account');
     }else{
@@ -164,19 +222,10 @@ const Pension = () => {
       }
       
     }
-       
+  }
     
     } catch (err) {
-      // if (!err?.response) {
-      //     setErrMsg('No Server Response');
-      // } else if (err.response?.status === 400) {
-      //     setErrMsg('Missing Username or Password');
-      // } else if (err.response?.status === 401) {
-      //     setErrMsg('Unauthorized');
-      // } else {
-      //     setErrMsg('Login Failed');
-      // }
-      // errRef.current.focus();
+     
       setLoading(false);
       toast.error(err);
     }
@@ -186,22 +235,7 @@ const Pension = () => {
     
     setLoading(true);
     try {
-      const response = await axiosPrivate.post("/Pension",
-          {
-            orderId: params.orderId?params.orderId: cookies.order.oderId,
-            name: data.pensionProvider,
-            paye: data.payee,
-            pensionFromP60: data.pensionFrom,
-            taxFromP60: data.taxFrom,
-            overallExpenses: overallexpenseValue,
-            expenses: overallexpenseValue?[]:[...expensesList.map(n=>{
-              return({description:n.description,amount:parseInt(n.amount)})
-            })],
-            attachments:[...urls.map(n=>{ 
-              return({url:n})})]
-          }
-      );
-      
+      const response = await postCall(data);
      
       
      reset();
@@ -212,39 +246,28 @@ const Pension = () => {
      setUrls([]);
      setOverallexpensesValue("");
     } catch (err) {
-      // if (!err?.response) {
-      //     setErrMsg('No Server Response');
-      // } else if (err.response?.status === 400) {
-      //     setErrMsg('Missing Username or Password');
-      // } else if (err.response?.status === 401) {
-      //     setErrMsg('Unauthorized');
-      // } else {
-      //     setErrMsg('Login Failed');
-      // }
-      // errRef.current.focus();
+     
       setLoading(false);
       toast.error(err);
     }
   };
   
 
-  const handleClickShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
-
-  const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword);
-  };
+ 
 
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
     values[i][name] = value;
     setExpensesList(values);
-    if(value){
-      setOverallexpenses(true)
-    }else{
-      setOverallexpenses(false)
+    if (value) {
+      setOverallexpenses(true);
+
+      setOverallexpensesValue(
+        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      );
+    } else {
+      setOverallexpenses(false);
     }
   }
 
@@ -252,25 +275,86 @@ const Pension = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: "",
+      amount: 0,
     });
     setExpensesList(values);
+    setOverallexpensesValue(
+      expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+    );
   }
 
   function handleRemoveInput(i) {
     const values = [...expensesList];
-   
     values.splice(i, 1);
     setExpensesList(values);
+    setOverallexpensesValue(
+      values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+    );
   }
 
   const handleUpload = (urlsComming) => {
-    setUrls(urlsComming);
-  }
+    if(packageId){
+      setUrls([...urls,...urlsComming.map(n=>{return {url:n}})]);
+    }else{
+      setUrls(urlsComming);
+    }
+  };
 
   const handleOverallExpenses = (e) => {
     setOverallexpensesValue(e.target.value);
-  }
+    if (e.target.value) {
+      setExpenseListHide(true);
+    } else {
+      setExpenseListHide(false);
+    }
+  };
+
+ 
+  useEffect(() => {
+    if (packageId) {
+      // get user and set form fields
+      getPackage(packageId);
+    }
+  }, [packageId]);
+
+  const getPackage = async (packageId) => {
+    setLoading(true);
+    try {
+      const response = await axiosPrivate.get(`/Pension/${packageId}`);
+      const fields = ["pensionProvider", "payee", "pensionFrom", "taxFrom"];
+    
+      const packages = {
+        pensionProvider: response.data.result.name,
+        payee: response.data.result.paye,
+        pensionFrom: response.data.result.pensionFromP60,
+        taxFrom: response.data.result.taxFromP60,
+      };
+
+      fields.forEach((field) => setValue(field, packages[field]));
+     
+      if(response.data.result.expenses.length > 0){
+        setExpensesList([
+          ...response.data.result.expenses.map((n) => {
+            return { id:n.id, description: n.description, amount: n.amount };
+          }),
+        ]);
+      }else{
+        setExpensesList([{ description: "", amount: 0 }]);
+      }
+     
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return{url: n.url, id: n.id};
+        }),
+      ]);
+      setOverallexpensesValue(response.data.result.totalExpenses);
+    } catch (err) {
+      // console.log(err);
+      setLoading(false);
+    }
+    setLoading(false);
+  };
+
 
   return (
     <div className="Pension">
@@ -489,6 +573,19 @@ const Pension = () => {
                 ))} */}
                 <Grid item xs={12} sm={12}>
                   <UploadFiles handleUpload={handleUpload}/>
+                  {packageId && (
+                      <>
+                        <ol style={{ padding: "1rem" }}>
+                          {urls.map((n) => (
+                            <li key={n.id}>
+                              <a target={"_blank"} href={n.url}>
+                                {n.url}
+                              </a>
+                            </li>
+                          ))}
+                        </ol>
+                      </>
+                    )}
                 </Grid>
               </Grid>
             </Box>
@@ -497,14 +594,27 @@ const Pension = () => {
 
         
         <div className="footer-save-button">
-          <button className="button is-warning" onClick={handleSubmit(onSubmit)}>
-            <SaveIcon />
-            Save
-          </button>
-          <button className="button is-success" onClick={handleSubmit(onSubmitAndAddAnother)}>
-            <SaveIcon />
-            Save and Add another
-          </button>
+        {packageId?<button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+            >
+              <SaveIcon />
+              Edit
+            </button>:<><button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+            >
+              <SaveIcon />
+              Save
+            </button>
+            
+            <button
+              className="button is-success"
+              onClick={handleSubmit(onSubmitAndAddAnother)}
+            >
+              <SaveIcon />
+              Save and Add another
+            </button></>}
         </div>
       </form>}
     </div>

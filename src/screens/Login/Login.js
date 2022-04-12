@@ -10,6 +10,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import useAuth from "../../hooks/useAuth";
 import { useCookies } from "react-cookie";
 import lottie from "lottie-web";
@@ -28,10 +31,15 @@ const Login = () => {
     const [errMsg, setErrMsg] = useState('');
 
     useEffect(() => {
-      if(loading){
+
+      const element = document.querySelector('#loading');
+      if (element) {
         lottie.loadAnimation({
-          container: document.querySelector("#loading"),
+          container: element,
           animationData: loadingAnim,
+          renderer: 'svg', // "canvas", "html"
+          loop: true, // boolean
+          autoplay: true, // boolean
         });
       }
       
@@ -66,7 +74,6 @@ const Login = () => {
     setLoading(true)
     try {
         const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
-       
         const response = await axios.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
             JSON.stringify({ userName:"+"+data.phone, password:data.password }),
             {
@@ -77,34 +84,36 @@ const Login = () => {
                 // withCredentials: true
             }
         );
+        console.log(response);
         console.log(response?.data.result);
         console.log(response?.data.result.otp);
         //console.log(JSON.stringify(response));
         const accessToken2FA = response?.data?.result?.token;
         const otp = response?.data?.result?.otp
         setAuth({ accessToken2FA, otp });
+        setLoading(false);
         // setUser('');
         // setPwd('');
         navigate('/otp');
     } catch (err) {
-        if (!err?.response) {
-            setErrMsg('No Server Response');
-        } else if (err.response?.status === 400) {
-            setErrMsg('Missing Username or Password');
-        } else if (err.response?.status === 401) {
-            setErrMsg('Unauthorized');
-        } else {
-            setErrMsg('Login Failed');
-        }
-        // errRef.current.focus();
+      setLoading(false);
+      if(err.response.data.isError){
+        toast.error(err.response.data.error.detail);
+      }
     }
-    setLoading(false)
+    
   };
 
   return (
+    <React.Fragment>
+       <ToastContainer />
+      {loading?<React.Fragment>{loading && <div className="Login">
+        <div id="loading" className="loading" />
+        </div>}</React.Fragment>:
     <div className="Login">
-       {loading?<div id="loading" className="loading" />:
+       
         <div className="login-form">
+          
         <button className="button is-ghost home" onClick={()=>navigate('/')}>{"<- Home"}</button>
       <form onSubmit={handleSubmit(onSubmit)}>
         <p className="title is-3">Login to account</p>
@@ -152,8 +161,10 @@ const Login = () => {
         </button>
       </form>
         </div>
-}
-    </div>
+
+    </div>}
+    </React.Fragment>
+    
   );
 };
 

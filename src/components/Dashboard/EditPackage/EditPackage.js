@@ -72,28 +72,28 @@ const EditPackage = () => {
                  
                   if(i===0){
                     return(
-                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem", background:"#ffe089"}} className="title is-3">{l}</p>}>
+                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem"}} className="title is-3">{l+" "+"("+list["employmentDetails"].length+")"}</p>}>
                           {list["employmentDetails"]?.map((p,v) => <TreeItem  nodeId={p.name+"-"+v} label={<div key={p.name+"-"+v} onClick={()=> hanclickEdit(p.id,l)} className="sigle-line"><p style={{padding:"0.5rem",margin:"0.5rem"}} className="subtitle is-5">{v+1+". "+p.name}</p> <button className="button is-success">Edit</button></div>} />)}
                         
                       </TreeItem>
                     )
                   }else if(i===1){
                     return(
-                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem",background:"#ffe089"}} className="title is-3">{l}</p>}>
+                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem"}} className="title is-3">{l+" "+"("+list["selfEmploymentDetails"].length+")"}</p>}>
                           {list["selfEmploymentDetails"]?.map((p,v) => <TreeItem nodeId={p.name+"-"+v} label={<div key={p.name+"-"+v} onClick={()=> hanclickEdit(p.id,l)} className="sigle-line"><p style={{padding:"0.5rem",margin:"0.5rem"}} className="subtitle is-5">{v+1+". "+p.name}</p> <button className="button is-success">Edit</button></div>} />)}
                         
                       </TreeItem>
                     )
                   }else if(i===2){
                     return(
-                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem",background:"#ffe089"}} className="title is-3">{l}</p>}>
+                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem"}} className="title is-3">{l+" "+"("+list["pensionDetails"].length+")"}</p>}>
                           {list["pensionDetails"]?.map((p,v) => <TreeItem nodeId={p.name+"-"+v} label={<div key={p.name+"-"+v} onClick={()=> hanclickEdit(p.id,l)} className="sigle-line"><p style={{padding:"0.5rem",margin:"0.5rem"}} className="subtitle is-5">{v+1+". "+p.name}</p> <button className="button is-success">Edit</button></div>} />)}
                         
                       </TreeItem>
                     )
                   }else if(i===3){
                     return(
-                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem",background:"#ffe089"}} className="title is-3">{l}</p>}>
+                      <TreeItem nodeId={l+"-"+i} label={<p style={{padding:"0.5rem",margin:"0.5rem"}} className="title is-3">{l+" "+"("+list["partnershipDetails"].length+")"}</p>}>
                           {list["partnershipDetails"]?.map((p,v) => <TreeItem nodeId={p.name+"-"+v} label={<div key={p.name+"-"+v} onClick={()=> hanclickEdit(p.id,l)} className="sigle-line"><p style={{padding:"0.5rem",margin:"0.5rem"}} className="subtitle is-5">{v+1+". "+p.name}</p> <button className="button is-success">Edit</button></div>} />)}
                         
                       </TreeItem>

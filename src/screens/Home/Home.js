@@ -32,11 +32,12 @@ const Home = () => {
 
   
   useEffect(() => {
-    setLoading(true);
-      let isMounted = true;
-      const controller = new AbortController();
+    
+      // let isMounted = true;
+      // const controller = new AbortController();
       
       const getUsers = async () => {
+        setLoading(true);
           try {
               const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
               const config = {
@@ -45,21 +46,22 @@ const Home = () => {
               const response2 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Package',config);
              
               setCards(response2.data?.result?.data)
-             
+              setLoading(false);
           } catch (err) {
            
               console.error(err);
+              setLoading(false);
               // navigate('/', { state: { from: location }, replace: true });
           }
       }
 
       getUsers();
-      setLoading(false);
+     
 
-      return () => {
-          isMounted = false;
-          controller.abort();
-      }
+      // return () => {
+      //     isMounted = false;
+      //     controller.abort();
+      // }
   }, [])
 
   return (

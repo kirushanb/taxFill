@@ -524,7 +524,7 @@ const Partnership = () => {
         address: response.data.result.address,
         totalTurnover: response.data.result.totalTurnOver,
       };
-      console.log(response.data.result);
+      
       setTotalTurnover(response.data.result.totalTurnOver);
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));

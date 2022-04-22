@@ -17,7 +17,7 @@ const SelectPackage = () => {
  
     useEffect(() => {
         setIsLoading(true);
-        if(params.orderId){
+        if(params.orderId){ 
             const getData = async () => {
                 try {
                    

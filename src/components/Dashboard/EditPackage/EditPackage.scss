@@ -13,6 +13,8 @@
     // width: 100%;
     .header{
         margin-bottom: 3rem;
+        font-size: 25px;
+        background-color: white;
     }
    
     .content-wrapper-1{
@@ -22,6 +24,7 @@
         justify-content: flex-start;
         align-items: flex-start;
         width: 100%;
+        font-size: 10px;
 
         .MuiTreeItem-label{
             .sigle-line{
@@ -29,10 +32,23 @@
                 flex-direction: row;
                 justify-content: space-between;
                 align-items: center;
+                font-size: 10px;
             }
            
         }
     }
+
+    .package-title {
+        font-size: 20px;
+    }
+
+    .information-title {
+        font-size: 15px;
+    }
     
+    .container {
+        width: 100%;
+        text-align: left;
+    }
 
 }

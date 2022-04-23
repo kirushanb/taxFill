@@ -1,4 +1,8 @@
 .EditPackage{
+    .loading{
+        height: 50%
+    }
+   
     border-radius: 0.5rem;
     border: 1px solid gray;
     display: flex;
@@ -33,6 +37,9 @@
                 justify-content: space-between;
                 align-items: center;
                 font-size: 10px;
+                button{
+                    width: 5rem;
+                }
             }
            
         }
@@ -49,6 +56,35 @@
     .container {
         width: 100%;
         text-align: left;
+    }
+
+    .modal{
+        .modal-content{
+            padding: 2rem;
+            border-radius: 1rem;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            .icon-outer{
+                border-radius: 50%;
+                background-color: #feecf0;
+                padding: 1rem;
+            }
+            p{
+                text-align: center;
+                margin-top: 2rem;
+            }
+            .delete-footer{
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                gap: 2rem;
+                width: 100%;
+                margin-top: 1rem;
+            }
+        }
     }
 
 }

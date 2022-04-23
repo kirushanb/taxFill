@@ -22,7 +22,7 @@ const defaultPackages = [
 const EditPackage = () => {
   const [list, setList] = useState([[]]);
   const [isLoading, setIsLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [deleteModal, setDeleteModal] = useState(false);
   const [deletepackage, setDeletepackage] = useState('');
   const [deletepackageId, setDeletepackageId] = useState('');

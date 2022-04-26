@@ -3,9 +3,11 @@
     flex-direction: column;
     justify-content: center;
     align-content: center;
-    height: 100vh;
     background: #202332;
+    
     .login-form{
+        margin-top: 4rem;
+        margin-bottom: 4rem;
         align-self: center;
         .header{
             display: flex;
@@ -26,7 +28,8 @@
         align-self: center;
         padding: 2rem 1rem;
         overflow-y: auto;
-        height: 80vh;
+        height: auto;
+        
         .address-input{
             padding: 16.5px 14px;
             height: 5rem;

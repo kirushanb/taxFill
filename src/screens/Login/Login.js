@@ -47,9 +47,9 @@ const Login = () => {
     }, [loading]);
  
  
-  const [phonenumber, setPhonenumber] = React.useState('');
+  
   const validationSchema = Yup.object().shape({
-    phone: Yup.string().required("Phone number must not be empty."),
+    email: Yup.string().email().required("Email must not be empty."),
     password: Yup.string().required("Password must not be empty.")
     //   .matches(
     //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
@@ -62,7 +62,7 @@ const Login = () => {
     mode: "onChange",
     resolver: yupResolver(validationSchema),
     defaultValues: {
-        phone: "",
+        email: "",
         password:""
     },
   };
@@ -75,7 +75,7 @@ const Login = () => {
     try {
         const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
         const response = await axios.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
-            JSON.stringify({ userName:"+"+data.phone, password:data.password }),
+            JSON.stringify({ userName:data.email, password:data.password }),
             {
                 headers: { 'Content-Type': 'application/json-patch+json',
                 Authorization: `Bearer ${response1.data.result.token}`,
@@ -119,21 +119,19 @@ const Login = () => {
         <p className="title is-3">Login to account</p>
 
         <div>
-          <PhoneInput
-            id="phone"
-            name="phone"
-            country={"lk"}
-            value={phonenumber}
-            onlyCountries={["gb",'lk']}
-            onChange={(phone) => {
-                setPhonenumber(phone)
-                setValue("phone",phone)
-                trigger('phone')
-            }}
+        <TextField
+            type="email"
+            id="email"
+            name="email"
+            label="Email"
+            variant="outlined"
+            fullWidth
+            autoComplete="off"
+            {...register("email")}
           />
 
           <Typography variant="body2" color="error" align="left">
-            {errors.phone?.message}
+            {errors.email?.message}
           </Typography>
         </div>
 

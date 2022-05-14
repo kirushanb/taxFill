@@ -18,6 +18,9 @@ const defaultPackages = [
   "Self employment",
   "Pension Income",
   "Partnership",
+  "Rental Income",
+  "Dividend",
+  "Bank interest"
 ];
 const EditPackage = () => {
   const [list, setList] = useState([[]]);
@@ -121,6 +124,10 @@ const EditPackage = () => {
       }else if(deletepackage.toLowerCase().replace(/\s/g, "")==='partnership'){
         const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Partnership/${deletepackageId}`
+        );
+      }else if(deletepackage.toLowerCase().replace(/\s/g, "")==='rentalincome'){
+        const response = await axiosPrivate.delete(
+          `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${deletepackageId}`
         );
       }
       toast.success(`Package deleted successfully`);
@@ -369,6 +376,174 @@ const EditPackage = () => {
                                   className="subtitle is-5 information-title"
                                 >
                                   {v + 1 + ". " + p.name}
+                                </p>{" "}
+                                <div>
+                                  {" "}
+                                  <button
+                                    className="button is-success"
+                                    onClick={() => hanclickEdit(p.id, l)}
+                                    style={{marginRight: '1rem'}}
+                                  >
+                                    Edit
+                                  </button>{" "}
+                                  <button
+                                    className="button is-danger"
+                                    onClick={() => hanclickDelete(p.id, l)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          />
+                        ))}
+                      </TreeItem>
+                    );
+                  }else if (i === 4) {
+                    return (
+                      <TreeItem
+                        nodeId={l + "-" + i}
+                        label={
+                          <p
+                            style={{ padding: "0.5rem", margin: "0.5rem" }}
+                            className="title is-3 package-title"
+                          >
+                            {l +
+                              "  " +
+                              "(" +
+                              list["rentalIncomeDetails"]?.length +
+                              ")"}
+                          </p>
+                        }
+                      >
+                        {list["rentalIncomeDetails"]?.map((p, v) => (
+                          <TreeItem
+                            nodeId={p.propertyName + "-" + v}
+                            label={
+                              <div
+                                key={p.propertyName + "-" + v}
+                                className="sigle-line"
+                              >
+                                <p
+                                  style={{
+                                    padding: "0.5rem",
+                                    margin: "0.5rem",
+                                  }}
+                                  className="subtitle is-5 information-title"
+                                >
+                                  {v + 1 + ". " + p.propertyName}
+                                </p>{" "}
+                                <div>
+                                  {" "}
+                                  <button
+                                    className="button is-success"
+                                    onClick={() => hanclickEdit(p.id, l)}
+                                    style={{marginRight: '1rem'}}
+                                  >
+                                    Edit
+                                  </button>{" "}
+                                  <button
+                                    className="button is-danger"
+                                    onClick={() => hanclickDelete(p.id, l)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          />
+                        ))}
+                      </TreeItem>
+                    );
+                  }else if (i === 5) {
+                    return (
+                      <TreeItem
+                        nodeId={l + "-" + i}
+                        label={
+                          <p
+                            style={{ padding: "0.5rem", margin: "0.5rem" }}
+                            className="title is-3 package-title"
+                          >
+                            {l +
+                              "  " +
+                              "(" +
+                              list["dividendIncomes"]?.length +
+                              ")"}
+                          </p>
+                        }
+                      >
+                        {list["dividendIncomes"]?.map((p, v) => (
+                          <TreeItem
+                            nodeId={p.companyName + "-" + v}
+                            label={
+                              <div
+                                key={p.companyName + "-" + v}
+                                className="sigle-line"
+                              >
+                                <p
+                                  style={{
+                                    padding: "0.5rem",
+                                    margin: "0.5rem",
+                                  }}
+                                  className="subtitle is-5 information-title"
+                                >
+                                  {v + 1 + ". " + p.companyName}
+                                </p>{" "}
+                                <div>
+                                  {" "}
+                                  <button
+                                    className="button is-success"
+                                    onClick={() => hanclickEdit(p.id, l)}
+                                    style={{marginRight: '1rem'}}
+                                  >
+                                    Edit
+                                  </button>{" "}
+                                  <button
+                                    className="button is-danger"
+                                    onClick={() => hanclickDelete(p.id, l)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              </div>
+                            }
+                          />
+                        ))}
+                      </TreeItem>
+                    );
+                  }else if (i === 6) {
+                    return (
+                      <TreeItem
+                        nodeId={l + "-" + i}
+                        label={
+                          <p
+                            style={{ padding: "0.5rem", margin: "0.5rem" }}
+                            className="title is-3 package-title"
+                          >
+                            {l +
+                              "  " +
+                              "(" +
+                              list["bankInterestIncomes"]?.length +
+                              ")"}
+                          </p>
+                        }
+                      >
+                        {list["bankInterestIncomes"]?.map((p, v) => (
+                          <TreeItem
+                            nodeId={p.bankName + "-" + v}
+                            label={
+                              <div
+                                key={p.bankName + "-" + v}
+                                className="sigle-line"
+                              >
+                                <p
+                                  style={{
+                                    padding: "0.5rem",
+                                    margin: "0.5rem",
+                                  }}
+                                  className="subtitle is-5 information-title"
+                                >
+                                  {v + 1 + ". " + p.bankName}
                                 </p>{" "}
                                 <div>
                                   {" "}

@@ -126,7 +126,7 @@ export default function StepWizard() {
       );
       console.log(response?.data.result.response.url);
       console.log(response?.data.result.response)
-      setCookie("payment", {response:response?.data.result.response,selectedlist:selectedlist,checkedEmail,checkedSMS}, {
+      setCookie("payment", {response:{id:response?.data.result.response.id,payment_intent:response?.data.result.response.payment_intent},selectedlist:selectedlist,checkedEmail,checkedSMS}, {
         path: "/"
       });
       setPrice(0);

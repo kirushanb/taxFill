@@ -20,6 +20,9 @@ import SelfEmployment from "./components/Dashboard/PackageForms/SelfEmployment";
 import Pension from "./components/Dashboard/PackageForms/Pension";
 import Partnership from "./components/Dashboard/PackageForms/Partnership";
 import EditPackage from "./components/Dashboard/EditPackage/EditPackage";
+import RentalIncome from "./components/Dashboard/PackageForms/RentalIncome";
+import Dividend from "./components/Dashboard/PackageForms/Dividend";
+import BankInterest from "./components/Dashboard/PackageForms/BankInterest";
 
 
 function App() {
@@ -132,6 +135,26 @@ function App() {
         </Route>
         <Route path="*" element={<Navigate to="/employment" replace />} />
       </Route>
+      <Route path="*" element={<RequireAuth />}>
+        <Route
+          path="rentalincome"
+          element={
+            <Layout>
+              <RentalIncome />
+            </Layout>
+          }
+        >
+          <Route
+            path=":orderId"
+            element={
+              <Layout>
+                <RentalIncome />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route path="*" element={<Navigate to="/rentalincome" replace />} />
+      </Route>
 
       <Route path="*" element={<RequireAuth />}>
         <Route
@@ -194,6 +217,46 @@ function App() {
           />
         </Route>
         <Route path="*" element={<Navigate to="/partnership" replace />} />
+      </Route>
+      <Route path="*" element={<RequireAuth />}>
+        <Route
+          path="dividend"
+          element={
+            <Layout>
+              <Dividend />
+            </Layout>
+          }
+        >
+          <Route
+            path=":orderId"
+            element={
+              <Layout>
+                <Dividend />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route path="*" element={<Navigate to="/dividend" replace />} />
+      </Route>
+      <Route path="*" element={<RequireAuth />}>
+        <Route
+          path="bankinterest"
+          element={
+            <Layout>
+              <BankInterest />
+            </Layout>
+          }
+        >
+          <Route
+            path=":orderId"
+            element={
+              <Layout>
+                <BankInterest />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route path="*" element={<Navigate to="/bankinterest" replace />} />
       </Route>
     </Routes>
   );

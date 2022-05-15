@@ -224,7 +224,7 @@ const BankInterest = () => {
                     accountNumber: n.accountNumber,
                     grossInterest: parseInt(n.grossInterest),
                     receivedDate: n.receivedDate,
-                    bankInterestIncome:  n.bankInterestIncome.toString()
+                    // bankInterestIncome:  n.bankInterestIncome.toString()
                   };
                 }),
               ],
@@ -253,7 +253,7 @@ const BankInterest = () => {
                   accountNumber: n.accountNumber,
                   grossInterest: parseInt(n.grossInterest),
                   receivedDate: n.receivedDate,
-                  bankInterestIncome: n.bankInterestIncome.toString()
+                  // bankInterestIncome: n.bankInterestIncome.toString()
                 };
               }),
             ],
@@ -596,7 +596,7 @@ const BankInterest = () => {
                         />
                        
                       </Grid>
-                      <Grid item xs={11} sm={11}>
+                      {/* <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
                         Bank Interest Income
                         </InputLabel>
@@ -610,7 +610,7 @@ const BankInterest = () => {
                           placeholder="Bank Interest Income"
                         />
                        
-                      </Grid>
+                      </Grid> */}
                       <Grid item xs={12} sm={1}>
                         {idx === 0 ? (
                           <Fab

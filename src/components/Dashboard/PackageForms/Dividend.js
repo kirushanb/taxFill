@@ -224,7 +224,7 @@ const Dividend = () => {
                     noOfShares: parseInt(n.noOfShares),
                     dividend: parseInt(n.dividend),
                     receivedDate: n.receivedDate,
-                    dividentIncome:  n.dividentIncome.toString()
+                    // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
                   };
                 }),
               ],
@@ -253,7 +253,7 @@ const Dividend = () => {
                   noOfShares: parseInt(n.noOfShares),
                   dividend: parseInt(n.dividend),
                   receivedDate: n.receivedDate,
-                  dividentIncome: n.dividentIncome.toString()
+                  // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
                 };
               }),
             ],
@@ -595,13 +595,14 @@ const Dividend = () => {
                         />
                        
                       </Grid>
-                      <Grid item xs={11} sm={11}>
+                      {/* <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
                         Divident Income
                         </InputLabel>
                         <TextField
                           required
                           fullWidth
+                          type="number"
                           id="dividentIncome"
                           name="dividentIncome"
                           value={field.dividentIncome}
@@ -609,7 +610,7 @@ const Dividend = () => {
                           placeholder="Divident Income"
                         />
                        
-                      </Grid>
+                      </Grid> */}
                       <Grid item xs={12} sm={1}>
                         {idx === 0 ? (
                           <Fab

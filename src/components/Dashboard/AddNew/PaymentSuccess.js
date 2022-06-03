@@ -30,9 +30,10 @@ const PaymentSuccess = () => {
         
         // console.log(response?.data.result);
         const oderId = response?.data?.result?.id;
-        const selectedPackages=response?.data?.result?.selectedPackages;
-        // console.log(selectedPackages);
-        setCookie("order", {oderId,selectedPackages}, {
+        const selectedPackages=response?.data?.result?.selectedPackages.map(n=> {
+          return({package:n.package})});
+        console.log(selectedPackages);
+        setCookie("order", {oderId, selectedPackages}, {
           path: "/"
         });
         removeCookie("payment");

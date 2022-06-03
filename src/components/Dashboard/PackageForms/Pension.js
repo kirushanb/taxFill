@@ -199,14 +199,14 @@ const Pension = () => {
      if(params.orderId){
       navigate('/account');
     }else{
-      if(cookies.order.selectedPackages.length>1){
+      if(cookies.order.selectedPackages.length>0){
        
         const filteredEmployement = cookies.order.selectedPackages.filter(n=> n.package.name === "Pension Income");
        
         filteredEmployement[0].package.recordsAdded = true;
         
         const filteredOther= cookies.order.selectedPackages.filter(n=> n.package.name !== "Pension Income");
-        const filtered = filteredOther.filter(n=> n.package.recordsAdded===false);
+        const filtered = filteredOther.filter(n=> n.package.recordsAdded!==true);
         
         setCookie("order", {oderId:cookies.order.oderId,selectedPackages:{...filteredOther,...filteredEmployement}}, {
           path: "/"

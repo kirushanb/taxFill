@@ -326,7 +326,7 @@ const SelfEmployment = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          if (cookies.order.selectedPackages.length > 1) {
+          if (cookies.order.selectedPackages.length > 0) {
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Self employment"
             );
@@ -337,7 +337,7 @@ const SelfEmployment = () => {
               (n) => n.package.name !== "Self employment"
             );
             const filtered = filteredOther.filter(
-              (n) => n.package.recordsAdded === false
+              (n) => n.package.recordsAdded !== true
             );
 
             setCookie(

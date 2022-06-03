@@ -297,7 +297,8 @@ const BankInterest = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          if (cookies.order.selectedPackages.length > 1) {
+          
+          if (cookies.order.selectedPackages.length > 0) {
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Bank interest"
             );
@@ -308,7 +309,7 @@ const BankInterest = () => {
               (n) => n.package.name !== "Bank interest"
             );
             const filtered = filteredOther.filter(
-              (n) => n.package.recordsAdded === false
+              (n) => n.package.recordsAdded !== true
             );
 
             setCookie(

@@ -4,10 +4,9 @@
     justify-content: center;
     align-items: center;
     margin: auto;
-    height: 80vh;
     text-align: center;
     .header{
-        margin: 3rem;
+        margin-bottom: 1rem;
     }
     .footer-button{
         margin: 3rem;
@@ -30,10 +29,26 @@
         // flex-direction: row;
         align-self: center;
         justify-content: center;
-        grid-template-columns: auto auto auto auto;
         gap: 2rem;
         // gap: 2rem;
+        @media (max-width: 1441px){
+            grid-template-columns: auto auto auto auto;
+        }
         
+        @media  screen and (max-width: 1440px) {
+            grid-template-columns: auto auto auto;
+        }
+       
+
+        @media screen and (max-width: 930px) {
+            grid-template-columns: auto auto;
+        }
+
+        @media screen and (max-width: 625px) {
+            grid-template-columns: auto;
+        }
+
+          
         
         .single-card{
             box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);

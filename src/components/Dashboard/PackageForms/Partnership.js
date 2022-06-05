@@ -137,7 +137,7 @@ const Partnership = () => {
   const { ref, autocompleteRef } = usePlacesWidget({
     apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
     onPlaceSelected: (place) => {
-      console.log(place);
+      //console.log(place);
     },
   });
 
@@ -297,7 +297,7 @@ const Partnership = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          if (cookies.order.selectedPackages.length > 0) {
+          if (cookies.order.selectedPackages.length > 1) {
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Partnership"
             );
@@ -315,7 +315,7 @@ const Partnership = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: { ...filteredOther, ...filteredEmployement },
+                selectedPackages: [...filteredOther, ...filteredEmployement ],
               },
               {
                 path: "/",

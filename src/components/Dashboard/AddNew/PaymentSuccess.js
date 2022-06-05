@@ -32,7 +32,7 @@ const PaymentSuccess = () => {
         const oderId = response?.data?.result?.id;
         const selectedPackages=response?.data?.result?.selectedPackages.map(n=> {
           return({package:n.package})});
-        console.log(selectedPackages);
+        // console.log(selectedPackages);
         setCookie("order", {oderId, selectedPackages}, {
           path: "/"
         });

@@ -97,7 +97,7 @@ const getMonths = (fromDate, toDate) => {
       months.push({ year, month, amount: "" });
     }
   }
-  console.log(months);
+  
   return months;
 };
 
@@ -176,7 +176,7 @@ const SelfEmployment = () => {
   const { ref, autocompleteRef } = usePlacesWidget({
     apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
     onPlaceSelected: (place) => {
-      console.log(place);
+      //console.log(place);
     },
   });
 
@@ -326,7 +326,7 @@ const SelfEmployment = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          if (cookies.order.selectedPackages.length > 0) {
+          if (cookies.order.selectedPackages.length > 1) {
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Self employment"
             );
@@ -344,7 +344,7 @@ const SelfEmployment = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: { ...filteredOther, ...filteredEmployement },
+                selectedPackages: [...filteredOther, ...filteredEmployement ],
               },
               {
                 path: "/",

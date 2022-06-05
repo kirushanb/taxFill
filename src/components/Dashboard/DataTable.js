@@ -99,25 +99,25 @@ export default function DataTable() {
               n.serialNo,
               n.createdOn,
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
-              <>
+              <div style={{width:'240px'}}>
                 <button
                   onClick={() => handleOnClickAddData(n.id)}
                   key={n.serialNo}
-                  className="button is-info"
+                  className="button is-info is-small"
                 >
                   <AddchartIcon />
                   <p style={{ marginLeft: "0.5rem" }}>{"Add Data"}</p>
                 </button>
                 <button
-                  style={{ marginLeft: "1rem" }}
+                  style={{ marginLeft: "0.5rem" }}
                   onClick={() => handleOnClickEditData(n.id)}
                   key={n.serialNo}
-                  className="button is-warning"
+                  className="button is-warning is-small"
                 >
                   <AddchartIcon />
                   <p style={{ marginLeft: "0.5rem" }}>{"Edit Data"}</p>
                 </button>
-              </>
+              </div>
             )
           ),
         ]);
@@ -138,7 +138,7 @@ export default function DataTable() {
         <CircularProgress />
       ) : (
         <>
-          <TableContainer sx={{ maxHeight: 440, backgroundColor: "#f5f5f5" }}>
+          <TableContainer sx={{backgroundColor: "#f5f5f5" }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>

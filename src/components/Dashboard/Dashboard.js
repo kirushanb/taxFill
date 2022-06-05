@@ -267,7 +267,6 @@ function DashboardContent() {
                     p: 2,
                     display: "flex",
                     flexDirection: "column",
-                    height: "82vh",
                     borderRadius: "1rem",
                   }}
                 >
@@ -282,17 +281,7 @@ function DashboardContent() {
                     <DataTable />
                     
                     
-                    {/* <div className={`modal ${modal?"is-active":""}`}>
-                      <div className="modal-background"  onClick={()=>setModal(false)}></div>
-                      <div className="modal-content">
-                    <AddNew/>
-                      </div>
-                      <button
-                        className="modal-close is-large"
-                        aria-label="close"
-                        onClick={()=>setModal(false)}
-                      ></button>
-                    </div> */}
+                    
                   </div>
                 </Paper>
               </Grid>

@@ -97,7 +97,7 @@ const getMonths = (fromDate, toDate) => {
       months.push({ year, month, amount: "" });
     }
   }
-  console.log(months);
+  
   return months;
 };
 
@@ -167,7 +167,7 @@ const Dividend = () => {
       noOfShares: 0,
       dividend: 0,
       receivedDate: "",
-      dividentIncome:"",
+      dividentIncome: "",
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -188,9 +188,7 @@ const Dividend = () => {
   const formOptions = {
     mode: "onChange",
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-     
-    },
+    defaultValues: {},
   };
 
   const {
@@ -208,7 +206,7 @@ const Dividend = () => {
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
-      'https://tax.api.cyberozunu.com/api/v1.1/Dividend',
+      "https://tax.api.cyberozunu.com/api/v1.1/Dividend",
       {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
 
@@ -236,28 +234,27 @@ const Dividend = () => {
 
   const putCall = (data) => {
     const response = axiosPrivate.put(
-      'https://tax.api.cyberozunu.com/api/v1.1/Dividend',
+      "https://tax.api.cyberozunu.com/api/v1.1/Dividend",
       {
         id: packageId,
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         details:
-        expensesList.length === 0
-          ? []
-          : expensesList.length === 1 && expensesList[0].companyName === ""
-          ? []
-          : [
-              ...expensesList.map((n) => {
-                return {
-                  id:n.id,
-                  companyName: n.companyName,
-                  noOfShares: parseInt(n.noOfShares),
-                  dividend: parseInt(n.dividend),
-                  receivedDate: n.receivedDate,
-                  // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
-                };
-              }),
-            ],
-        
+          expensesList.length === 0
+            ? []
+            : expensesList.length === 1 && expensesList[0].companyName === ""
+            ? []
+            : [
+                ...expensesList.map((n) => {
+                  return {
+                    id: n.id,
+                    companyName: n.companyName,
+                    noOfShares: parseInt(n.noOfShares),
+                    dividend: parseInt(n.dividend),
+                    receivedDate: n.receivedDate,
+                    // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
+                  };
+                }),
+              ],
       }
     );
 
@@ -271,13 +268,15 @@ const Dividend = () => {
 
       setLoading(false);
       reset();
-      setExpensesList([{
-        companyName: "",
-        noOfShares: 0,
-        dividend: 0,
-        receivedDate: "",
-        dividentIncome:"",
-      },]);
+      setExpensesList([
+        {
+          companyName: "",
+          noOfShares: 0,
+          dividend: 0,
+          receivedDate: "",
+          dividentIncome: "",
+        },
+      ]);
       setAddress("");
       setLoading(false);
       toast.success(
@@ -297,7 +296,7 @@ const Dividend = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          if (cookies.order.selectedPackages.length > 0) {
+          if (cookies.order.selectedPackages.length > 1) {
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Dividend"
             );
@@ -315,7 +314,7 @@ const Dividend = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: { ...filteredOther, ...filteredEmployement },
+                selectedPackages: [ ...filteredOther, ...filteredEmployement ],
               },
               {
                 path: "/",
@@ -347,13 +346,15 @@ const Dividend = () => {
       const response = await postCall(data);
 
       reset();
-      setExpensesList([{
-        companyName: "",
-        noOfShares: 0,
-        dividend: 0,
-        receivedDate: "",
-        dividentIncome:"",
-      },]);
+      setExpensesList([
+        {
+          companyName: "",
+          noOfShares: 0,
+          dividend: 0,
+          receivedDate: "",
+          dividentIncome: "",
+        },
+      ]);
       setLoading(false);
       toast.success("Dividend Details Saved Successfully");
       setUrls([]);
@@ -390,7 +391,6 @@ const Dividend = () => {
     const { name, value } = event.target;
     values[i][name] = value;
     setExpensesList(values);
-    
   }
 
   function handleAddInput() {
@@ -400,14 +400,12 @@ const Dividend = () => {
       amount: 0,
     });
     setExpensesList(values);
-    
   }
 
   function handleRemoveInput(i) {
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
-   
   }
 
   const handleOverallExpenses = (e) => {
@@ -473,24 +471,31 @@ const Dividend = () => {
       const response = await axiosPrivate.get(
         `https://tax.api.cyberozunu.com/api/v1.1/Dividend/${packageId}`
       );
-      
+
       if (response.data.result.details.length > 0) {
         setExpensesList([
           ...response.data.result.details.map((n) => {
-            return { id: n.id, companyName: n.companyName, noOfShares: n.noOfShares, dividend:n.dividend, receivedDate:n.receivedDate,dividentIncome:n.dividentIncome };
+            return {
+              id: n.id,
+              companyName: n.companyName,
+              noOfShares: n.noOfShares,
+              dividend: n.dividend,
+              receivedDate: n.receivedDate,
+              dividentIncome: n.dividentIncome,
+            };
           }),
         ]);
       } else {
-        setExpensesList([{
-          companyName: "",
-          noOfShares: 0,
-          dividend: 0,
-          receivedDate: "",
-          dividentIncome:"",
-        },]);
+        setExpensesList([
+          {
+            companyName: "",
+            noOfShares: 0,
+            dividend: 0,
+            receivedDate: "",
+            dividentIncome: "",
+          },
+        ]);
       }
-
-      
     } catch (err) {
       // console.log(err);
       setLoading(false);
@@ -523,12 +528,6 @@ const Dividend = () => {
               <p className="title is-3">Dividend</p>
               <Box sx={{ mt: 1 }}>
                 <Grid container spacing={3}>
-                  
-
-                 
-
-                  
-                 
                   {expensesList.map((field, idx) => (
                     <React.Fragment key={field + "-" + idx}>
                       <Grid item xs={11} sm={11}>
@@ -545,11 +544,10 @@ const Dividend = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Company Name"
                         />
-                       
                       </Grid>
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        No Of Shares
+                          No Of Shares
                         </InputLabel>
                         <TextField
                           required
@@ -561,11 +559,10 @@ const Dividend = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="No Of Shares"
                         />
-                       
                       </Grid>
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        Dividend
+                          Dividend
                         </InputLabel>
                         <TextField
                           required
@@ -577,11 +574,10 @@ const Dividend = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Dividend"
                         />
-                       
                       </Grid>
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        Received Date
+                          Received Date
                         </InputLabel>
                         <TextField
                           required
@@ -593,7 +589,6 @@ const Dividend = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Received Date"
                         />
-                       
                       </Grid>
                       {/* <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
@@ -644,7 +639,6 @@ const Dividend = () => {
                       </Grid>
                     </React.Fragment>
                   ))}
-                  
                 </Grid>
               </Box>
             </Box>

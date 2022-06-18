@@ -1,8 +1,6 @@
 import { CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "../../../api/axios";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import "./EditPackage.scss";
 import TreeView from "@mui/lab/TreeView";
@@ -13,6 +11,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import lottie from "lottie-web";
 import loadingAnim from "../../../static/working.json";
 import { toast, ToastContainer } from "react-toastify";
+import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
 const defaultPackages = [
   "Employment",
   "Self employment",
@@ -29,7 +28,6 @@ const EditPackage = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deletepackage, setDeletepackage] = useState("");
   const [deletepackageId, setDeletepackageId] = useState("");
-  const [cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
@@ -70,17 +68,9 @@ const EditPackage = () => {
     } else {
       navigate("/account");
     }
-  }, []);
+  }, [getData, navigate, params]);
 
-  const ColoredLine = ({ color }) => (
-    <hr
-      style={{
-        color: color,
-        backgroundColor: color,
-        height: 5,
-      }}
-    />
-  );
+  
 
   const hanclickEdit = (id, packageName) => {
     navigate(
@@ -111,31 +101,31 @@ const EditPackage = () => {
     setLoading(true);
     try {
       if (deletepackage.toLowerCase().replace(/\s/g, "") === "employment") {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/EmploymentDetail/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "selfemployment"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/SelfEmployment/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "pensionincome"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Pension/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "partnership"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Partnership/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "rentalincome"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${deletepackageId}`
         );
       }
@@ -170,6 +160,10 @@ const EditPackage = () => {
         </React.Fragment>
       ) : (
         <div className="EditPackage">
+          <div className="back-button" onClick={()=> navigate(-1)}>
+          <ArrowBackIosNewIcon className="back-icon"/><h5 className="title is-5">Back</h5>
+          </div>
+         
           <p className="title is-3 header">Choose a document to edit: </p>
           <div className="content-wrapper-1">
             <div className="cards-grid-1 container">

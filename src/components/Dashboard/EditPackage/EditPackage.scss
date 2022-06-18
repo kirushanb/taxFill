@@ -4,6 +4,15 @@
         align-self: center;
         
     }
+
+    .back-button{
+        display: flex;
+        flex-direction: row;
+        gap:1rem;
+        margin-top: -1rem;
+        margin-bottom: 2rem;
+        cursor: pointer;
+    }
    
     border-radius: 0.5rem;
     border: 1px solid gray;

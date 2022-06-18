@@ -1,6 +1,8 @@
 import { CircularProgress } from "@mui/material";
 import React, { useEffect, useState } from "react";
+import { useCookies } from "react-cookie";
 import { useNavigate, useParams } from "react-router-dom";
+import axios from "../../../api/axios";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import "./EditPackage.scss";
 import TreeView from "@mui/lab/TreeView";
@@ -28,6 +30,7 @@ const EditPackage = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deletepackage, setDeletepackage] = useState("");
   const [deletepackageId, setDeletepackageId] = useState("");
+  const [cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
@@ -68,9 +71,17 @@ const EditPackage = () => {
     } else {
       navigate("/account");
     }
-  }, [getData, navigate, params]);
+  }, []);
 
-  
+  const ColoredLine = ({ color }) => (
+    <hr
+      style={{
+        color: color,
+        backgroundColor: color,
+        height: 5,
+      }}
+    />
+  );
 
   const hanclickEdit = (id, packageName) => {
     navigate(
@@ -101,31 +112,31 @@ const EditPackage = () => {
     setLoading(true);
     try {
       if (deletepackage.toLowerCase().replace(/\s/g, "") === "employment") {
-        await axiosPrivate.delete(
+        const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/EmploymentDetail/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "selfemployment"
       ) {
-        await axiosPrivate.delete(
+        const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/SelfEmployment/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "pensionincome"
       ) {
-        await axiosPrivate.delete(
+        const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Pension/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "partnership"
       ) {
-        await axiosPrivate.delete(
+        const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Partnership/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "rentalincome"
       ) {
-        await axiosPrivate.delete(
+        const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${deletepackageId}`
         );
       }

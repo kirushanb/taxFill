@@ -112,8 +112,9 @@ export default function StepWizard() {
     }else if(!payment){
       return
     }
-
+    if(payment === "stripe"){
     setLoading(true)
+
     try {
      
       const response = await axiosPrivate.post("Stripe/create-session",null,{ params: {
@@ -131,6 +132,9 @@ export default function StepWizard() {
       });
       setPrice(0);
       setSelectedlist([]);
+      setCheckedEmail(false);
+      setCheckedSMS(false);
+      setPayment("");
       //console.log(JSON.stringify(response));
       const url = response?.data.result.response.url;
       window.location.href=url;
@@ -148,6 +152,17 @@ export default function StepWizard() {
       // errRef.current.focus();
   }
   setLoading(false)
+  }else{
+    setCookie("payment", {amount: price,selectedlist:selectedlist,checkedEmail,checkedSMS}, {
+      path: "/"
+    });
+    setPrice(0);
+    setSelectedlist([]);
+    setCheckedEmail(false);
+    setCheckedSMS(false);
+    setPayment("");
+    navigate("/bank-transfer");
+  }
   }
 
   const handleSelectPayment = (method) => {

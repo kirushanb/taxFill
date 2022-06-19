@@ -23,6 +23,7 @@ import EditPackage from "./components/Dashboard/EditPackage/EditPackage";
 import RentalIncome from "./components/Dashboard/PackageForms/RentalIncome";
 import Dividend from "./components/Dashboard/PackageForms/Dividend";
 import BankInterest from "./components/Dashboard/PackageForms/BankInterest";
+import BankTransfer from "./components/Dashboard/AddNew/BankTransfer";
 
 
 function App() {
@@ -57,6 +58,16 @@ function App() {
           element={
             <Layout>
               <AddNew />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route element={<RequireAuth />}>
+        <Route
+          path="/bank-transfer"
+          element={
+            <Layout>
+              <BankTransfer />
             </Layout>
           }
         />

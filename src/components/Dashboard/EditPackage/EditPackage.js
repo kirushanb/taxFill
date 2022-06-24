@@ -139,7 +139,20 @@ const EditPackage = () => {
         const response = await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${deletepackageId}`
         );
+      } else if (
+        deletepackage.toLowerCase().replace(/\s/g, "") === "dividend"
+      ) {
+        const response = await axiosPrivate.delete(
+          `https://tax.api.cyberozunu.com/api/v1.1/Dividend/${deletepackageId}`
+        );
+      }else if (
+        deletepackage.toLowerCase().replace(/\s/g, "") === "bankinterest"
+      ) {
+        const response = await axiosPrivate.delete(
+          `https://tax.api.cyberozunu.com/api/v1.1/BankDetail/${deletepackageId}`
+        );
       }
+      
       toast.success(`Package deleted successfully`);
       setLoading(false);
       setDeleteModal(false);
@@ -171,7 +184,7 @@ const EditPackage = () => {
         </React.Fragment>
       ) : (
         <div className="EditPackage">
-          <div className="back-button" onClick={()=> navigate(-1)}>
+          <div className="back-button" onClick={()=> navigate("/account")}>
           <ArrowBackIosNewIcon className="back-icon"/><h5 className="title is-5">Back</h5>
           </div>
          

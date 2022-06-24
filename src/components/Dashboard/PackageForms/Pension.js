@@ -12,6 +12,7 @@ import * as Yup from "yup";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SaveIcon from "@mui/icons-material/Save";
 import Files from "react-files";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import {
   Avatar,
   Box,
@@ -195,7 +196,7 @@ const Pension = () => {
       setUrls([]);
       setOverallexpensesValue("");
       if (packageId) {
-        navigate("/account");
+        navigate(`/edit/${params.orderId}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -209,7 +210,7 @@ const Pension = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Pension Income"
+              (n) => n.package.name !== "Pension Income" && n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -373,6 +374,10 @@ const Pension = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
+          <div className="back-button" onClick={() => navigate(-1)}>
+            <ArrowBackIosNewIcon className="back-icon" />
+            <h5 className="title is-5">Back</h5>
+          </div>
             <Box
               sx={{
                 // marginTop: 8,

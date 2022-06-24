@@ -14,6 +14,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import Files from "react-files";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import {
   Avatar,
   Box,
@@ -321,7 +322,7 @@ const SelfEmployment = () => {
       setEndDate("");
       setMonthsList([]);
       if (packageId) {
-        navigate("/account");
+        navigate(`/edit/${params.orderId}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -334,7 +335,7 @@ const SelfEmployment = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Self employment"
+              (n) => n.package.name !== "Self employment" && n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -573,6 +574,10 @@ const SelfEmployment = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
+          <div className="back-button" onClick={() => navigate(-1)}>
+            <ArrowBackIosNewIcon className="back-icon" />
+            <h5 className="title is-5">Back</h5>
+          </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -773,7 +778,7 @@ const SelfEmployment = () => {
                           type={"number"}
                           value={n.amount}
                           onChange={(e) => handleInputMonth(i, e)}
-                          placeholder="Enter your expense"
+                          placeholder="Enter your turnover"
                         />
                         <Typography variant="body2" color="error" align="left">
                           {errors.taxFrom?.message}

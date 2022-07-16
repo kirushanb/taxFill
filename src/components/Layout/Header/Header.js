@@ -1,16 +1,14 @@
-import { AccountCircle } from "@mui/icons-material";
-import { Avatar, Button, IconButton, Menu, MenuItem } from "@mui/material";
-import React, { useContext, useEffect } from "react";
+import { Avatar, Menu, MenuItem } from "@mui/material";
+import React from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import AuthContext from "../../../context/AuthProvider";
 import useAuth from "../../../hooks/useAuth";
 
 import "./Header.scss";
 
 const Header = () => {
   const navigate = useNavigate();
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [cookies, setCookie] = useCookies(["user"]);
  
@@ -46,7 +44,7 @@ const Header = () => {
       <div className="desktop">
         <h1 className="title" onClick={()=> navigate('/')}>TaxFill</h1>
         <div className="nav-items">
-          {!auth.accessToken ? (
+          {!cookies.user ? (
             <div>
               <button
                 className="button is-ghost"

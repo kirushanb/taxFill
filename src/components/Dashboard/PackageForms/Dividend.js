@@ -248,11 +248,7 @@ const Dividend = () => {
       ]);
       setAddress("");
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Dividend Details Edited Successfully"
-          : "Dividend Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -302,6 +298,11 @@ const Dividend = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Dividend Details Edited Successfully"
+          : "Dividend Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -358,7 +359,11 @@ const Dividend = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if(name==='companyName'|| name==='receivedDate'){
+      values[i][name] = value;
+    }else{
+      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    }
     setExpensesList(values);
   }
 
@@ -528,7 +533,7 @@ const Dividend = () => {
                           id="noOfShares"
                           name="noOfShares"
                           value={field.noOfShares}
-                          type="number"
+                          // type="number"
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="No Of Shares"
                         />
@@ -543,7 +548,7 @@ const Dividend = () => {
                           id="dividend"
                           name="dividend"
                           value={field.dividend}
-                          type="number"
+                          // type="number"
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Dividend"
                         />
@@ -618,33 +623,32 @@ const Dividend = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId ? (
-              <button
-                className="button is-warning"
-                onClick={handleSubmit(onSubmit)}
-              >
-                <SaveIcon />
-                Edit
-              </button>
-            ) : (
-              <>
-                <button
-                  className="button is-warning"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  <SaveIcon />
-                  Save
-                </button>
-
-                <button
-                  className="button is-success"
-                  onClick={handleSubmit(onSubmitAndAddAnother)}
-                >
-                  <SaveIcon />
-                  Save and Add another
-                </button>
-              </>
-            )}
+            {packageId?<button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Edit'}
+            </button>:<><button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save'}
+            </button>
+            
+            <button
+              className="button is-success"
+              onClick={handleSubmit(onSubmitAndAddAnother)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save and Add another'}
+              
+            </button></>}
+            
           </div>
         </form>
       )}

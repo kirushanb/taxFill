@@ -10,11 +10,7 @@ const UploadFiles = (props) => {
   const {
     files,
     fileNames,
-    fileTypes,
-    totalSize,
-    totalSizeInBytes,
     handleDragDropEvent,
-    clearAllFiles,
     createFormData,
     setFiles,
     removeFile,
@@ -125,8 +121,8 @@ const UploadFiles = (props) => {
           </div>
 
           <div className="submit">
-            <button className="button is-link" onClick={handleSubmit}>
-              Submit
+            <button disabled={isLoading} className="button is-link" onClick={handleSubmit}>
+              {isLoading?'Submitting':'Submit'}
             </button>
           </div>
         </>

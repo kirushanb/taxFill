@@ -1,19 +1,17 @@
-import { CircularProgress } from "@mui/material";
-import React, { useEffect, useState } from "react";
-import { useCookies } from "react-cookie";
-import { useNavigate, useParams } from "react-router-dom";
-import axios from "../../../api/axios";
-import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import "./EditPackage.scss";
-import TreeView from "@mui/lab/TreeView";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import TreeItem from "@mui/lab/TreeItem";
-import DeleteIcon from "@mui/icons-material/Delete";
-import lottie from "lottie-web";
-import loadingAnim from "../../../static/working.json";
-import { toast, ToastContainer } from "react-toastify";
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import DeleteIcon from "@mui/icons-material/Delete";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import TreeItem from "@mui/lab/TreeItem";
+import TreeView from "@mui/lab/TreeView";
+import { CircularProgress } from "@mui/material";
+import lottie from "lottie-web";
+import React, { useCallback, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import loadingAnim from "../../../static/working.json";
+import "./EditPackage.scss";
 const defaultPackages = [
   "Employment",
   "Self employment",
@@ -30,11 +28,10 @@ const EditPackage = () => {
   const [deleteModal, setDeleteModal] = useState(false);
   const [deletepackage, setDeletepackage] = useState("");
   const [deletepackageId, setDeletepackageId] = useState("");
-  const [cookies, setCookie, removeCookie] = useCookies();
   const navigate = useNavigate();
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
-
+  console.log(list)
   useEffect(() => {
     const element = document.querySelector("#loading");
     if (element) {
@@ -48,7 +45,7 @@ const EditPackage = () => {
     }
   }, [loading]);
 
-  const getData = async () => {
+  const getData = useCallback( async () => {
     setIsLoading(true);
     try {
       const response = await axiosPrivate.get(
@@ -63,7 +60,7 @@ const EditPackage = () => {
       // navigate('/', { state: { from: location }, replace: true });
       setIsLoading(false);
     }
-  };
+  },[params.orderId, axiosPrivate]);
 
   useEffect(() => {
     if (params.orderId) {
@@ -71,18 +68,9 @@ const EditPackage = () => {
     } else {
       navigate("/account");
     }
-  }, []);
+  }, [getData, navigate, params.orderId ]);
 
-  const ColoredLine = ({ color }) => (
-    <hr
-      style={{
-        color: color,
-        backgroundColor: color,
-        height: 5,
-      }}
-    />
-  );
-
+  
   const hanclickEdit = (id, packageName) => {
     navigate(
       `/${packageName.toLowerCase().replace(/\s/g, "")}/${
@@ -112,43 +100,43 @@ const EditPackage = () => {
     setLoading(true);
     try {
       if (deletepackage.toLowerCase().replace(/\s/g, "") === "employment") {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/EmploymentDetail/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "selfemployment"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/SelfEmployment/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "pensionincome"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Pension/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "partnership"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Partnership/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "rentalincome"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${deletepackageId}`
         );
       } else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "dividend"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/Dividend/${deletepackageId}`
         );
       }else if (
         deletepackage.toLowerCase().replace(/\s/g, "") === "bankinterest"
       ) {
-        const response = await axiosPrivate.delete(
+        await axiosPrivate.delete(
           `https://tax.api.cyberozunu.com/api/v1.1/BankDetail/${deletepackageId}`
         );
       }
@@ -206,12 +194,14 @@ const EditPackage = () => {
                       // overflowY: "auto",
                       textAlign: "left",
                     }}
+                    
                   >
                     {defaultPackages.map((l, i) => {
                       if (i === 0) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                           nodeId={l + "-" + i+0+"-"}
+                           key={l + "-" + i+0+"-"}
                             label={
                               <div
                                 style={{
@@ -220,6 +210,7 @@ const EditPackage = () => {
                                   justifyContent: "space-between",
                                   alignItems: "center",
                                 }}
+                                // key={l + "-" + i+"-"}
                               >
                                 <p
                                   style={{
@@ -248,9 +239,10 @@ const EditPackage = () => {
                               <TreeItem
                                 className="test"
                                 nodeId={p.name + "-" + v}
+                                key={p.name + "-" + v}
                                 label={
                                   <div
-                                    key={p.name + "-" + v}
+                                    // key={p.name + "-" + v + "-"}
                                     className="sigle-line"
                                   >
                                     <p
@@ -286,7 +278,8 @@ const EditPackage = () => {
                       } else if (i === 1) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+1+"-"}
+                          key={l + "-" + i+1+"-"}
                             label={
                               <div
                                 style={{
@@ -295,6 +288,7 @@ const EditPackage = () => {
                                   justifyContent: "space-between",
                                   alignItems: "center",
                                 }}
+                                // key={l + "-" + i+"-"}
                               >
                                 <p
                                   style={{
@@ -322,9 +316,10 @@ const EditPackage = () => {
                             {list["selfEmploymentDetails"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.name + "-" + v}
+                                key={p.name + "-" + v}
                                 label={
                                   <div
-                                    key={p.name + "-" + v}
+                                    // key={p.name + "-" + v + "-"}
                                     className="sigle-line"
                                   >
                                     <p
@@ -361,11 +356,14 @@ const EditPackage = () => {
                       } else if (i === 2) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+2+"-"}
+                          key={l + "-" + i+2+"-"}
                             label={
                               <div style={{display: 'flex',
                           flexDirection: 'row',
-                          justifyContent: 'space-between', alignItems:"center"}}>
+                          justifyContent: 'space-between', alignItems:"center"}}
+                          // key={l + "-" + i+"-"}
+                          >
                               <p
                                 style={{ padding: "0.5rem", margin: "0.5rem" }}
                                 className="title is-3 package-title"
@@ -389,9 +387,10 @@ const EditPackage = () => {
                             {list["pensionDetails"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.name + "-" + v}
+                                key={p.name + "-" + v}
                                 label={
                                   <div
-                                    key={p.name + "-" + v}
+                                    // key={p.name + "-" + v + "-"}
                                     className="sigle-line"
                                   >
                                     <p
@@ -428,9 +427,12 @@ const EditPackage = () => {
                       } else if (i === 3) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+3+"-"}
+                          key={l + "-" + i+3+"-"}
                             label={
-                              <div style={{display: 'flex',
+                              <div 
+                              // key={l + "-" + i+"-"}
+                              style={{display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'space-between', alignItems:"center"}}>
                               <p
@@ -456,9 +458,10 @@ const EditPackage = () => {
                             {list["partnershipDetails"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.name + "-" + v}
+                                key={p.name + "-" + v}
                                 label={
                                   <div
-                                    key={p.name + "-" + v}
+                                    // key={p.name + "-" + v + "-"}
                                     className="sigle-line"
                                   >
                                     <p
@@ -495,9 +498,12 @@ const EditPackage = () => {
                       } else if (i === 4) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+4+"-"}
+                          key={l + "-" + i+4+"-"}
                             label={
-                              <div style={{display: 'flex',
+                              <div 
+                              // key={l + "-" + i+"-"}
+                              style={{display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'space-between', alignItems:"center"}}>
                               <p
@@ -523,9 +529,10 @@ const EditPackage = () => {
                             {list["rentalIncomeDetails"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.propertyName + "-" + v}
+                                key={p.propertyName + "-" + v}
                                 label={
                                   <div
-                                    key={p.propertyName + "-" + v}
+                                    // key={p.propertyName + "-" + v}
                                     className="sigle-line"
                                   >
                                     <p
@@ -562,9 +569,12 @@ const EditPackage = () => {
                       } else if (i === 5) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+5+"-"}
+                          key={l + "-" + i+5+"-"}
                             label={
-                              <div style={{display: 'flex',
+                              <div 
+                              // key={l + "-" + i+"-"}
+                              style={{display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'space-between', alignItems:"center"}}>
                               <p
@@ -591,9 +601,10 @@ const EditPackage = () => {
                             {list["dividendIncomes"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.companyName + "-" + v}
+                                key={p.companyName + "-" + v}
                                 label={
                                   <div
-                                    key={p.companyName + "-" + v}
+                                    // key={p.companyName + "-" + v}
                                     className="sigle-line"
                                   >
                                     <p
@@ -630,9 +641,12 @@ const EditPackage = () => {
                       } else if (i === 6) {
                         return (
                           <TreeItem
-                            nodeId={l + "-" + i}
+                          nodeId={l + "-" + i+6+"-"}
+                          key={l + "-" + i+6+"-"}
                             label={
-                              <div style={{display: 'flex',
+                              <div 
+                              // key={l + "-" + i+"-"}
+                              style={{display: 'flex',
                           flexDirection: 'row',
                           justifyContent: 'space-between', alignItems:"center"}}>
                               <p
@@ -658,9 +672,10 @@ const EditPackage = () => {
                             {list["bankInterestIncomes"]?.map((p, v) => (
                               <TreeItem
                                 nodeId={p.bankName + "-" + v}
+                                key={p.bankName + "-" + v}
                                 label={
                                   <div
-                                    key={p.bankName + "-" + v}
+                                    // key={p.bankName + "-" + v}
                                     className="sigle-line"
                                   >
                                     <p
@@ -694,6 +709,8 @@ const EditPackage = () => {
                             ))}
                           </TreeItem>
                         );
+                      }else{
+                        return null;
                       }
                     })}
                   </TreeView>

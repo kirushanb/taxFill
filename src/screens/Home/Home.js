@@ -1,24 +1,21 @@
-import React, { useEffect, useState } from "react";
-import "./Home.scss";
-import reactLogo from "../../static/react-logo.json";
-import Hero from "../../components/Home/Hero/Hero";
-import Cards from "../../components/Home/Cards/Cards";
-import UK from "../../components/Home/UK/UK";
-import Footer from "../../components/Home/Footer/Footer";
-import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import lottie from "lottie-web";
-import loadingAnim from "../../static/working.json";
-import useAuth from "../../hooks/useAuth";
+import React, { useEffect, useState } from "react";
 import { useCookies } from "react-cookie";
+import Cards from "../../components/Home/Cards/Cards";
+import Footer from "../../components/Home/Footer/Footer";
+import Hero from "../../components/Home/Hero/Hero";
+import UK from "../../components/Home/UK/UK";
+import useAuth from "../../hooks/useAuth";
+import loadingAnim from "../../static/working.json";
+import "./Home.scss";
 
 const Home = () => {
   const [cards, setCards] = useState([]);
   const [loading, setLoading] = useState(false);
-  const { auth, setAuth } = useAuth();
-  const [cookies, setCookie] = useCookies(["user"]);
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { setAuth } = useAuth();
+  const [, setCookie] = useCookies(["client"]);
+ 
 
   useEffect(() => {
     if (loading) {
@@ -46,12 +43,12 @@ const Home = () => {
             "Access-Control-Allow-Origin": "*",
           },
         };
-        setAuth({ accessToken: response1.data.result.token });
-        setCookie("user", response1.data.result.token, {
+        setAuth({ accessToken:response1.data.result.token });
+        setCookie("client", response1.data.result.token, {
           path: "/",
         });
         setCookie("refreshToken", response1.data.result.token, {
-          path: "/",
+          path: "/"
         });
         const response2 = await axios.get(
           "https://tax.api.cyberozunu.com/api/v1.1/Package",
@@ -73,7 +70,7 @@ const Home = () => {
     //     isMounted = false;
     //     controller.abort();
     // }
-  }, []);
+  }, [setAuth, setCookie]);
 
   return (
     <div className="Home">

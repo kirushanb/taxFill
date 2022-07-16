@@ -4,9 +4,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -211,7 +214,11 @@ const Partnership = () => {
         totalTurnOver: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
         shares: [
           ...partnershipList.map((n) => {
-            return { id: n.id, name: n.fullName, percentage: parseInt(n.share) };
+            return {
+              id: n.id,
+              name: n.fullName,
+              percentage: parseInt(n.share),
+            };
           }),
         ],
         turnOver: [
@@ -256,11 +263,7 @@ const Partnership = () => {
       setNetProfit("");
       setAddress("");
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Partnership Details Edit Successfully"
-          : "Partnership Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -278,7 +281,9 @@ const Partnership = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Partnership" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Partnership" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -288,7 +293,7 @@ const Partnership = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -307,6 +312,11 @@ const Partnership = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Partnership Details Edit Successfully"
+          : "Partnership Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -337,7 +347,7 @@ const Partnership = () => {
   const handleInputMonth = (i, event) => {
     const values = [...monthsList];
     const { name, value } = event.target;
-    values[i]["amount"] = value;
+    values[i]["amount"] = value.replace(/[^\dA-Z]/g, '');
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
@@ -349,11 +359,15 @@ const Partnership = () => {
       );
     }
   };
-  
+
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if(name==='description'){
+      values[i][name] = value;
+    }else{
+      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
@@ -413,8 +427,7 @@ const Partnership = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value);
-
+    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
     if (e.target.value) {
       setExpenseListHide(true);
       setNetProfit(parseInt(totalTurnover) - parseInt(e.target.value));
@@ -442,7 +455,6 @@ const Partnership = () => {
     }
   };
 
-
   const handleUpload = (urlsComming) => {
     if (packageId) {
       setUrls([
@@ -462,8 +474,8 @@ const Partnership = () => {
   };
 
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value);
-    setTotalTurnover(e.target.value);
+    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
   };
 
   const handleCalculateProfit = (share) => {
@@ -497,7 +509,7 @@ const Partnership = () => {
         address: response.data.result.address,
         totalTurnover: response.data.result.totalTurnOver,
       };
-      
+
       setTotalTurnover(response.data.result.totalTurnOver);
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
@@ -517,7 +529,7 @@ const Partnership = () => {
       setEndDate(
         moment(response.data.result.accountPeriodTo).format("YYYY-MM-DD")
       );
-      if(response.data.result.turnOver.length>0){
+      if (response.data.result.turnOver.length > 0) {
         setMonthsList(
           getMonthsWithData(
             new Date(response.data.result.accountingPeriodFrom),
@@ -526,7 +538,6 @@ const Partnership = () => {
           )
         );
       }
-      
 
       if (response.data.result?.attachments?.length > 0) {
         setUrls([
@@ -537,17 +548,23 @@ const Partnership = () => {
       }
 
       setOverallexpensesValue(response.data.result.totalExpenses);
-      setPartnershipList(response.data.result.shares.map(n=>{return {id:n.id,fullName: n.name, share: n.percentage}}));
-      
-      if(response.data.result.totalExpenses && response.data.result.totalTurnOver){
-        setNetProfit(response.data.result.totalTurnOver - response.data.result.totalExpenses);
-      }else if(response.data.result.totalTurnOver){
+      setPartnershipList(
+        response.data.result.shares.map((n) => {
+          return { id: n.id, fullName: n.name, share: n.percentage };
+        })
+      );
 
+      if (
+        response.data.result.totalExpenses &&
+        response.data.result.totalTurnOver
+      ) {
+        setNetProfit(
+          response.data.result.totalTurnOver -
+            response.data.result.totalExpenses
+        );
+      } else if (response.data.result.totalTurnOver) {
         setNetProfit(parseInt(response.data.result.totalTurnOver.toString()));
       }
-
-      
-      
     } catch (err) {
       console.log(err);
       setLoading(false);
@@ -563,10 +580,10 @@ const Partnership = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="back-button" onClick={() => navigate(-1)}>
+              <ArrowBackIosNewIcon className="back-icon" />
+              <h5 className="title is-5">Back</h5>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -646,7 +663,7 @@ const Partnership = () => {
                     {...register("address")}
                     placeholder="Enter your business address"
                   /> */}
-                   <AutoFillForm
+                    <AutoFillForm
                       handleAddress={handleAddress}
                       addressComingFrom={address}
                     />
@@ -794,7 +811,7 @@ const Partnership = () => {
                       fullWidth
                       id="totalTurnover"
                       name="totalTurnover"
-                      type={"number"}
+                      // type={"number"}
                       value={totalTurnover}
                       // {...register("totalTurnover")}
                       onChange={handleTotalTurnover}
@@ -834,7 +851,7 @@ const Partnership = () => {
                           fullWidth
                           id="monthExpense"
                           name="monthExpense"
-                          type={"number"}
+                          // type={"number"}
                           onChange={(e) => handleInputMonth(i, e)}
                           placeholder="Enter your turnover"
                           value={n.amount}
@@ -863,7 +880,7 @@ const Partnership = () => {
                       fullWidth
                       id="overallExpenses"
                       name="overallExpenses"
-                      type={"number"}
+                      // type={"number"}
                       value={overallexpenseValue}
                       onChange={handleOverallExpenses}
                       placeholder="Enter your overall expenses"
@@ -960,7 +977,7 @@ const Partnership = () => {
                       fullWidth
                       id="netProfit"
                       name="netProfit"
-                      type={"number"}
+                      // type={"number"}
                       value={netProfit}
                       placeholder="Net Profit"
                       disabled={true}
@@ -1017,30 +1034,33 @@ const Partnership = () => {
           </Container>
 
           <div className="footer-save-button">
-          {packageId ? (
+            {packageId ? (
               <button
                 className="button is-warning"
                 onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
               >
                 <SaveIcon />
-                Edit
+                {isLoading ? "Submitting" : "Edit"}
               </button>
             ) : (
               <>
                 <button
                   className="button is-warning"
                   onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save
+                  {isLoading ? "Submitting" : "Save"}
                 </button>
 
                 <button
                   className="button is-success"
                   onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save and Add another
+                  {isLoading ? "Submitting" : "Save and Add another"}
                 </button>
               </>
             )}

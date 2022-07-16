@@ -1,51 +1,29 @@
-import * as React from "react";
-import { styled, createTheme, ThemeProvider } from "@mui/material/styles";
+import { AccountCircle } from "@mui/icons-material";
+import AddIcon from "@mui/icons-material/Add";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import MenuIcon from "@mui/icons-material/Menu";
+import { Menu, MenuItem } from "@mui/material";
+import MuiAppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Container from "@mui/material/Container";
 import CssBaseline from "@mui/material/CssBaseline";
 import MuiDrawer from "@mui/material/Drawer";
-import Box from "@mui/material/Box";
-import MuiAppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
-import List from "@mui/material/List";
-import Typography from "@mui/material/Typography";
-import Divider from "@mui/material/Divider";
-import IconButton from "@mui/material/IconButton";
-import Badge from "@mui/material/Badge";
-import Container from "@mui/material/Container";
 import Grid from "@mui/material/Grid";
+import IconButton from "@mui/material/IconButton";
+import List from "@mui/material/List";
 import Paper from "@mui/material/Paper";
-import Link from "@mui/material/Link";
-import MenuIcon from "@mui/icons-material/Menu";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import NotificationsIcon from "@mui/icons-material/Notifications";
-import { mainListItems, secondaryListItems } from "./routes";
-import { AccountCircle } from "@mui/icons-material";
-import { Menu, MenuItem } from "@mui/material";
-import "./Dashboard.scss";
-import AddIcon from "@mui/icons-material/Add";
-import DataTable from "./DataTable";
-import AddNew from "./AddNew/AddNew";
-import { useNavigate } from "react-router-dom";
-import PieChartComponent from "./PieChartComponent";
+import { styled } from "@mui/material/styles";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import * as React from "react";
 import { useCookies } from "react-cookie";
-import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from "react-router-dom";
+import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
+import "./Dashboard.scss";
+import DataTable from "./DataTable";
+import { mainListItems } from "./routes";
+
 
 const drawerWidth = 240;
 
@@ -97,15 +75,13 @@ function DashboardContent() {
   const [open, setOpen] = React.useState(false);
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [modal, setModal] = React.useState(false);
+  
   const navigate = useNavigate();
 
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
 
 
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
+  
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -118,9 +94,7 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  const handleAddNew = () => {
-    setModal(true)
-  }
+ 
 
   const handleLogout = () => {
     // toast("User Logged Out Successfully");
@@ -128,7 +102,10 @@ function DashboardContent() {
     setCookie("user", "", {
       path: "/"
     });
-   window.location.href='/'
+    setCookie("refreshToken", "", {
+      path: "/"
+    });
+  //  window.location.href='/'
   }
   React.useEffect( () => {
    
@@ -138,7 +115,7 @@ function DashboardContent() {
     }
    
 
-  },[])
+  },[cookies.order, removeCookie])
   
  
   return (

@@ -282,11 +282,7 @@ const SelfEmployment = () => {
       setExpensesList([{ description: "", amount: "" }]);
       setAddress("");
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Self Employment Details Edited Successfully"
-          : "Self Employment Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -336,6 +332,11 @@ const SelfEmployment = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Self Employment Details Edited Successfully"
+          : "Self Employment Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -368,7 +369,7 @@ const SelfEmployment = () => {
   const handleInputMonth = (i, event) => {
     const values = [...monthsList];
     const { name, value } = event.target;
-    values[i]["amount"] = value;
+    values[i]["amount"] = value.replace(/[^\dA-Z]/g, '');
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
@@ -384,7 +385,11 @@ const SelfEmployment = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if(name==='description'){
+      values[i][name] = value;
+    }else{
+      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
@@ -419,7 +424,7 @@ const SelfEmployment = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value);
+    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -464,8 +469,8 @@ const SelfEmployment = () => {
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value);
-    setTotalTurnover(e.target.value);
+    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
   };
 
   useEffect(() => {
@@ -707,7 +712,6 @@ const SelfEmployment = () => {
                       fullWidth
                       id="totalTurnover"
                       name="totalTurnover"
-                      type={"number"}
                       value={totalTurnover}
                       // {...register("totalTurnover")}
                       onChange={handleTotalTurnover}
@@ -747,7 +751,6 @@ const SelfEmployment = () => {
                           fullWidth
                           id="monthExpense"
                           name="monthExpense"
-                          type={"number"}
                           value={n.amount}
                           onChange={(e) => handleInputMonth(i, e)}
                           placeholder="Enter your turnover"
@@ -776,7 +779,6 @@ const SelfEmployment = () => {
                       fullWidth
                       id="overallExpenses"
                       name="overallExpenses"
-                      type={"number"}
                       value={overallexpenseValue}
                       onChange={handleOverallExpenses}
                       placeholder="Enter your overall expenses"
@@ -817,7 +819,7 @@ const SelfEmployment = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                          type="number"
+                         
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}
@@ -883,33 +885,32 @@ const SelfEmployment = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId ? (
-              <button
-                className="button is-warning"
-                onClick={handleSubmit(onSubmit)}
-              >
-                <SaveIcon />
-                Edit
-              </button>
-            ) : (
-              <>
-                <button
-                  className="button is-warning"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  <SaveIcon />
-                  Save
-                </button>
-
-                <button
-                  className="button is-success"
-                  onClick={handleSubmit(onSubmitAndAddAnother)}
-                >
-                  <SaveIcon />
-                  Save and Add another
-                </button>
-              </>
-            )}
+            {packageId?<button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Edit'}
+            </button>:<><button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save'}
+            </button>
+            
+            <button
+              className="button is-success"
+              onClick={handleSubmit(onSubmitAndAddAnother)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save and Add another'}
+              
+            </button></>}
+            
           </div>
         </form>
       )}

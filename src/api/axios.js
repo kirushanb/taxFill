@@ -14,3 +14,13 @@ export const axiosPrivate = axios.create({
   },
 //   withCredentials: true,
 });
+
+export const axiosClient = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Content-Type": "application/json-patch+json",
+    "accept": "*/*",
+  },
+//   withCredentials: true,
+});

@@ -4,9 +4,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -70,7 +73,7 @@ const getMonths = (fromDate, toDate) => {
       months.push({ year, month, amount: "" });
     }
   }
-  
+
   return months;
 };
 
@@ -184,7 +187,7 @@ const RentalIncome = () => {
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
-      'https://tax.api.cyberozunu.com/api/v1.1/RentalIncome',
+      "https://tax.api.cyberozunu.com/api/v1.1/RentalIncome",
       {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         propertyName: data.propertyName,
@@ -217,7 +220,7 @@ const RentalIncome = () => {
 
   const putCall = (data) => {
     const response = axiosPrivate.put(
-      'https://tax.api.cyberozunu.com/api/v1.1/RentalIncome',
+      "https://tax.api.cyberozunu.com/api/v1.1/RentalIncome",
       {
         id: packageId,
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
@@ -260,11 +263,7 @@ const RentalIncome = () => {
       setExpensesList([{ description: "", amount: "" }]);
       setAddress("");
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Rental Income Details Edited Successfully"
-          : "Rental Income Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -285,7 +284,9 @@ const RentalIncome = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Rental Income" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Rental Income" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -295,7 +296,7 @@ const RentalIncome = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [ ...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -314,6 +315,11 @@ const RentalIncome = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Rental Income Details Edited Successfully"
+          : "Rental Income Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -362,7 +368,11 @@ const RentalIncome = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if(name==='description'){
+      values[i][name] = value;
+    }else{
+      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
@@ -397,7 +407,7 @@ const RentalIncome = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value);
+    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -442,8 +452,8 @@ const RentalIncome = () => {
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value);
-    setTotalTurnover(e.target.value);
+    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
   };
 
   useEffect(() => {
@@ -459,11 +469,7 @@ const RentalIncome = () => {
       const response = await axiosPrivate.get(
         `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${packageId}`
       );
-      const fields = [
-        "propertyName",
-        "address",
-        "totalTurnover",
-      ];
+      const fields = ["propertyName", "address", "totalTurnover"];
 
       const packages = {
         propertyName: response.data.result.propertyName,
@@ -522,10 +528,10 @@ const RentalIncome = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="back-button" onClick={() => navigate(-1)}>
+              <ArrowBackIosNewIcon className="back-icon" />
+              <h5 className="title is-5">Back</h5>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -683,7 +689,7 @@ const RentalIncome = () => {
                       fullWidth
                       id="totalTurnover"
                       name="totalTurnover"
-                      type={"number"}
+                      // type={"number"}
                       value={totalTurnover}
                       // {...register("totalTurnover")}
                       onChange={handleTotalTurnover}
@@ -793,7 +799,7 @@ const RentalIncome = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                          type="number"
+                          // type="number"
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}
@@ -863,26 +869,29 @@ const RentalIncome = () => {
               <button
                 className="button is-warning"
                 onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
               >
                 <SaveIcon />
-                Edit
+                {isLoading ? "Submitting" : "Edit"}
               </button>
             ) : (
               <>
                 <button
                   className="button is-warning"
                   onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save
+                  {isLoading ? "Submitting" : "Save"}
                 </button>
 
                 <button
                   className="button is-success"
                   onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save and Add another
+                  {isLoading ? "Submitting" : "Save and Add another"}
                 </button>
               </>
             )}

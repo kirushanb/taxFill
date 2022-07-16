@@ -1,15 +1,14 @@
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 import "./SelectPlan.scss";
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
-import lottie from "lottie-web";
-import loadingAnim from "../../../static/loading.json";
 import { CircularProgress } from "@mui/material";
+import useAxiosClient from "../../../hooks/useAxiosClient";
 const SelectPlan = (props) => {
   const [list, setList] = useState([]);
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = React.useState(false);
-
+  const axiosClient = useAxiosClient();
   // React.useEffect(() => {
   //   if(loading){
   //     lottie.loadAnimation({
@@ -21,7 +20,7 @@ const SelectPlan = (props) => {
     
   // }, [loading]);
 
-  useEffect(async() => {
+  useEffect(() => {
    
     // let isMounted = true;
     // const controller = new AbortController();
@@ -29,20 +28,9 @@ const SelectPlan = (props) => {
     const getUsers = async () => {
       setLoading(true);
       try {
-        const response1 = await axios.get(
-          "https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D",
-          { headers: { "Access-Control-Allow-Origin": "*" } }
-        );
-        const config = {
-          headers: {
-            Authorization: `Bearer ${response1.data.result.token}`,
-            "Access-Control-Allow-Origin": "*",
-          },
-        };
-        const response2 = await axios.get(
-          "https://tax.api.cyberozunu.com/api/v1.1/Package",
-          config
-        );
+        
+        const response2 = await axiosClient.get(
+          "https://tax.api.cyberozunu.com/api/v1.1/Package");
           
         setList(response2.data?.result?.data);
         setLoading(false)
@@ -52,13 +40,13 @@ const SelectPlan = (props) => {
       }
     };
 
-    await getUsers();
+    getUsers();
    
     // return () => {
     //   isMounted = false;
     //   controller.abort();
     // };
-  }, []);
+  }, [axiosClient]);
 
 
   const handleSelected = (item) => {

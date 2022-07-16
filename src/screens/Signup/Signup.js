@@ -1,20 +1,12 @@
-import React, { useEffect } from "react";
-import "./Signup.scss";
-import PhoneInput from "react-phone-input-2";
 import TextField from "@mui/material/TextField";
+import React, { useEffect } from "react";
+import PhoneInput from "react-phone-input-2";
+import "./Signup.scss";
 
-import Typography from "@mui/material/Typography";
-import "react-phone-input-2/lib/material.css";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { Link, useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
-  Autocomplete,
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
+  Box, Checkbox,
   Container,
   FormControl,
   FormControlLabel,
@@ -22,19 +14,20 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput,
+  OutlinedInput
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import { Copyright, Visibility, VisibilityOff } from "@mui/icons-material";
-import DateAdapter from '@mui/lab/AdapterDateFns';
-import { DatePicker, LocalizationProvider } from "@mui/lab";
-import ReactGoogleAutocomplete from "react-google-autocomplete";
-import { usePlacesWidget } from "react-google-autocomplete";
+import Typography from "@mui/material/Typography";
+// import { usePlacesWidget } from "react-google-autocomplete";
 import usePlacesService from "react-google-autocomplete/lib/usePlacesAutocompleteService";
+import { useForm } from "react-hook-form";
+import "react-phone-input-2/lib/material.css";
+import { useNavigate } from "react-router-dom";
+import * as Yup from "yup";
 
-import useAuth from "../../hooks/useAuth";
-import axios from "axios";
 import AutoFillForm from "../../components/Address/AutoFillForm";
+import useAuth from "../../hooks/useAuth";
+import useAxiosClient from "../../hooks/useAxiosClient";
+import { toast, ToastContainer } from "react-toastify";
 
 
 
@@ -49,21 +42,21 @@ const Signup = () => {
   const [password, setPassword] = React.useState("");
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [confirmpassword, setConfirmPassword] = React.useState("");
-  const [errMsg, setErrMsg] = React.useState('');
   const { setAuth } = useAuth();
-  const [places, setPlaces] = React.useState("");
-  const { ref, autocompleteRef } = usePlacesWidget({
-    apiKey:"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
-    onPlaceSelected: (place) => {
-      console.log(place);
-    }
-  });
+  const [, setPlaces] = React.useState("");
+  const axiosClient = useAxiosClient();
+  // const { ref, autocompleteRef } = usePlacesWidget({
+  //   apiKey:"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
+  //   onPlaceSelected: (place) => {
+  //     console.log(place);
+  //   }
+  // });
 
   const {
     placesService,
     placePredictions,
-    getPlacePredictions,
-    isPlacePredictionsLoading,
+    // getPlacePredictions,
+    // isPlacePredictionsLoading,
   } = usePlacesService({
     apiKey:"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
   });
@@ -77,7 +70,7 @@ const Signup = () => {
         },
         (placeDetails) => setPlaces(placeDetails)
       );
-  }, [placePredictions]);
+  }, [placePredictions, placesService]);
 
  
 
@@ -116,7 +109,7 @@ const Signup = () => {
     },
   };
 
-  const { register, handleSubmit, formState, reset, setValue, trigger, getValues } =
+  const { register, handleSubmit, formState, setValue, trigger } =
     useForm(formOptions);
   const { errors } = formState;
 
@@ -135,9 +128,8 @@ const Signup = () => {
     //     userName: ""
     // }),)
     try {
-        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
        
-        const response = await axios.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
+        const response = await axiosClient.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
             JSON.stringify({ 
                 firstName: data.firstName,
                 lastName: data.lastName,
@@ -149,15 +141,7 @@ const Signup = () => {
                 phoneNumber: data.phone,
                 status: 1,
                 password: data.password,
-            }),
-            {
-                headers: { 'Content-Type': 'application/json-patch+json',
-                Authorization: `Bearer ${response1.data.result.token}`,
-                "accept": "*/*"
-            },
-                // withCredentials: true
-            }
-        );
+            }));
         console.log(response?.data.result);
         console.log(response?.data.result.otp);
         //console.log(JSON.stringify(response));
@@ -168,15 +152,10 @@ const Signup = () => {
         // setPwd('');
         navigate('/otp');
     } catch (err) {
-        if (!err?.response) {
-            setErrMsg('No Server Response');
-        } else if (err.response?.status === 400) {
-            setErrMsg('Missing Username or Password');
-        } else if (err.response?.status === 401) {
-            setErrMsg('Unauthorized');
-        } else {
-            setErrMsg('Login Failed');
-        }
+      
+      if(err.response.data.isError){
+        toast.error(err.response.data.error.detail);
+      }
         // errRef.current.focus();
     }
   };
@@ -196,6 +175,7 @@ const Signup = () => {
 
   return (
     <div className="Signup">
+      <ToastContainer />
       <div className="login-form">
           <div className="header">
           <button className="button is-ghost home" onClick={() => navigate("/")}>

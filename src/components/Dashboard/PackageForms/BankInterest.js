@@ -248,11 +248,7 @@ const BankInterest = () => {
       },]);
       setAddress("");
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Bank Interest Details Edited Successfully"
-          : "Bank Interest Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -304,6 +300,11 @@ const BankInterest = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Bank Interest Details Edited Successfully"
+          : "Bank Interest Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -358,7 +359,11 @@ const BankInterest = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if(name==='grossInterest'){
+      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    }else{
+      values[i][name] = value;
+    }
     setExpensesList(values);
     
   }
@@ -547,7 +552,6 @@ const BankInterest = () => {
                           id="grossInterest"
                           name="grossInterest"
                           value={field.grossInterest}
-                          type="number"
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Gross Interest"
                         />
@@ -625,33 +629,32 @@ const BankInterest = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId ? (
-              <button
-                className="button is-warning"
-                onClick={handleSubmit(onSubmit)}
-              >
-                <SaveIcon />
-                Edit
-              </button>
-            ) : (
-              <>
-                <button
-                  className="button is-warning"
-                  onClick={handleSubmit(onSubmit)}
-                >
-                  <SaveIcon />
-                  Save
-                </button>
-
-                <button
-                  className="button is-success"
-                  onClick={handleSubmit(onSubmitAndAddAnother)}
-                >
-                  <SaveIcon />
-                  Save and Add another
-                </button>
-              </>
-            )}
+            {packageId?<button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Edit'}
+            </button>:<><button
+              className="button is-warning"
+              onClick={handleSubmit(onSubmit)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save'}
+            </button>
+            
+            <button
+              className="button is-success"
+              onClick={handleSubmit(onSubmitAndAddAnother)}
+              disabled={isLoading}
+            >
+              <SaveIcon />
+              {isLoading?'Submitting':'Save and Add another'}
+              
+            </button></>}
+            
           </div>
         </form>
       )}

@@ -1,35 +1,32 @@
+import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
 import "./Login.scss";
-import PhoneInput from "react-phone-input-2";
-import TextField from "@mui/material/TextField";
 
-import Typography from "@mui/material/Typography";
-import "react-phone-input-2/lib/material.css";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Typography from "@mui/material/Typography";
+import { useForm } from "react-hook-form";
+import "react-phone-input-2/lib/material.css";
+import { Link, useNavigate } from "react-router-dom";
 import * as Yup from "yup";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { ToastContainer, toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-import useAuth from "../../hooks/useAuth";
-import { useCookies } from "react-cookie";
 import lottie from "lottie-web";
+import useAuth from "../../hooks/useAuth";
+import useAxiosClient from "../../hooks/useAxiosClient";
 import loadingAnim from "../../static/working.json";
-import axios from "axios";
-const LOGIN_URL = '/login';
+
 
 const Login = () => {
     const { setAuth } = useAuth();
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation();
-    const from = location.state?.from?.pathname || "/";
     
+    
+    const axiosClient = useAxiosClient();
    
-    const [errMsg, setErrMsg] = useState('');
-
+   
     useEffect(() => {
 
       const element = document.querySelector('#loading');
@@ -67,23 +64,14 @@ const Login = () => {
     },
   };
 
-  const { register, handleSubmit, formState, reset, setValue, trigger } = useForm(formOptions);
+  const { register, handleSubmit, formState,  } = useForm(formOptions);
   const { errors } = formState;
 
   const onSubmit = async (data) => {
     setLoading(true)
     try {
-        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
-        const response = await axios.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
-            JSON.stringify({ userName:data.email, password:data.password }),
-            {
-                headers: { 'Content-Type': 'application/json-patch+json',
-                Authorization: `Bearer ${response1.data.result.token}`,
-                "accept": "*/*"
-            },
-                // withCredentials: true
-            }
-        );
+        const response = await axiosClient.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
+            JSON.stringify({ userName:data.email, password:data.password }));
         console.log(response);
         console.log(response?.data.result);
         console.log(response?.data.result.otp);

@@ -12,8 +12,6 @@ import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
 import { ReactComponent as StripeIcon } from "./img/stripe.svg";
 import { ReactComponent as VisaIcon } from "./img/visa.svg";
 import { ReactComponent as MasterIcon } from "./img/master.svg";
-import StripePaymentForm from "../../Payment/StripePaymentForm";
-import axios from "../../../api/axios";
 import { useNavigate } from "react-router-dom";
 import lottie from "lottie-web";
 import loadingAnim from "../../../static/working.json";
@@ -69,7 +67,7 @@ export default function StepWizard() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
-  const [cookies, setCookie] = useCookies(["payment"]);
+  const [, setCookie] = useCookies(["payment"]);
   const handleChange1 = (panel) => (event, newExpanded) => {
     setExpanded1(newExpanded ? panel : false);
   };
@@ -120,7 +118,7 @@ export default function StepWizard() {
       const response = await axiosPrivate.post("Stripe/create-session",null,{ params: {
         amount: price,
         cancelUrl: "https://tax-fill.web.app/fail",
-        successUrl: "https://tax-fill.web.app/success",
+        successUrl: "http://localhost:9000/success",
       },
      
     }

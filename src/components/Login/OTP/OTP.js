@@ -1,40 +1,32 @@
-import React, { Component, useEffect, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useState } from "react";
 import OtpInput from "react-otp-input-rc-17";
 
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
-import { makeStyles, useTheme } from "@mui/styles";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Avatar from "@mui/material/Avatar";
 import lottie from "lottie-web";
-import reactLogo from "../../../static/otp.json";
-import "./OTP.scss";
-import { color } from "@mui/system";
-import useAuth from "../../../hooks/useAuth";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
-import { useNavigate } from "react-router-dom";
 import { useCookies } from "react-cookie";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import useAuth from "../../../hooks/useAuth";
+import useAxiosClient from "../../../hooks/useAxiosClient";
+import reactLogo from "../../../static/otp.json";
 import loadingAnim from "../../../static/working.json";
-import axios from "axios";
-const LOGIN_URL_2FA = '/Authentication/2FA-authentication'
+import "./OTP.scss";
 
 const OTP = () => {
   const [otp, setOtp] = React.useState("");
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
-  const [cookies, setCookie] = useCookies(["user"]);
+  const [, setCookie] = useCookies(["user"]);
   const [loading, setLoading] = useState(false);
-
+  const axiosClient = useAxiosClient();
   useEffect(() => {
    
     if(!auth.accessToken2FA){
       navigate('/login');
     }
-  }, []);
+  }, [auth.accessToken2FA, navigate]);
 
   useEffect(() => {
     const element = document.querySelector('#tax-logo');
@@ -66,19 +58,17 @@ const OTP = () => {
   }, [loading]);
 
   const handleChange = async () => {
+    if(!otp){
+      toast.warn('Please enter the OTP number.')
+      return
+    }else if(otp.length!==6){
+      toast.warn('Please enter a valid OTP number.')
+      return
+    }
     setLoading(true)
-    try {
-        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
-       
-        const response = await axios.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/2FA-authentication',
-            JSON.stringify({ token: auth.accessToken2FA, code: otp }),
-            {
-                headers: { 'Content-Type': 'application/json-patch+json',
-                Authorization: `Bearer ${response1.data.result.token}`,
-                "accept": "*/*"
-            },
-                // withCredentials: true
-            }
+    try {       
+        const response = await axiosClient.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/2FA-authentication',
+            JSON.stringify({ token: auth.accessToken2FA, code: otp })
         );
         console.log(response?.data.result);
        
@@ -152,10 +142,10 @@ const OTP = () => {
    
    <div>
    <div className="signup-link">
-     <p className="title is-6">Didn't recieve OTP?</p>
-     <button className="button is-ghost home" onClick={()=>null}>Resend OTP</button>
+     {/* <p className="title is-6">Didn't recieve OTP?</p>
+     <button className="button is-ghost home" onClick={()=>null}>Resend OTP</button> */}
    </div>
-   <button className="button is-warning is-fullwidth" onClick={handleChange}>Verify</button>
+   <button disabled={loading} className="button is-warning is-fullwidth" onClick={handleChange}>{loading? 'Verifying...': 'Verify'}</button>
    </div>
 
    

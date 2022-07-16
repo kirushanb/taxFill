@@ -4,15 +4,17 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
-import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import React, { useEffect, useState } from "react";
-import { usePlacesWidget } from "react-google-autocomplete";
+import React, { useCallback, useEffect, useState } from "react";
+// import { usePlacesWidget } from "react-google-autocomplete";
 import { useForm } from "react-hook-form";
 import "react-phone-input-2/lib/material.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -24,9 +26,6 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import UploadFiles from "./UploadFiles";
-const Input = styled("input")({
-  display: "none",
-});
 
 export function getQueryStringParam(paramName) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -38,7 +37,6 @@ const Employment = () => {
   const [overallexpenseValue, setOverallexpensesValue] = React.useState("");
 
   const [urls, setUrls] = useState([]);
-
 
   const [overallexpenses, setOverallexpenses] = React.useState(false);
   const [expenseListHide, setExpenseListHide] = React.useState(false);
@@ -53,12 +51,12 @@ const Employment = () => {
   ]);
   const params = useParams();
   const [cookies, setCookie] = useCookies();
-  const { ref, autocompleteRef } = usePlacesWidget({
-    apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
-    onPlaceSelected: (place) => {
-      // console.log(place);
-    },
-  });
+  // const { ref, autocompleteRef } = usePlacesWidget({
+  //   apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
+  //   onPlaceSelected: (place) => {
+  //     // console.log(place);
+  //   },
+  // });
 
   const validationSchema = Yup.object().shape({
     employerName: Yup.string().required("Employer name must not be empty."),
@@ -84,34 +82,34 @@ const Employment = () => {
     formState,
     reset,
     setValue,
-    trigger,
-    getValues,
+    // trigger,
+    // getValues,
   } = useForm(formOptions);
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
 
   const postCall = (data) => {
-    const response =  axiosPrivate.post("/EmploymentDetail", {
+    const response = axiosPrivate.post("/EmploymentDetail", {
       orderId: params.orderId ? params.orderId : cookies.order.oderId,
       name: data.employerName,
       paye: data.payee,
       incomeFromP60_P45: data.incomeFrom,
       taxFromP60_P45: data.taxFrom,
-      totalExpenses: overallexpenseValue
-        ? parseInt(overallexpenseValue)
-        : 0,
-      expenses: expensesList.length===0
-        ? []
-        : expensesList.length===1 && expensesList[0].amount===0?[]: 
-        [
-            ...expensesList.map((n) => {
-              return {
-                description: n.description,
-                amount: parseInt(n.amount),
-              };
-            }),
-          ],
+      totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+      expenses:
+        expensesList.length === 0
+          ? []
+          : expensesList.length === 1 && expensesList[0].amount === 0
+          ? []
+          : [
+              ...expensesList.map((n) => {
+                return {
+                  description: n.description,
+                  amount: parseInt(n.amount),
+                };
+              }),
+            ],
       attachments: [
         ...urls.map((n) => {
           return { url: n };
@@ -120,113 +118,110 @@ const Employment = () => {
     });
 
     return response;
-  }
+  };
 
   const putCall = (data) => {
-    const response =  axiosPrivate.put("/EmploymentDetail", {
+    const response = axiosPrivate.put("/EmploymentDetail", {
       id: packageId,
       orderId: params.orderId,
       name: data.employerName,
       paye: data.payee,
       incomeFromP60_P45: data.incomeFrom,
       taxFromP60_P45: data.taxFrom,
-      totalExpenses: overallexpenseValue
-        ? parseInt(overallexpenseValue)
-        : 0,
-      expenses: expensesList.length===0
-        ? []
-        : expensesList.length===1 && expensesList[0].amount===0?[]: 
-        [
-            ...expensesList.map((n) => {
-              return {
-                id: n.id,
-                description: n.description,
-                amount: parseInt(n.amount),
-              };
-            }),
-          ],
+      totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+      expenses:
+        expensesList.length === 0
+          ? []
+          : expensesList.length === 1 && expensesList[0].amount === 0
+          ? []
+          : [
+              ...expensesList.map((n) => {
+                return {
+                  id: n.id,
+                  description: n.description,
+                  amount: parseInt(n.amount),
+                };
+              }),
+            ],
       attachments: [
         ...urls.map((n) => {
-          return { id:n.id, url: n.url };
+          return { id: n.id, url: n.url };
         }),
       ],
     });
 
     return response;
-  }
+  };
 
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      
-      const response = packageId? await putCall(data): await postCall(data);
-      
+      packageId ? await putCall(data) : await postCall(data);
+
       setLoading(false);
-      toast.success(packageId?"Employment Details Edited Successfully":"Employment Details Saved Successfully");
+
       reset();
       setExpensesList([{ description: "", amount: 0 }]);
       setLoading(false);
       setUrls([]);
       setOverallexpensesValue("");
-      if(packageId){
+      if (packageId) {
         navigate(`/edit/${params.orderId}`);
-      }else{
-        
-      if (params.orderId) {
-        navigate("/account");
       } else {
-       
-        if (cookies.order.selectedPackages.length > 1) {
-          
-          const filteredEmployement = cookies.order.selectedPackages.filter(
-            (n) => n.package.name === "Employment"
-          );
-
-          filteredEmployement[0].package.recordsAdded = true;
-
-          const filteredOther = cookies.order.selectedPackages.filter(
-            (n) => n.package.name !== "Employment" && n.package.name !== "Capital gain"
-          );
-          const filtered = filteredOther.filter(
-            (n) => n.package.recordsAdded !== true
-          );
-
-          setCookie(
-            "order",
-            {
-              oderId: cookies.order.oderId,
-              selectedPackages: [...filteredOther, ...filteredEmployement] ,
-            },
-            {
-              path: "/",
-            }
-          );
-
-          
-
-          if (filtered.length > 0) {
-            navigate(
-              `/${filtered[0].package.name.toLowerCase().replace(/\s/g, "")}`
+        if (params.orderId) {
+          navigate("/account");
+        } else {
+          if (cookies.order.selectedPackages.length > 1) {
+            const filteredEmployement = cookies.order.selectedPackages.filter(
+              (n) => n.package.name === "Employment"
             );
+
+            filteredEmployement[0].package.recordsAdded = true;
+
+            const filteredOther = cookies.order.selectedPackages.filter(
+              (n) =>
+                n.package.name !== "Employment" &&
+                n.package.name !== "Capital gain"
+            );
+            const filtered = filteredOther.filter(
+              (n) => n.package.recordsAdded !== true
+            );
+
+            setCookie(
+              "order",
+              {
+                oderId: cookies.order.oderId,
+                selectedPackages: [...filteredOther, ...filteredEmployement],
+              },
+              {
+                path: "/",
+              }
+            );
+
+            if (filtered.length > 0) {
+              navigate(
+                `/${filtered[0].package.name.toLowerCase().replace(/\s/g, "")}`
+              );
+            } else {
+              navigate("/account");
+            }
           } else {
             navigate("/account");
           }
-        } else {
-          navigate("/account");
         }
       }
-    }
+      toast.success(packageId?"Employment Details Edited Successfully":"Employment Details Saved Successfully");
     } catch (err) {
-     
       setLoading(false);
       toast.error(err);
     }
+
   };
 
   const onSubmitAndAddAnother = async (data) => {
     setLoading(true);
     try {
-      const response = await postCall(data);
+      await postCall(data);
 
       reset();
       setExpensesList([{ description: "", amount: 0 }]);
@@ -235,19 +230,20 @@ const Employment = () => {
       setUrls([]);
       setOverallexpensesValue("");
     } catch (err) {
-      
-     
       setLoading(false);
       toast.error(err);
     }
   };
 
-
-
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    values[i][name] = value;
+    if (name === "description") {
+      values[i][name] = value;
+    } else {
+      values[i][name] = value.replace(/[^\dA-Z]/g, "");
+    }
+
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
@@ -282,15 +278,22 @@ const Employment = () => {
   }
 
   const handleUpload = (urlsComming) => {
-    if(packageId){
-      setUrls([...urls,...urlsComming.map(n=>{return {url:n}})]);
-    }else{
+    if (packageId) {
+      setUrls([
+        ...urls,
+        ...urlsComming.map((n) => {
+          return { url: n };
+        }),
+      ]);
+    } else {
       setUrls(urlsComming);
     }
   };
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value);
+    setOverallexpensesValue(
+      (e.target.value = e.target.value.replace(/[^\dA-Z]/g, ""))
+    );
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -298,64 +301,69 @@ const Employment = () => {
     }
   };
 
- 
+  const getPackage = useCallback(
+    async (packageId) => {
+      setLoading(true);
+      try {
+        const response = await axiosPrivate.get(
+          `/EmploymentDetail/${packageId}`
+        );
+        const fields = ["employerName", "payee", "incomeFrom", "taxFrom"];
+
+        const packages = {
+          employerName: response.data.result.name,
+          payee: response.data.result.paye,
+          incomeFrom: response.data.result.incomeFromP60_P45,
+          taxFrom: response.data.result.taxFromP60_P45,
+        };
+
+        fields.forEach((field) => setValue(field, packages[field]));
+
+        if (response.data.result.expenses.length > 0) {
+          setExpensesList([
+            ...response.data.result.expenses.map((n) => {
+              return { id: n.id, description: n.description, amount: n.amount };
+            }),
+          ]);
+        } else {
+          setExpensesList([{ description: "", amount: 0 }]);
+        }
+
+        setUrls([
+          ...response.data.result.attachments.map((n) => {
+            return { url: n.url, id: n.id };
+          }),
+        ]);
+        setOverallexpensesValue(response.data.result.totalExpenses);
+      } catch (err) {
+        // console.log(err);
+        setLoading(false);
+      }
+      setLoading(false);
+    },
+    [axiosPrivate, setValue]
+  );
+
   useEffect(() => {
     if (packageId) {
       // get user and set form fields
       getPackage(packageId);
     }
-  }, [packageId]);
-
-  const getPackage = async (packageId) => {
-    setLoading(true);
-    try {
-      const response = await axiosPrivate.get(`/EmploymentDetail/${packageId}`);
-      const fields = ["employerName", "payee", "incomeFrom", "taxFrom"];
-
-      const packages = {
-        employerName: response.data.result.name,
-        payee: response.data.result.paye,
-        incomeFrom: response.data.result.incomeFromP60_P45,
-        taxFrom: response.data.result.taxFromP60_P45,
-      };
-
-      fields.forEach((field) => setValue(field, packages[field]));
-     
-      if(response.data.result.expenses.length > 0){
-        setExpensesList([
-          ...response.data.result.expenses.map((n) => {
-            return { id:n.id, description: n.description, amount: n.amount };
-          }),
-        ]);
-      }else{
-        setExpensesList([{ description: "", amount: 0 }]);
-      }
-     
-      setUrls([
-        ...response.data.result.attachments.map((n) => {
-          return{url: n.url, id: n.id};
-        }),
-      ]);
-      setOverallexpensesValue(response.data.result.totalExpenses);
-    } catch (err) {
-      // console.log(err);
-      setLoading(false);
-    }
-    setLoading(false);
-  };
+  }, [packageId, getPackage]);
 
   return (
     <div className="Employment">
+      
       {isLoading ? (
         <CircularProgress />
       ) : (
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="back-button" onClick={() => navigate(-1)}>
+              <ArrowBackIosNewIcon className="back-icon" />
+              <h5 className="title is-5">Back</h5>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -389,7 +397,7 @@ const Employment = () => {
                       //   label="Enter your employer name"
                       placeholder="Enter your employer name"
                       autoFocus
-                      error={errors.employerName?.message}
+                      error={!!errors.employerName?.message}
                       {...register("employerName")}
                     />
 
@@ -430,8 +438,16 @@ const Employment = () => {
                       fullWidth
                       id="incomeFrom"
                       name="incomeFrom"
-                      {...register("incomeFrom")}
-                      type="number"
+                      onChange={(e) =>
+                        setValue(
+                          "incomeFrom",
+                          (e.target.value = e.target.value.replace(
+                            /[^\dA-Z]/g,
+                            ""
+                          ))
+                        )
+                      }
+                      // {...register("incomeFrom")}
                       placeholder="Income from P60/P45"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -451,8 +467,16 @@ const Employment = () => {
                       fullWidth
                       id="taxFrom"
                       name="taxFrom"
-                      {...register("taxFrom")}
-                      type="number"
+                      // {...register("taxFrom")}
+                      onChange={(e) =>
+                        setValue(
+                          "taxFrom",
+                          (e.target.value = e.target.value.replace(
+                            /[^\dA-Z]/g,
+                            ""
+                          ))
+                        )
+                      }
                       placeholder="Tax from P60/P45"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -477,7 +501,6 @@ const Employment = () => {
                       fullWidth
                       id="overallExpenses"
                       name="overallExpenses"
-                      type={"number"}
                       onChange={handleOverallExpenses}
                       placeholder="Enter your overall expenses"
                       value={overallexpenseValue}
@@ -518,7 +541,6 @@ const Employment = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                          type="number"
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}
@@ -569,7 +591,11 @@ const Employment = () => {
                         <ol style={{ padding: "1rem" }}>
                           {urls.map((n) => (
                             <li key={n.id}>
-                              <a target={"_blank"} href={n.url}>
+                              <a
+                                target={"_blank"}
+                                href={n.url}
+                                rel="noreferrer"
+                              >
                                 {n.url}
                               </a>
                             </li>
@@ -584,28 +610,36 @@ const Employment = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId?<button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-            >
-              <SaveIcon />
-              Edit
-            </button>:<><button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-            >
-              <SaveIcon />
-              Save
-            </button>
-            
-            <button
-              className="button is-success"
-              onClick={handleSubmit(onSubmitAndAddAnother)}
-            >
-              <SaveIcon />
-              Save and Add another
-            </button></>}
-            
+            {packageId ? (
+              <button
+                className="button is-warning"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
+              >
+                <SaveIcon />
+                {isLoading ? "Submitting" : "Edit"}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="button is-warning"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save"}
+                </button>
+
+                <button
+                  className="button is-success"
+                  onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save and Add another"}
+                </button>
+              </>
+            )}
           </div>
         </form>
       )}

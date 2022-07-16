@@ -2,8 +2,11 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
-  Container, Grid, InputLabel
+  Box,
+  CircularProgress,
+  Container,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -157,11 +160,7 @@ const Pension = () => {
       reset();
       setExpensesList([{ description: "", amount: "" }]);
       setLoading(false);
-      toast.success(
-        packageId
-          ? "Pension Details Edited Successfully"
-          : "Pension Details Saved Successfully"
-      );
+      
       setUrls([]);
       setOverallexpensesValue("");
       if (packageId) {
@@ -179,7 +178,9 @@ const Pension = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Pension Income" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Pension Income" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -189,7 +190,7 @@ const Pension = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [ ...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -208,6 +209,11 @@ const Pension = () => {
           }
         }
       }
+      toast.success(
+        packageId
+          ? "Pension Details Edited Successfully"
+          : "Pension Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
@@ -343,10 +349,10 @@ const Pension = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="back-button" onClick={() => navigate(-1)}>
+              <ArrowBackIosNewIcon className="back-icon" />
+              <h5 className="title is-5">Back</h5>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -420,8 +426,9 @@ const Pension = () => {
                       fullWidth
                       id="pensionFrom"
                       name="pensionFrom"
-                      type={"number"}
-                      {...register("pensionFrom")}
+                      // type={"number"}
+                      // {...register("pensionFrom")}
+                      onChange={e => setValue("pensionFrom",e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''))}
                       placeholder="Pension from P60"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -441,8 +448,9 @@ const Pension = () => {
                       fullWidth
                       id="taxFrom"
                       name="taxFrom"
-                      type={"number"}
-                      {...register("taxFrom")}
+                      // type={"number"}
+                      // {...register("taxFrom")}
+                      onChange={e => setValue("taxFrom",e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''))}
                       placeholder="Tax from P60"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -579,26 +587,29 @@ const Pension = () => {
               <button
                 className="button is-warning"
                 onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
               >
                 <SaveIcon />
-                Edit
+                {isLoading ? "Submitting" : "Edit"}
               </button>
             ) : (
               <>
                 <button
                   className="button is-warning"
                   onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save
+                  {isLoading ? "Submitting" : "Save"}
                 </button>
 
                 <button
                   className="button is-success"
                   onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
                 >
                   <SaveIcon />
-                  Save and Add another
+                  {isLoading ? "Submitting" : "Save and Add another"}
                 </button>
               </>
             )}

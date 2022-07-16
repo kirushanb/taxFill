@@ -77,13 +77,13 @@ export default function DataTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleOnClickAddData = (id) => {
+  const handleOnClickAddData = React.useCallback((id) => {
     navigate(`/select/${id}`);
-  };
+  },[navigate]);
 
-  const handleOnClickEditData = (id) => {
+  const handleOnClickEditData = React.useCallback((id) => {
     navigate(`/edit/${id}`);
-  };
+  },[navigate]);
   
   React.useEffect(() => {
     const getData = async () => {
@@ -99,10 +99,9 @@ export default function DataTable() {
               n.serialNo,
               n.createdOn,
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
-              <div style={{width:'240px'}}>
+              <div style={{width:'240px'}} key={n.serialNo}>
                 <button
                   onClick={() => handleOnClickAddData(n.id)}
-                  key={n.serialNo}
                   className="button is-info is-small"
                 >
                   <AddchartIcon />
@@ -111,7 +110,6 @@ export default function DataTable() {
                 <button
                   style={{ marginLeft: "0.5rem" }}
                   onClick={() => handleOnClickEditData(n.id)}
-                  key={n.serialNo}
                   className="button is-warning is-small"
                 >
                   <AddchartIcon />
@@ -130,7 +128,7 @@ export default function DataTable() {
     };
 
     getData();
-  }, []);
+  }, [axiosPrivate, handleOnClickAddData, handleOnClickEditData]);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>

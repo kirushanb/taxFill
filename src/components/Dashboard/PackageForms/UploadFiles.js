@@ -1,12 +1,11 @@
-import React, { useEffect, useRef } from "react";
-import axios from "axios";
-import useFileUpload from "react-use-file-upload";
-import { Button, Chip, CircularProgress } from "@mui/material";
-import "./UploadFiles.scss";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
-import { ToastContainer, toast } from "react-toastify";
+import { Button, CircularProgress } from "@mui/material";
+import React, { useRef } from "react";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import useFileUpload from "react-use-file-upload";
+import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
+import "./UploadFiles.scss";
 const UploadFiles = (props) => {
   const {
     files,

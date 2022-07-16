@@ -1,60 +1,32 @@
-import React, { useEffect, useState } from "react";
-import "./RentalIncome.scss";
-import PhoneInput from "react-phone-input-2";
-import TextField from "@mui/material/TextField";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import Typography from "@mui/material/Typography";
-import "react-phone-input-2/lib/material.css";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as Yup from "yup";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import SaveIcon from "@mui/icons-material/Save";
-import Files from "react-files";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import AddIcon from "@mui/icons-material/Add";
 import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
+import RemoveIcon from "@mui/icons-material/Remove";
+import SaveIcon from "@mui/icons-material/Save";
 import {
-  Avatar,
-  Box,
-  Button,
-  Checkbox,
-  CircularProgress,
+  Box, CircularProgress,
   Container,
-  Fab,
-  FormControl,
-  FormControlLabel,
-  Grid,
-  IconButton,
-  InputAdornment,
-  InputLabel,
-  OutlinedInput,
+  Fab, Grid, InputLabel
 } from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import {
-  AddLinkOutlined,
-  Copyright,
-  Upload,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
-import DateAdapter from "@mui/lab/AdapterDateFns";
-import { DatePicker, LocalizationProvider } from "@mui/lab";
-import ReactGoogleAutocomplete from "react-google-autocomplete";
-import { usePlacesWidget } from "react-google-autocomplete";
 import { styled } from "@mui/material/styles";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import React, { useEffect, useState } from "react";
+import { usePlacesWidget } from "react-google-autocomplete";
+import { useForm } from "react-hook-form";
+import "react-phone-input-2/lib/material.css";
+import { useNavigate, useParams } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import * as Yup from "yup";
+import "./RentalIncome.scss";
 
-import PhotoCamera from "@mui/icons-material/PhotoCamera";
-import Stack from "@mui/material/Stack";
-import FileUpload from "react-material-file-upload";
-import UploadFiles from "./UploadFiles";
-import axios from "axios";
+import moment from "moment";
 import { useCookies } from "react-cookie";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import AutoFillForm from "../../Address/AutoFillForm";
 import { getQueryStringParam } from "./Employment";
-import moment from "moment";
+import UploadFiles from "./UploadFiles";
 
 const mL = [
   "January",

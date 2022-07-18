@@ -16,6 +16,8 @@ import lottie from "lottie-web";
 import useAuth from "../../hooks/useAuth";
 import useAxiosClient from "../../hooks/useAxiosClient";
 import loadingAnim from "../../static/working.json";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 
 const Login = () => {
@@ -23,7 +25,7 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
     
-    
+    const [cookies, setCookie] = useCookies(["client"]);
     const axiosClient = useAxiosClient();
    
    
@@ -69,7 +71,8 @@ const Login = () => {
 
   const onSubmit = async (data) => {
     setLoading(true)
-    try {
+    if(cookies.client){
+      try {
         const response = await axiosClient.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
             JSON.stringify({ userName:data.email, password:data.password }));
         console.log(response);
@@ -89,6 +92,41 @@ const Login = () => {
         toast.error(err.response.data.error.detail);
       }
     }
+    }else{
+      try {
+        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
+        setCookie("client", response1.data.result.token, {
+          path: "/",
+        });
+        const response = await axios.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/login',
+            JSON.stringify({ userName:"+"+data.phone, password:data.password }),
+            {
+                headers: { 'Content-Type': 'application/json-patch+json',
+                Authorization: `Bearer ${response1.data.result.token}`,
+                "accept": "*/*"
+            },
+                // withCredentials: true
+            }
+        );
+        console.log(response);
+        console.log(response?.data.result);
+        console.log(response?.data.result.otp);
+        //console.log(JSON.stringify(response));
+        const accessToken2FA = response?.data?.result?.token;
+        const otp = response?.data?.result?.otp
+        setAuth({ accessToken2FA, otp });
+        setLoading(false);
+        // setUser('');
+        // setPwd('');
+        navigate('/otp');
+    } catch (err) {
+      setLoading(false);
+      if(err.response.data.isError){
+        toast.error(err.response.data.error.detail);
+      }
+    }
+    }
+    
     
   };
 

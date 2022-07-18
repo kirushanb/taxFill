@@ -28,6 +28,8 @@ import AutoFillForm from "../../components/Address/AutoFillForm";
 import useAuth from "../../hooks/useAuth";
 import useAxiosClient from "../../hooks/useAxiosClient";
 import { toast, ToastContainer } from "react-toastify";
+import { useCookies } from "react-cookie";
+import axios from "axios";
 
 
 
@@ -45,6 +47,7 @@ const Signup = () => {
   const { setAuth } = useAuth();
   const [, setPlaces] = React.useState("");
   const axiosClient = useAxiosClient();
+  const [cookies, setCookie] = useCookies(["client"]);
   // const { ref, autocompleteRef } = usePlacesWidget({
   //   apiKey:"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
   //   onPlaceSelected: (place) => {
@@ -114,20 +117,9 @@ const Signup = () => {
   const { errors } = formState;
 
   const onSubmit = async (data) => {
-    // alert(JSON.stringify({ 
-    //     firstName: data.firstName,
-    //     lastName: data.lastName,
-    //     dob: data.dob,
-    //     nI_Number: data.nINumber,
-    //     utR_Number: data.uTRNumber? data.uTRNumber.replace(/\s/g, ''):data.uTRNumber,
-    //     address: data.address,
-    //     email: data.email,
-    //     phoneNumber: data.phone,
-    //     status: 1,
-    //     password: data.password,
-    //     userName: ""
-    // }),)
-    try {
+    
+    if(cookies.client){
+      try {
        
         const response = await axiosClient.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
             JSON.stringify({ 
@@ -158,6 +150,49 @@ const Signup = () => {
       }
         // errRef.current.focus();
     }
+    }else{
+      try {
+        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
+        setCookie("client", response1.data.result.token, {
+          path: "/",
+        });
+        const response = await axios.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
+            JSON.stringify({ 
+                firstName: data.firstName,
+                lastName: data.lastName,
+                dob: data.dob,
+                nI_Number: data.nINumber,
+                utR_Number: data.uTRNumber?data.uTRNumber.replace(/\s/g, ''):data.uTRNumber,
+                address: JSON.stringify(address ?? {}),
+                email: data.email,
+                phoneNumber: data.phone,
+                status: 1,
+                password: data.password,
+            }),
+            {
+                headers: { 'Content-Type': 'application/json-patch+json',
+                Authorization: `Bearer ${response1.data.result.token}`,
+                "accept": "*/*"
+            },
+                // withCredentials: true
+            }
+        );
+        console.log(response?.data.result);
+        console.log(response?.data.result.otp);
+        //console.log(JSON.stringify(response));
+        const accessToken2FA = response?.data?.result?.token;
+        const otp = response?.data?.result?.otp
+        setAuth({ accessToken2FA, otp });
+        // setUser('');
+        // setPwd('');
+        navigate('/otp');
+    } catch (err) {
+      if(err.response.data.isError){
+        toast.error(err.response.data.error.detail);
+      }
+    }
+    }
+    
   };
 
   const handleClickShowPassword = () => {

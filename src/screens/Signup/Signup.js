@@ -41,6 +41,7 @@ const Signup = () => {
   const [address, setAddress] = React.useState("");
   const [checked, setChecked] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [confirmpassword, setConfirmPassword] = React.useState("");
@@ -117,7 +118,7 @@ const Signup = () => {
   const { errors } = formState;
 
   const onSubmit = async (data) => {
-    
+    setLoading(true);
     if(cookies.client){
       try {
        
@@ -143,11 +144,13 @@ const Signup = () => {
         // setUser('');
         // setPwd('');
         navigate('/otp');
+        setLoading(false);
     } catch (err) {
       
       if(err.response.data.isError){
         toast.error(err.response.data.error.detail);
       }
+      setLoading(false);
         // errRef.current.focus();
     }
     }else{
@@ -186,10 +189,12 @@ const Signup = () => {
         // setUser('');
         // setPwd('');
         navigate('/otp');
+        setLoading(false);
     } catch (err) {
       if(err.response.data.isError){
         toast.error(err.response.data.error.detail);
       }
+      setLoading(false);
     }
     }
     
@@ -469,7 +474,7 @@ const Signup = () => {
             <Link to="/signup">Create account</Link>
           </div> */}
 
-          <button className="button is-medium is-warning">Submit</button>
+          <button disabled={loading} className="button is-medium is-warning">Submit</button>
         </form>
       </div>
     </div>

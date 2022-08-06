@@ -185,6 +185,11 @@ const SelfEmployment = () => {
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear ? cookies.order.taxYear : getQueryStringParam("reference") ? getQueryStringParam("reference") : 0;
+
+  const checkTaxYear = () => {
+
+  }
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
@@ -433,10 +438,42 @@ const SelfEmployment = () => {
   };
 
   const handleStartDate = (e) => {
+    const date = new Date(e.target.value);
+    if(date.getFullYear()!==parseInt(taxYear)){
+      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+      return;
+    }else if(date.getMonth()<4){
+      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+      return;
+    }
     setStartDate(e.target.value);
   };
 
   const handleEndDate = (e) => {
+    const date = new Date(e.target.value);
+    const selectedYear=date.getFullYear();
+    if(!startDate){
+      toast.warn(`Please select start date first`);
+      return;
+    }else if(!(selectedYear===(parseInt(taxYear)) || selectedYear===(parseInt(taxYear)+1))){
+      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+      return;
+    }else if(new Date(startDate).getFullYear()===selectedYear){
+      if(new Date(startDate).getMonth() > date.getMonth()){
+        toast.error(`End date should be greater than start date`);
+        return;
+      }
+    }else if(new Date(startDate).getFullYear()===selectedYear && new Date(startDate).getMonth()===date.getMonth()){
+      if(new Date(startDate).getDate()> date.getDate()){
+        toast.error(`End date should be greater than start date`);
+        return;
+      }
+    }else if(selectedYear===(parseInt(taxYear)+1)){
+      if(date.getMonth()>4){
+        toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+        return;
+      }
+    }
     setEndDate(e.target.value);
     if (packageId) {
       setMonthsList(

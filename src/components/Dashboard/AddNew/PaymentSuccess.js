@@ -22,33 +22,24 @@ const PaymentSuccess = () => {
           paymentIntentId: responseSaved.payment_intent,
           smsNotificationActivated: cookies.payment.checkedEmail,
           emailNotificationActivated: cookies.payment.checkedSMS,
+          taxYear: cookies.payment.taxYear ? parseInt(cookies.payment.taxYear) : 0,
           selectedPackages: [...selectedList.map(n=>{
           return({packageId:n.id});
           })]
           }
         );
-        
-        // console.log(response?.data.result);
+       
+        const taxYear = response?.data?.result?.taxYear;
         const oderId = response?.data?.result?.id;
         const selectedPackages=response?.data?.result?.selectedPackages.map(n=> {
           return({package:n.package})});
-        // console.log(selectedPackages);
-        setCookie("order", {oderId, selectedPackages}, {
+        setCookie("order", {oderId, selectedPackages,taxYear}, {
           path: "/"
         });
         removeCookie("payment");
         navigate("/select")
     } catch (err) {
-        // if (!err?.response) {
-        //     setErrMsg('No Server Response');
-        // } else if (err.response?.status === 400) {
-        //     setErrMsg('Missing Username or Password');
-        // } else if (err.response?.status === 401) {
-        //     setErrMsg('Unauthorized');
-        // } else {
-        //     setErrMsg('Login Failed');
-        // }
-        // errRef.current.focus();
+        console.log(err);
     }
     }else{
       navigate("/account")

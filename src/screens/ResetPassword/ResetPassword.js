@@ -1,6 +1,6 @@
 import TextField from "@mui/material/TextField";
 import React, { useEffect, useState } from "react";
-import "./Login.scss";
+import "./ResetPassword.scss";
 
 import { yupResolver } from "@hookform/resolvers/yup";
 import Typography from "@mui/material/Typography";
@@ -19,22 +19,22 @@ import loadingAnim from "../../static/working.json";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
-const Login = () => {
+const ResetPassword = () => {
   const { setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const [cookies, setCookie] = useCookies(["client"]);
-  const axiosClient = useAxiosClient();
-
   const [usercookies, setUserCookie] = useCookies(["resetPassword"]);
-  useEffect(() => {
-    if (usercookies.resetPassword) {
+useEffect(()=>{
+    if(usercookies.resetPassword){
       setUserCookie("resetPassword", undefined, {
-        path: "/",
+        path: "/"
       });
     }
-  }, [usercookies.resetPassword]);
+  },[usercookies.resetPassword])
+
+  const axiosClient = useAxiosClient();
 
   useEffect(() => {
     const element = document.querySelector("#loading");
@@ -51,11 +51,6 @@ const Login = () => {
 
   const validationSchema = Yup.object().shape({
     email: Yup.string().email().required("Email must not be empty."),
-    password: Yup.string().required("Password must not be empty."),
-    //   .matches(
-    //     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{8,}$/,
-    //     "Password must have minimum eight characters, at least one uppercase letter, one lowercase letter and one number."
-    //   )
   });
 
   const formOptions = {
@@ -74,21 +69,18 @@ const Login = () => {
     setLoading(true);
     if (cookies.client) {
       try {
-        const response = await axiosClient.post(
-          "https://tax.api.cyberozunu.com/api/v1.1/Authentication/login",
-          JSON.stringify({ userName: data.email, password: data.password })
-        );
+        const response = await axiosClient.get(
+          `https://tax.api.cyberozunu.com/api/v1.1//Authentication/request-forgot-password?userName=${data.email}`);
         console.log(response);
         console.log(response?.data.result);
         console.log(response?.data.result.otp);
-        //console.log(JSON.stringify(response));
+        
         const accessToken2FA = response?.data?.result?.token;
         const otp = response?.data?.result?.otp;
         setAuth({ accessToken2FA, otp });
         setLoading(false);
-        // setUser('');
-        // setPwd('');
-        navigate("/otp");
+       
+        navigate("/otp-change-password");
       } catch (err) {
         setLoading(false);
         if (err.response.data.isError) {
@@ -104,12 +96,7 @@ const Login = () => {
         setCookie("client", response1.data.result.token, {
           path: "/",
         });
-        const response = await axios.post(
-          "https://tax.api.cyberozunu.com/api/v1.1/Authentication/login",
-          JSON.stringify({
-            userName: "+" + data.phone,
-            password: data.password,
-          }),
+        const response = await axios.get( `https://tax.api.cyberozunu.com/api/v1.1//Authentication/request-forgot-password?userName=${data.email}`,
           {
             headers: {
               "Content-Type": "application/json-patch+json",
@@ -122,14 +109,13 @@ const Login = () => {
         console.log(response);
         console.log(response?.data.result);
         console.log(response?.data.result.otp);
-        //console.log(JSON.stringify(response));
+        
         const accessToken2FA = response?.data?.result?.token;
         const otp = response?.data?.result?.otp;
         setAuth({ accessToken2FA, otp });
         setLoading(false);
-        // setUser('');
-        // setPwd('');
-        navigate("/otp");
+       
+        navigate("/otp-change-password");
       } catch (err) {
         setLoading(false);
         if (err.response.data.isError) {
@@ -145,13 +131,13 @@ const Login = () => {
       {loading ? (
         <React.Fragment>
           {loading && (
-            <div className="Login">
+            <div className="ResetPassword">
               <div id="loading" className="loading" />
             </div>
           )}
         </React.Fragment>
       ) : (
-        <div className="Login">
+        <div className="ResetPassword">
           <div className="login-form">
             <button
               className="button is-ghost home"
@@ -160,7 +146,7 @@ const Login = () => {
               {"<- Home"}
             </button>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <p className="title is-3">Login to account</p>
+              <p className="title is-3">Reset Password</p>
 
               <div>
                 <TextField
@@ -171,6 +157,7 @@ const Login = () => {
                   variant="outlined"
                   fullWidth
                   autoComplete="off"
+                  error={!!errors.email?.message}
                   {...register("email")}
                 />
 
@@ -179,32 +166,13 @@ const Login = () => {
                 </Typography>
               </div>
 
-              <div>
-                <TextField
-                  type="password"
-                  id="password"
-                  name="password"
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  autoComplete="off"
-                  {...register("password")}
-                />
-                <Typography variant="body2" color="error" align="left">
-                  {errors.password?.message}
-                </Typography>
-              </div>
-              <div className="forgot-link">
-                <p className="title is-6">Did you</p>
-                <Link to="/forgot-password">forget your password?</Link>
-              </div>
-              <button className="button is-medium is-fullwidth is-warning">
+              
+              
+              <button className="button is-medium is-fullwidth is-warning" style={{marginTop:'1rem'}}>
                 Next
               </button>
-              <div className="signup-link">
-                <p className="title is-6">Don't have an account ?</p>
-                <Link to="/signup">Create account</Link>
-              </div>
+              
+              
             </form>
           </div>
         </div>
@@ -213,4 +181,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default ResetPassword;

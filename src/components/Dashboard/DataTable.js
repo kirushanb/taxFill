@@ -66,6 +66,7 @@ export default function DataTable() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [rows, setRows] = React.useState([]);
+  const [list, setList] = React.useState([]);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [isLoading, setLoading] = React.useState(true);
@@ -77,8 +78,9 @@ export default function DataTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  const handleOnClickAddData = React.useCallback((id) => {
-    navigate(`/select/${id}`);
+  const handleOnClickAddData = React.useCallback((id, list) => {
+    const taxYear = list.filter(n=> n.id===id)[0]?.taxYear;
+    navigate(`/select/${id}/?reference=${taxYear}`);
   },[navigate]);
 
   const handleOnClickEditData = React.useCallback((id) => {
@@ -92,6 +94,7 @@ export default function DataTable() {
         const response = await axiosPrivate.get(
           "https://tax.api.cyberozunu.com/api/v1.1/Order"
         );
+        setList(response.data.result.data);
 
         setRows([
           ...response.data.result.data.map((n) =>
@@ -101,7 +104,7 @@ export default function DataTable() {
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
               <div style={{width:'240px'}} key={n.serialNo}>
                 <button
-                  onClick={() => handleOnClickAddData(n.id)}
+                  onClick={() => handleOnClickAddData(n.id, response.data.result.data)}
                   className="button is-info is-small"
                 >
                   <AddchartIcon />
@@ -119,6 +122,7 @@ export default function DataTable() {
             )
           ),
         ]);
+        
         setLoading(false);
       } catch (err) {
         console.error(err);
@@ -128,7 +132,7 @@ export default function DataTable() {
     };
 
     getData();
-  }, [axiosPrivate, handleOnClickAddData, handleOnClickEditData]);
+  }, []);
 
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>

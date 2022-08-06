@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import React, { useEffect } from "react";
 import { useCookies } from "react-cookie";
 import { Navigate, Route, Router, Routes } from "react-router-dom";
 import "./App.css";
@@ -24,6 +24,10 @@ import RentalIncome from "./components/Dashboard/PackageForms/RentalIncome";
 import Dividend from "./components/Dashboard/PackageForms/Dividend";
 import BankInterest from "./components/Dashboard/PackageForms/BankInterest";
 import BankTransfer from "./components/Dashboard/AddNew/BankTransfer";
+import ChangePassword from "./screens/ChangePassword/ChangePassword";
+import ResetPassword from "./screens/ResetPassword/ResetPassword";
+import OTPChangePassword from "./components/Login/OTPChangePassword/OTPChangePassword";
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
@@ -37,7 +41,9 @@ function App() {
   }, []);
 
   return (
-    <Routes>
+    <React.Fragment>
+      <ToastContainer />
+      <Routes>
       <Route
         path="/"
         element={
@@ -47,7 +53,10 @@ function App() {
         }
       />
       <Route path="/login" element={<Login />} />
+      <Route path="/forgot-password" element={<ResetPassword />} />
+      <Route path="/change-password" element={<ChangePassword />} />
       <Route path="/otp" element={<OTP />} />
+      <Route path="/otp-change-password" element={<OTPChangePassword />} />
       <Route path="/signup" element={<Signup />} />
       <Route element={<RequireAuth />}>
         <Route path="/account" element={<Dashboard />} />
@@ -270,6 +279,8 @@ function App() {
         <Route path="*" element={<Navigate to="/bankinterest" replace />} />
       </Route>
     </Routes>
+    </React.Fragment>
+    
   );
 }
 

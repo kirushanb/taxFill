@@ -15,6 +15,7 @@ const Home = () => {
   const [loading, setLoading] = useState(false);
   const { setAuth } = useAuth();
   const [, setCookie] = useCookies(["client"]);
+
  
 
   useEffect(() => {
@@ -27,8 +28,8 @@ const Home = () => {
   }, [loading]);
 
   useEffect(() => {
-    // let isMounted = true;
-    // const controller = new AbortController();
+    let isMounted = true;
+    const controller = new AbortController();
 
     const getUsers = async () => {
       setLoading(true);
@@ -42,6 +43,7 @@ const Home = () => {
             Authorization: `Bearer ${response1.data.result.token}`,
             "Access-Control-Allow-Origin": "*",
           },
+          signal: controller.signal,
         };
         setAuth({ accessToken:response1.data.result.token });
         setCookie("client", response1.data.result.token, {
@@ -66,11 +68,11 @@ const Home = () => {
 
     getUsers();
 
-    // return () => {
-    //     isMounted = false;
-    //     controller.abort();
-    // }
-  }, [setAuth, setCookie]);
+    return () => {
+        isMounted = false;
+        controller.abort();
+    }
+  }, []);
 
   return (
     <div className="Home">

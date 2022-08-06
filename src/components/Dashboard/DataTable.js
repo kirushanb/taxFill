@@ -12,6 +12,7 @@ import AddchartIcon from "@mui/icons-material/Addchart";
 import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
+import moment from "moment";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#2a2d3e",
@@ -100,7 +101,7 @@ export default function DataTable() {
           ...response.data.result.data.map((n) =>
             createData(
               n.serialNo,
-              n.createdOn,
+              moment(n.createdOn).format("DD/MM/YYYY, HH:mm:ss"),
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
               <div style={{width:'240px'}} key={n.serialNo}>
                 <button

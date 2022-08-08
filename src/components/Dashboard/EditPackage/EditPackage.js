@@ -31,7 +31,7 @@ const EditPackage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
-  console.log(list)
+  
   useEffect(() => {
     const element = document.querySelector("#loading");
     if (element) {

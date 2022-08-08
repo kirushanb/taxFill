@@ -18,12 +18,14 @@ import useAxiosClient from "../../hooks/useAxiosClient";
 import loadingAnim from "../../static/working.json";
 import { useCookies } from "react-cookie";
 import axios from "axios";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { FormControl, IconButton, InputAdornment, InputLabel, OutlinedInput } from "@mui/material";
 
 const Login = () => {
   const { setAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const [showPassword, setShowPassword] = React.useState(false);
   const [cookies, setCookie] = useCookies(["client"]);
   const axiosClient = useAxiosClient();
 
@@ -139,6 +141,10 @@ const Login = () => {
     }
   };
 
+  const handleClickShowPassword = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <React.Fragment>
       <ToastContainer />
@@ -180,16 +186,39 @@ const Login = () => {
               </div>
 
               <div>
-                <TextField
-                  type="password"
-                  id="password"
-                  name="password"
-                  label="Password"
-                  variant="outlined"
-                  fullWidth
-                  autoComplete="off"
-                  {...register("password")}
-                />
+              <FormControl variant="outlined" fullWidth>
+                      <InputLabel htmlFor="outlined-adornment-password">
+                        Password
+                      </InputLabel>
+                      <OutlinedInput
+                        
+                        id="password"
+                        name="password"
+                        label="Password"
+                        variant="outlined"
+                        fullWidth
+                        autoComplete="off"
+                        type={showPassword ? "text" : "password"}
+                        
+                        endAdornment={
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={handleClickShowPassword}
+                              edge="end"
+                            >
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
+                            </IconButton>
+                          </InputAdornment>
+                        }
+                        {...register("password")}
+                      />
+                    </FormControl>
+                
                 <Typography variant="body2" color="error" align="left">
                   {errors.password?.message}
                 </Typography>

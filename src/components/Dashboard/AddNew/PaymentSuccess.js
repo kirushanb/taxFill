@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { useCookies } from 'react-cookie';
 import { useNavigate } from 'react-router-dom';
-import axios from '../../../api/axios';
 import useAxiosPrivate from '../../../hooks/useAxiosPrivate';
 import './PaymentSuccess.scss'
 

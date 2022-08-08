@@ -225,13 +225,13 @@ const EditPackage = () => {
                                     list["employmentDetails"]?.length +
                                     ")"}
                                 </p>
-                                <button
+                                {list?.selectedPackages?.find(n=> n.package.name==="Employment") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >
@@ -303,13 +303,13 @@ const EditPackage = () => {
                                     list["selfEmploymentDetails"]?.length +
                                     ")"}
                                 </p>
-                                <button
+                                {list?.selectedPackages?.find(n=> n.package.name==="Self employment") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >
@@ -374,13 +374,13 @@ const EditPackage = () => {
                                   list["pensionDetails"]?.length +
                                   ")"}
                               </p>
-                              <button
+                              {list?.selectedPackages?.find(n=> n.package.name==="Pension Income") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >
@@ -445,13 +445,13 @@ const EditPackage = () => {
                                   list["partnershipDetails"]?.length +
                                   ")"}
                               </p>
-                              <button
+                              {list?.selectedPackages?.find(n=> n.package.name==="Partnership") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >
@@ -516,13 +516,13 @@ const EditPackage = () => {
                                   list["rentalIncomeDetails"]?.length +
                                   ")"}
                               </p>
-                              <button
+                              {list?.selectedPackages?.find(n=> n.package.name==="Rental Income") &&  <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >
@@ -587,13 +587,13 @@ const EditPackage = () => {
                                   list["dividendIncomes"]?.length +
                                   ")"}
                               </p>
-                              <button
+                              {list?.selectedPackages?.find(n=> n.package.name==="Dividend") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                             
@@ -659,13 +659,13 @@ const EditPackage = () => {
                                   list["bankInterestIncomes"]?.length +
                                   ")"}
                               </p>
-                              <button
+                              {list?.selectedPackages?.find(n=> n.package.name==="Bank interest") && <button
                                   className="button is-warning"
                                   onClick={() => handleAdd(l)}
                                   style={{ marginRight: "1rem" }}
                                 >
                                   Add
-                                </button>
+                                </button>}
                               </div>
                             }
                           >

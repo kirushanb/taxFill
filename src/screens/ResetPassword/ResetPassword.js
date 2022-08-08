@@ -32,7 +32,7 @@ useEffect(()=>{
         path: "/"
       });
     }
-  },[usercookies.resetPassword])
+  },[usercookies.resetPassword]);
 
   const axiosClient = useAxiosClient();
 

@@ -444,9 +444,6 @@ const Partnership = () => {
     if(date.getFullYear()!==parseInt(taxYear)){
       toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
       return;
-    }else if(date.getMonth()<4){
-      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
-      return;
     }
     setStartDate(e.target.value);
   };
@@ -468,11 +465,6 @@ const Partnership = () => {
     }else if(new Date(startDate).getFullYear()===selectedYear && new Date(startDate).getMonth()===date.getMonth()){
       if(new Date(startDate).getDate()> date.getDate()){
         toast.error(`End date should be greater than start date`);
-        return;
-      }
-    }else if(selectedYear===(parseInt(taxYear)+1)){
-      if(date.getMonth()>4){
-        toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
         return;
       }
     }

@@ -441,7 +441,7 @@ const Partnership = () => {
 
   const handleStartDate = (e) => {
     const date = new Date(e.target.value);
-    if(date.getFullYear()!==parseInt(taxYear)){
+    if(!(date.getFullYear()===parseInt(taxYear) || date.getFullYear()===(parseInt(taxYear)-1))){
       toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
       return;
     }
@@ -454,7 +454,7 @@ const Partnership = () => {
     if(!startDate){
       toast.warn(`Please select start date first`);
       return;
-    }else if(!(selectedYear===(parseInt(taxYear)) || selectedYear===(parseInt(taxYear)+1))){
+    }else if(selectedYear!==(parseInt(taxYear))){
       toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
       return;
     }else if(new Date(startDate).getFullYear()===selectedYear){

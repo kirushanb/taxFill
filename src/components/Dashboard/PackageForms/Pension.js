@@ -76,6 +76,11 @@ const Pension = () => {
     },
   };
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const {
     register,
@@ -160,7 +165,7 @@ const Pension = () => {
       reset();
       setExpensesList([{ description: "", amount: "" }]);
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       if (packageId) {
@@ -349,9 +354,15 @@ const Pension = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-            <div className="back-button" onClick={() => navigate(-1)}>
-              <ArrowBackIosNewIcon className="back-icon" />
-              <h5 className="title is-5">Back</h5>
+          <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
             </div>
             <Box
               sx={{
@@ -428,7 +439,12 @@ const Pension = () => {
                       name="pensionFrom"
                       // type={"number"}
                       // {...register("pensionFrom")}
-                      onChange={e => setValue("pensionFrom",e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''))}
+                      onChange={(e) =>
+                        setValue(
+                          "pensionFrom",
+                          (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+                        )
+                      }
                       placeholder="Pension from P60"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -450,7 +466,12 @@ const Pension = () => {
                       name="taxFrom"
                       // type={"number"}
                       // {...register("taxFrom")}
-                      onChange={e => setValue("taxFrom",e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''))}
+                      onChange={(e) =>
+                        setValue(
+                          "taxFrom",
+                          (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+                        )
+                      }
                       placeholder="Tax from P60"
                     />
                     <Typography variant="body2" color="error" align="left">

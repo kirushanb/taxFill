@@ -2,11 +2,12 @@ import TextField from "@mui/material/TextField";
 import React, { useEffect } from "react";
 import PhoneInput from "react-phone-input-2";
 import "./Signup.scss";
-
+import PasswordChecklist from "react-multiple-password-validator";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
-  Box, Checkbox,
+  Box,
+  Checkbox,
   Container,
   FormControl,
   FormControlLabel,
@@ -14,7 +15,7 @@ import {
   IconButton,
   InputAdornment,
   InputLabel,
-  OutlinedInput
+  OutlinedInput,
 } from "@mui/material";
 import Typography from "@mui/material/Typography";
 // import { usePlacesWidget } from "react-google-autocomplete";
@@ -31,10 +32,7 @@ import { toast, ToastContainer } from "react-toastify";
 import { useCookies } from "react-cookie";
 import axios from "axios";
 
-
-
 const Signup = () => {
-
   let navigate = useNavigate();
   const [phonenumber, setPhonenumber] = React.useState("");
   const [uTRNumber, setuTRNumber] = React.useState("");
@@ -44,6 +42,7 @@ const Signup = () => {
   const [loading, setLoading] = React.useState(false);
   const [password, setPassword] = React.useState("");
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [validPassword, setValidPassword] = React.useState(false);
   const [confirmpassword, setConfirmPassword] = React.useState("");
   const { setAuth } = useAuth();
   const [, setPlaces] = React.useState("");
@@ -62,7 +61,7 @@ const Signup = () => {
     // getPlacePredictions,
     // isPlacePredictionsLoading,
   } = usePlacesService({
-    apiKey:"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
+    apiKey: "AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY",
   });
 
   useEffect(() => {
@@ -76,12 +75,9 @@ const Signup = () => {
       );
   }, [placePredictions, placesService]);
 
- 
-
   const handleChange = (event) => {
     setChecked(event.target.checked);
   };
-
 
   const validationSchema = Yup.object().shape({
     firstName: Yup.string().required("First name must not be empty."),
@@ -89,19 +85,22 @@ const Signup = () => {
     email: Yup.string()
       .email("Email must be valid email")
       .required("Email must not be empty"),
-    password: Yup.string()
-      .required("Password must not be empty"),
+    password: Yup.string().required("Password must not be empty"),
     confirmPassword: Yup.string()
       .required("Confirm Password must not be empty")
       .oneOf(
         [Yup.ref("password"), null],
         "Confirm passwords must match password above."
       ),
-    phone: Yup.string().required("Phone number must not be empty").min(10,"Phone number must be enough length"),
-    nINumber:Yup.string().required("NI Number must not be empty")
-    .matches(/^\s*[a-zA-Z]{2}(?:\s*\d\s*){6}[a-zA-Z]?\s*[a-zA-Z]{1}$/,"NI Number must be valid")
-    
-      
+    phone: Yup.string()
+      .required("Phone number must not be empty")
+      .min(10, "Phone number must be enough length"),
+    nINumber: Yup.string()
+      .required("NI Number must not be empty")
+      .matches(
+        /^\s*[a-zA-Z]{2}(?:\s*\d\s*){6}[a-zA-Z]?\s*[a-zA-Z]{1}$/,
+        "NI Number must be valid"
+      ),
   });
 
   const formOptions = {
@@ -119,115 +118,134 @@ const Signup = () => {
 
   const onSubmit = async (data) => {
     setLoading(true);
-    if(cookies.client){
+    if (cookies.client) {
       try {
-       
-        const response = await axiosClient.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
-            JSON.stringify({ 
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dob: data.dob,
-                nI_Number: data.nINumber,
-                utR_Number: data.uTRNumber?data.uTRNumber.replace(/\s/g, ''):data.uTRNumber,
-                address: JSON.stringify(address ?? {}),
-                email: data.email,
-                phoneNumber: data.phone,
-                status: 1,
-                password: data.password,
-            }));
-        console.log(response?.data.result);
-        console.log(response?.data.result.otp);
-        //console.log(JSON.stringify(response));
-        const accessToken2FA = response?.data?.result?.token;
-        const otp = response?.data?.result?.otp
-        setAuth({ accessToken2FA, otp });
-        // setUser('');
-        // setPwd('');
-        navigate('/otp');
-        setLoading(false);
-    } catch (err) {
-      
-      if(err.response.data.isError){
-        toast.error(err.response.data.error.detail);
-      }
-      setLoading(false);
-        // errRef.current.focus();
-    }
-    }else{
-      try {
-        const response1 = await axios.get('https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D',{headers: {"Access-Control-Allow-Origin": "*"}});
-        setCookie("client", response1.data.result.token, {
-          path: "/",
-        });
-        const response = await axios.post("https://tax.api.cyberozunu.com/api/v1.1/Customer",
-            JSON.stringify({ 
-                firstName: data.firstName,
-                lastName: data.lastName,
-                dob: data.dob,
-                nI_Number: data.nINumber,
-                utR_Number: data.uTRNumber?data.uTRNumber.replace(/\s/g, ''):data.uTRNumber,
-                address: JSON.stringify(address ?? {}),
-                email: data.email,
-                phoneNumber: data.phone,
-                status: 1,
-                password: data.password,
-            }),
-            {
-                headers: { 'Content-Type': 'application/json-patch+json',
-                Authorization: `Bearer ${response1.data.result.token}`,
-                "accept": "*/*"
-            },
-                // withCredentials: true
-            }
+        const response = await axiosClient.post(
+          "https://tax.api.cyberozunu.com/api/v1.1/Customer",
+          JSON.stringify({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dob: data.dob,
+            nI_Number: data.nINumber,
+            utR_Number: data.uTRNumber
+              ? data.uTRNumber.replace(/\s/g, "")
+              : data.uTRNumber,
+            address: JSON.stringify(address ?? {}),
+            email: data.email,
+            phoneNumber: data.phone,
+            status: 1,
+            password: data.password,
+          })
         );
         console.log(response?.data.result);
         console.log(response?.data.result.otp);
         //console.log(JSON.stringify(response));
         const accessToken2FA = response?.data?.result?.token;
-        const otp = response?.data?.result?.otp
+        const otp = response?.data?.result?.otp;
         setAuth({ accessToken2FA, otp });
         // setUser('');
         // setPwd('');
-        navigate('/otp');
+        navigate("/otp");
         setLoading(false);
-    } catch (err) {
-      if(err.response.data.isError){
-        toast.error(err.response.data.error.detail);
+      } catch (err) {
+        if (err.response.data.isError) {
+          toast.error(err.response.data.error.detail);
+        }
+        setLoading(false);
+        // errRef.current.focus();
       }
-      setLoading(false);
+    } else {
+      try {
+        const response1 = await axios.get(
+          "https://tax.api.cyberozunu.com/api/v1.1/Authentication/Client-token?id=474FA9DA-28DB-4635-B666-EB5B6C662537&key=uwODmcIAA0e2dwKD8ifprQ%3D%3D",
+          { headers: { "Access-Control-Allow-Origin": "*" } }
+        );
+        setCookie("client", response1.data.result.token, {
+          path: "/",
+        });
+        const response = await axios.post(
+          "https://tax.api.cyberozunu.com/api/v1.1/Customer",
+          JSON.stringify({
+            firstName: data.firstName,
+            lastName: data.lastName,
+            dob: data.dob,
+            nI_Number: data.nINumber,
+            utR_Number: data.uTRNumber
+              ? data.uTRNumber.replace(/\s/g, "")
+              : data.uTRNumber,
+            address: JSON.stringify(address ?? {}),
+            email: data.email,
+            phoneNumber: data.phone,
+            status: 1,
+            password: data.password,
+          }),
+          {
+            headers: {
+              "Content-Type": "application/json-patch+json",
+              Authorization: `Bearer ${response1.data.result.token}`,
+              accept: "*/*",
+            },
+            // withCredentials: true
+          }
+        );
+        console.log(response?.data.result);
+        console.log(response?.data.result.otp);
+        //console.log(JSON.stringify(response));
+        const accessToken2FA = response?.data?.result?.token;
+        const otp = response?.data?.result?.otp;
+        setAuth({ accessToken2FA, otp });
+        // setUser('');
+        // setPwd('');
+        navigate("/otp");
+        setLoading(false);
+      } catch (err) {
+        if (err.response.data.isError) {
+          toast.error(err.response.data.error.detail);
+        }
+        setLoading(false);
+      }
     }
-    }
-    
   };
 
   const handleClickShowPassword = () => {
-   setShowPassword(!showPassword)
+    setShowPassword(!showPassword);
   };
 
   const handleClickShowConfirmPassword = () => {
-    setShowConfirmPassword(!showConfirmPassword)
-   };
+    setShowConfirmPassword(!showConfirmPassword);
+  };
 
-   const handleAddress = (value) => {
+  const handleAddress = (value) => {
     setAddress(value);
-  
-   }
+  };
+
+  const formValid = () => {
+    if (!validPassword) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <div className="Signup">
       <ToastContainer />
       <div className="login-form">
-          <div className="header">
-          <button className="button is-ghost home" onClick={() => navigate("/")}>
-          {"<- Home"}
-        </button>
-        <button className="button is-ghost home" onClick={() => navigate("/login")}>
-          {"Login ->"}
-        </button>
-          </div>
-       
+        <div className="header">
+          <button
+            className="button is-ghost home"
+            onClick={() => navigate("/")}
+          >
+            {"<- Home"}
+          </button>
+          <button
+            className="button is-ghost home"
+            onClick={() => navigate("/login")}
+          >
+            {"Login ->"}
+          </button>
+        </div>
 
-        <form onSubmit={handleSubmit(onSubmit)} className='signup-form'>
+        <form onSubmit={handleSubmit(onSubmit)} className="signup-form">
           <Container component="main" maxWidth="lg">
             <Box
               sx={{
@@ -243,7 +261,7 @@ const Signup = () => {
               {/* <Typography component="h1" variant="h5">
                 Sign up
               </Typography> */}
-               <p className="title is-3">Sign up</p>
+              <p className="title is-3">Sign up</p>
               <Box sx={{ mt: 1 }}>
                 <Grid container spacing={3}>
                   <Grid item xs={12} sm={6}>
@@ -301,19 +319,22 @@ const Signup = () => {
                         type={showPassword ? "text" : "password"}
                         value={password}
                         name={"password"}
-                        onChange={(event)=> {setPassword(event.target.value)
-                            setValue("password",event.target.value)
+                        onChange={(event) => {
+                          setPassword(event.target.value);
+                          setValue("password", event.target.value);
                         }}
-                        
-                      
                         endAdornment={
                           <InputAdornment position="end">
                             <IconButton
                               aria-label="toggle password visibility"
-                                onClick={handleClickShowPassword}
+                              onClick={handleClickShowPassword}
                               edge="end"
                             >
-                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                              {showPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         }
@@ -334,18 +355,23 @@ const Signup = () => {
                         type={showConfirmPassword ? "text" : "password"}
                         value={confirmpassword}
                         name={"confirmPassword"}
-                        onChange={(event)=> {setConfirmPassword(event.target.value)
-                        setValue("confirmPassword",event.target.value)
+                        onChange={(event) => {
+                          setConfirmPassword(event.target.value);
+                          setValue("confirmPassword", event.target.value);
                         }}
                         fullWidth
                         endAdornment={
                           <InputAdornment position="end">
                             <IconButton
                               aria-label="toggle password visibility"
-                               onClick={handleClickShowConfirmPassword}
+                              onClick={handleClickShowConfirmPassword}
                               edge="end"
                             >
-                              {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                              {showConfirmPassword ? (
+                                <VisibilityOff />
+                              ) : (
+                                <Visibility />
+                              )}
                             </IconButton>
                           </InputAdornment>
                         }
@@ -356,25 +382,47 @@ const Signup = () => {
                       {errors.confirmPassword?.message}
                     </Typography>
                   </Grid>
+                  {(password || confirmpassword) && (
+                    <Grid item xs={12} sm={12}>
+                      <PasswordChecklist
+                        rules={[
+                          "minLength",
+                          "specialChar",
+                          "number",
+                          "capital",
+                          "match",
+                        ]}
+                        minLength={8}
+                        specialCharLength={1}
+                        numberLength={1}
+                        capitalLength={1}
+                        lowerCaseLength={1}
+                        value={password}
+                        valueAgain={confirmpassword}
+                        onChange={(isValid) => setValidPassword(isValid)}
+                      />
+                    </Grid>
+                  )}
                   <Grid item xs={12} sm={6}>
-                  {/* <ReactGoogleAutocomplete
+                    {/* <ReactGoogleAutocomplete
   apiKey={"AIzaSyDezvcxcWVk19G542NjV5St1IGSf0ixwIY"}
   onPlaceSelected={(place) => console.log(place)}
 /> */}
-                    
+
                     {/* <InputLabel htmlFor="address">
                         Address
                       </InputLabel> */}
-                     {/* <input className="address-input" ref={ref}></input> */}
+                    {/* <input className="address-input" ref={ref}></input> */}
 
-                     <AutoFillForm handleAddress={handleAddress}/>
-                    
+                    <AutoFillForm handleAddress={handleAddress} />
+
                     <Typography variant="body2" color="error" align="left">
                       {errors.address?.message}
                     </Typography>
                   </Grid>
+
                   <Grid item xs={12} sm={6}>
-                  <TextField
+                    <TextField
                       name="dob"
                       required
                       fullWidth
@@ -402,13 +450,12 @@ const Signup = () => {
                       name="phone"
                       country={"lk"}
                       value={phonenumber}
-                      onlyCountries={["gb","lk"]}
+                      onlyCountries={["gb", "lk"]}
                       onChange={(phone) => {
                         setPhonenumber(phone);
                         setValue("phone", phone);
                         trigger("phone");
                       }}
-                    
                       specialLabel={"Phone number"}
                     />
 
@@ -426,24 +473,30 @@ const Signup = () => {
                       autoFocus
                       value={uTRNumber}
                       disabled={checked}
-                      onChange={(e)=>{
-                        (e.target.value = e.target.value
-                            .replace(/[^\dA-Z]/g, '')
-                            .replace(/(.{5})/g, '$1 ')
-                            .trim())
-                            setuTRNumber(e.target.value)
-                            setValue("uTRNumber", e.target.value);
-                            trigger("uTRNumber");
+                      onChange={(e) => {
+                        e.target.value = e.target.value
+                          .replace(/[^\dA-Z]/g, "")
+                          .replace(/(.{5})/g, "$1 ")
+                          .trim();
+                        setuTRNumber(e.target.value);
+                        setValue("uTRNumber", e.target.value);
+                        trigger("uTRNumber");
                       }}
-                     inputProps={{ maxLength: 11 }}
+                      inputProps={{ maxLength: 11 }}
                     />
                     <Grid item xs={12}>
-                <FormControlLabel
-                  control={<Checkbox checked={checked}
-                  onChange={handleChange} value="" color="primary" />}
-                  label="I don't have a UTR number"
-                />
-              </Grid>
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            checked={checked}
+                            onChange={handleChange}
+                            value=""
+                            color="primary"
+                          />
+                        }
+                        label="I don't have a UTR number"
+                      />
+                    </Grid>
                     <Typography variant="body2" color="error" align="left">
                       {errors.uTRNumber?.message}
                     </Typography>
@@ -464,7 +517,6 @@ const Signup = () => {
                     </Typography>
                   </Grid>
                 </Grid>
-                
               </Box>
             </Box>
           </Container>
@@ -474,7 +526,9 @@ const Signup = () => {
             <Link to="/signup">Create account</Link>
           </div> */}
 
-          <button disabled={loading} className="button is-medium is-warning">Submit</button>
+          <button disabled={!formValid() || loading} className="button is-medium is-warning">
+            Submit
+          </button>
         </form>
       </div>
     </div>

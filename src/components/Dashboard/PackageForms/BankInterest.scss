@@ -8,14 +8,24 @@
     margin-top: -1rem;
     align-self: center;
     padding: 2rem;
-    .back-button{
+    .heading-form{
         display: flex;
-        flex-direction: row;
-        gap:1rem;
+        justify-content: space-between;
+        align-items: baseline;
         margin-top: -2rem;
         margin-bottom: 1rem;
-        cursor: pointer;
+        .back-button{
+            display: flex;
+            flex-direction: row;
+            gap:1rem;
+            cursor: pointer;
+            width: 100px;
+        }
+        &>:last-child{
+            width: 100px;
+        }
     }
+    
         // .header{
         //     display: flex;
         //     flex-direction: row;

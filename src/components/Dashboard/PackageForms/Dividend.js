@@ -4,9 +4,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -66,7 +69,7 @@ const getMonths = (fromDate, toDate) => {
       months.push({ year, month, amount: "" });
     }
   }
-  
+
   return months;
 };
 
@@ -172,6 +175,11 @@ const Dividend = () => {
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
@@ -248,7 +256,7 @@ const Dividend = () => {
       ]);
       setAddress("");
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -269,7 +277,9 @@ const Dividend = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Dividend" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Dividend" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -279,7 +289,7 @@ const Dividend = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [ ...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -359,10 +369,15 @@ const Dividend = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    if(name==='companyName'|| name==='receivedDate'){
+    if (name === "companyName" || name === "receivedDate") {
       values[i][name] = value;
-    }else{
-      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    } else if (name === "dividend") {
+      values[i][name] = value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1");
+    } else {
+      values[i][name] = value.replace(/[^\dA-Z]/g, "");
     }
     setExpensesList(values);
   }
@@ -470,6 +485,11 @@ const Dividend = () => {
           },
         ]);
       }
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return { url: n.url, id: n.id };
+        }),
+      ]);
     } catch (err) {
       // console.log(err);
       setLoading(false);
@@ -485,10 +505,16 @@ const Dividend = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -623,32 +649,36 @@ const Dividend = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId?<button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Edit'}
-            </button>:<><button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save'}
-            </button>
-            
-            <button
-              className="button is-success"
-              onClick={handleSubmit(onSubmitAndAddAnother)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save and Add another'}
-              
-            </button></>}
-            
+            {packageId ? (
+              <button
+                className="button is-warning"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
+              >
+                <SaveIcon />
+                {isLoading ? "Submitting" : "Edit"}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="button is-warning"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save"}
+                </button>
+
+                <button
+                  className="button is-success"
+                  onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save and Add another"}
+                </button>
+              </>
+            )}
           </div>
         </form>
       )}

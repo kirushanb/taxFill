@@ -11,6 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import loadingAnim from "../../../static/working.json";
+import { getQueryStringParam } from '../PackageForms/Employment';
 import "./EditPackage.scss";
 const defaultPackages = [
   "Employment",
@@ -31,7 +32,7 @@ const EditPackage = () => {
   const navigate = useNavigate();
   const params = useParams();
   const axiosPrivate = useAxiosPrivate();
-  
+  const reference = getQueryStringParam("reference");
   useEffect(() => {
     const element = document.querySelector("#loading");
     if (element) {
@@ -75,13 +76,13 @@ const EditPackage = () => {
     navigate(
       `/${packageName.toLowerCase().replace(/\s/g, "")}/${
         params.orderId
-      }/?packageId=${id}`
+      }/?packageId=${id}&reference=${reference}`
     );
   };
 
   const handleAdd = (packageName) => {
     navigate(
-      `/${packageName.toLowerCase().replace(/\s/g, "")}/${params.orderId}`
+      `/${packageName.toLowerCase().replace(/\s/g, "")}/${params.orderId}/?reference=${reference}`
     );
   };
 

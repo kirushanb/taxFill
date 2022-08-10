@@ -46,17 +46,11 @@ const Employment = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: 0,
+      amount: '0',
     },
   ]);
   const params = useParams();
   const [cookies, setCookie] = useCookies();
-  // const { ref, autocompleteRef } = usePlacesWidget({
-  //   apiKey: "YOUR_GOOGLE_MAPS_API_KEY",
-  //   onPlaceSelected: (place) => {
-  //     // console.log(place);
-  //   },
-  // });
 
   const validationSchema = Yup.object().shape({
     employerName: Yup.string().required("Employer name must not be empty."),
@@ -82,12 +76,15 @@ const Employment = () => {
     formState,
     reset,
     setValue,
-    // trigger,
-    // getValues,
   } = useForm(formOptions);
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const postCall = (data) => {
     const response = axiosPrivate.post("/EmploymentDetail", {
@@ -210,12 +207,15 @@ const Employment = () => {
           }
         }
       }
-      toast.success(packageId?"Employment Details Edited Successfully":"Employment Details Saved Successfully");
+      toast.success(
+        packageId
+          ? "Employment Details Edited Successfully"
+          : "Employment Details Saved Successfully"
+      );
     } catch (err) {
       setLoading(false);
       toast.error(err);
     }
-
   };
 
   const onSubmitAndAddAnother = async (data) => {
@@ -241,7 +241,10 @@ const Employment = () => {
     if (name === "description") {
       values[i][name] = value;
     } else {
-      values[i][name] = value.replace(/[^\dA-Z]/g, "");
+      values[i][name] = value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1");
     }
 
     setExpensesList(values);
@@ -249,7 +252,7 @@ const Employment = () => {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     } else {
       setOverallexpenses(false);
@@ -260,11 +263,11 @@ const Employment = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: 0,
+      amount: '0',
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -273,7 +276,7 @@ const Employment = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -292,7 +295,10 @@ const Employment = () => {
 
   const handleOverallExpenses = (e) => {
     setOverallexpensesValue(
-      (e.target.value = e.target.value.replace(/[^\dA-Z]/g, ""))
+      (e.target.value = e.target.value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"))
     );
     if (e.target.value) {
       setExpenseListHide(true);
@@ -353,16 +359,21 @@ const Employment = () => {
 
   return (
     <div className="Employment">
-      
       {isLoading ? (
         <CircularProgress />
       ) : (
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-            <div className="back-button" onClick={() => navigate(-1)}>
-              <ArrowBackIosNewIcon className="back-icon" />
-              <h5 className="title is-5">Back</h5>
+            <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
             </div>
             <Box
               sx={{
@@ -372,12 +383,7 @@ const Employment = () => {
                 alignItems: "center",
               }}
             >
-              {/* <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-                <LockOutlinedIcon />
-              </Avatar> */}
-              {/* <Typography component="h1" variant="h5">
-                Sign up
-              </Typography> */}
+              
               <p className="title is-3">Employment Details</p>
               <Box sx={{ mt: 1 }}>
                 <Grid container spacing={3}>
@@ -441,10 +447,10 @@ const Employment = () => {
                       onChange={(e) =>
                         setValue(
                           "incomeFrom",
-                          (e.target.value = e.target.value.replace(
-                            /[^\dA-Z]/g,
-                            ""
-                          ))
+                          (e.target.value = e.target.value
+                            .replace(/[^\d.]/g, "")
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            .replace(/(\.\d{1,2}).*/g, "$1"))
                         )
                       }
                       // {...register("incomeFrom")}
@@ -471,10 +477,10 @@ const Employment = () => {
                       onChange={(e) =>
                         setValue(
                           "taxFrom",
-                          (e.target.value = e.target.value.replace(
-                            /[^\dA-Z]/g,
-                            ""
-                          ))
+                          (e.target.value = e.target.value
+                            .replace(/[^\d.]/g, "")
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            .replace(/(\.\d{1,2}).*/g, "$1"))
                         )
                       }
                       placeholder="Tax from P60/P45"

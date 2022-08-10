@@ -84,8 +84,9 @@ export default function DataTable() {
     navigate(`/select/${id}/?reference=${taxYear}`);
   },[navigate]);
 
-  const handleOnClickEditData = React.useCallback((id) => {
-    navigate(`/edit/${id}`);
+  const handleOnClickEditData = React.useCallback((id, list) => {
+    const taxYear = list.filter(n=> n.id===id)[0]?.taxYear;
+    navigate(`/edit/${id}/?reference=${taxYear}`);
   },[navigate]);
   
   React.useEffect(() => {
@@ -97,7 +98,7 @@ export default function DataTable() {
         );
         setList(response.data.result.data);
 
-        setRows([
+        const filtered =[
           ...response.data.result.data.map((n) =>
             createData(
               n.serialNo,
@@ -113,7 +114,7 @@ export default function DataTable() {
                 </button>
                 <button
                   style={{ marginLeft: "0.5rem" }}
-                  onClick={() => handleOnClickEditData(n.id)}
+                  onClick={() => handleOnClickEditData(n.id, response.data.result.data)}
                   className="button is-warning is-small"
                 >
                   <AddchartIcon />
@@ -122,8 +123,8 @@ export default function DataTable() {
               </div>
             )
           ),
-        ]);
-        
+        ];
+        setRows([...filtered.sort((a,b)=> moment(b.timeDAte,"DD/MM/YYYY, HH:mm:ss") - moment(a.timeDAte,"DD/MM/YYYY, HH:mm:ss"))]);
         setLoading(false);
       } catch (err) {
         console.error(err);

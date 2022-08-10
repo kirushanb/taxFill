@@ -33,6 +33,7 @@
     "react-google-autocomplete": "^2.6.1",
     "react-hook-form": "^7.28.0",
     "react-material-file-upload": "^0.0.4",
+    "react-multiple-password-validator": "^2021.10.28-1.1.5",
     "react-otp-input-rc-17": "^2.4.1-minor",
     "react-phone-input-2": "^2.15.0",
     "react-router-dom": "^6.2.2",

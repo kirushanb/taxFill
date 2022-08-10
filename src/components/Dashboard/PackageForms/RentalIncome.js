@@ -116,7 +116,7 @@ export const getMonthsWithDataAdd = (fromDate, toDate, data) => {
           id: data.filter((x) => x.month === month)[0].id,
         });
       } else {
-        months.push({ year, month, amount: "" });
+        months.push({ year, month, amount: "0" });
       }
     }
   }
@@ -140,7 +140,7 @@ const RentalIncome = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: 0,
+      amount: '0',
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -184,6 +184,11 @@ const RentalIncome = () => {
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
@@ -263,7 +268,7 @@ const RentalIncome = () => {
       setExpensesList([{ description: "", amount: "" }]);
       setAddress("");
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -356,11 +361,11 @@ const RentalIncome = () => {
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     }
   };
@@ -368,17 +373,19 @@ const RentalIncome = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    if(name==='description'){
+    if (name === "description") {
       values[i][name] = value;
-    }else{
-      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    } else {
+      values[i][name] = value .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1");
     }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     } else {
       setOverallexpenses(false);
@@ -389,11 +396,11 @@ const RentalIncome = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: 0,
+      amount: '0',
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -402,12 +409,14 @@ const RentalIncome = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setOverallexpensesValue(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+    );
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -452,8 +461,13 @@ const RentalIncome = () => {
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
-    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setValue(
+      "totalTurnover",
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+    );
+    setTotalTurnover(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+    );
   };
 
   useEffect(() => {
@@ -511,7 +525,11 @@ const RentalIncome = () => {
           }),
         ]);
       }
-
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return { url: n.url, id: n.id };
+        }),
+      ]);
       setOverallexpensesValue(response.data.result.totalExpenses);
     } catch (err) {
       // console.log(err);
@@ -528,9 +546,15 @@ const RentalIncome = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-            <div className="back-button" onClick={() => navigate(-1)}>
-              <ArrowBackIosNewIcon className="back-icon" />
-              <h5 className="title is-5">Back</h5>
+          <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
             </div>
             <Box
               sx={{

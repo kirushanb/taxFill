@@ -42,7 +42,7 @@ const getMonths = (fromDate, toDate) => {
     let month = year === fromYear ? fromMonth : 0;
     const monthLimit = year === toYear ? toMonth : 11;
     for (; month <= monthLimit; month++) {
-      months.push({ year, month, amount: "" });
+      months.push({ year, month, amount: "0" });
     }
   }
   return months;
@@ -93,7 +93,7 @@ const Partnership = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: 0,
+      amount: '0',
     },
   ]);
   const [partnershipList, setPartnershipList] = React.useState([
@@ -263,7 +263,7 @@ const Partnership = () => {
       setNetProfit("");
       setAddress("");
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -347,15 +347,18 @@ const Partnership = () => {
   const handleInputMonth = (i, event) => {
     const values = [...monthsList];
     const { name, value } = event.target;
-    values[i]["amount"] = value.replace(/[^\dA-Z]/g, '');
+    values[i]["amount"] = value
+    .replace(/[^\d.]/g, "")
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    .replace(/(\.\d{1,2}).*/g, "$1");
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     }
   };
@@ -363,20 +366,23 @@ const Partnership = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    if(name==='description'){
+    if (name === "description") {
       values[i][name] = value;
-    }else{
-      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    } else {
+      values[i][name] = value
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1");
     }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
       setNetProfit(
-        parseInt(totalTurnover) -
-          parseInt(values.reduce((acc, curr) => acc + parseInt(curr.amount), 0))
+        parseFloat(totalTurnover) -
+          parseFloat(values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2))
       );
     } else {
       setOverallexpenses(false);
@@ -394,11 +400,11 @@ const Partnership = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: 0,
+      amount: '0',
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -416,7 +422,7 @@ const Partnership = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -427,22 +433,34 @@ const Partnership = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setOverallexpensesValue(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1")
+    ));
     if (e.target.value) {
       setExpenseListHide(true);
-      setNetProfit(parseInt(totalTurnover) - parseInt(e.target.value));
+      setNetProfit(parseFloat(totalTurnover) - parseFloat(e.target.value));
     } else {
       setExpenseListHide(false);
     }
   };
 
-  const taxYear = cookies?.order?.taxYear ? cookies.order.taxYear : getQueryStringParam("reference") ? getQueryStringParam("reference") : 0;
-
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const handleStartDate = (e) => {
     const date = new Date(e.target.value);
-    if(!(date.getFullYear()===parseInt(taxYear) || date.getFullYear()===(parseInt(taxYear)-1))){
-      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+    if (
+      !(
+        date.getFullYear() === parseInt(taxYear) ||
+        date.getFullYear() === parseInt(taxYear) - 1
+      )
+    ) {
+      toast.error(
+        `You could only select dates between selected Tax Year ${taxYear}`
+      );
       return;
     }
     setStartDate(e.target.value);
@@ -450,20 +468,25 @@ const Partnership = () => {
 
   const handleEndDate = (e) => {
     const date = new Date(e.target.value);
-    const selectedYear=date.getFullYear();
-    if(!startDate){
+    const selectedYear = date.getFullYear();
+    if (!startDate) {
       toast.warn(`Please select start date first`);
       return;
-    }else if(selectedYear!==(parseInt(taxYear))){
-      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+    } else if (selectedYear !== parseInt(taxYear)) {
+      toast.error(
+        `You could only select dates between selected Tax Year ${taxYear}`
+      );
       return;
-    }else if(new Date(startDate).getFullYear()===selectedYear){
-      if(new Date(startDate).getMonth() > date.getMonth()){
+    } else if (new Date(startDate).getFullYear() === selectedYear) {
+      if (new Date(startDate).getMonth() > date.getMonth()) {
         toast.error(`End date should be greater than start date`);
         return;
       }
-    }else if(new Date(startDate).getFullYear()===selectedYear && new Date(startDate).getMonth()===date.getMonth()){
-      if(new Date(startDate).getDate()> date.getDate()){
+    } else if (
+      new Date(startDate).getFullYear() === selectedYear &&
+      new Date(startDate).getMonth() === date.getMonth()
+    ) {
+      if (new Date(startDate).getDate() > date.getDate()) {
         toast.error(`End date should be greater than start date`);
         return;
       }
@@ -501,8 +524,13 @@ const Partnership = () => {
   };
 
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
-    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setValue(
+      "totalTurnover",
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+    );
+    setTotalTurnover(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+    );
   };
 
   const handleCalculateProfit = (share) => {
@@ -592,6 +620,11 @@ const Partnership = () => {
       } else if (response.data.result.totalTurnOver) {
         setNetProfit(parseInt(response.data.result.totalTurnOver.toString()));
       }
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return { url: n.url, id: n.id };
+        }),
+      ]);
     } catch (err) {
       console.log(err);
       setLoading(false);
@@ -607,9 +640,15 @@ const Partnership = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-            <div className="back-button" onClick={() => navigate(-1)}>
-              <ArrowBackIosNewIcon className="back-icon" />
-              <h5 className="title is-5">Back</h5>
+            <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
             </div>
             <Box
               sx={{

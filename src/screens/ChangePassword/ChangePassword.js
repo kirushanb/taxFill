@@ -31,7 +31,7 @@ import useAxiosClient from "../../hooks/useAxiosClient";
 import { toast, ToastContainer } from "react-toastify";
 import { useCookies } from "react-cookie";
 import axios from "axios";
-
+import PasswordChecklist from "react-multiple-password-validator";
 const ChangePassword = () => {
   let navigate = useNavigate();
   const [phonenumber, setPhonenumber] = React.useState("");
@@ -43,6 +43,7 @@ const ChangePassword = () => {
   const [password, setPassword] = React.useState("");
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
   const [confirmpassword, setConfirmPassword] = React.useState("");
+  const [validPassword, setValidPassword] = React.useState(false);
   const { setAuth } = useAuth();
   const [, setPlaces] = React.useState("");
   const axiosClient = useAxiosClient();
@@ -173,6 +174,13 @@ const ChangePassword = () => {
     setAddress(value);
   };
 
+  const formValid = () => {
+    if (!validPassword) {
+      return false;
+    }
+    return true;
+  };
+
   return (
     <div className="ChangePassword">
       <ToastContainer />
@@ -286,7 +294,27 @@ const ChangePassword = () => {
                     </Typography>
                   </Grid>
 
-                  
+                  {(password || confirmpassword) && (
+                    <Grid item xs={12} sm={12}>
+                      <PasswordChecklist
+                        rules={[
+                          "minLength",
+                          "specialChar",
+                          "number",
+                          "capital",
+                          "match",
+                        ]}
+                        minLength={8}
+                        specialCharLength={1}
+                        numberLength={1}
+                        capitalLength={1}
+                        lowerCaseLength={1}
+                        value={password}
+                        valueAgain={confirmpassword}
+                        onChange={(isValid) => setValidPassword(isValid)}
+                      />
+                    </Grid>
+                  )}
 
                     
                   
@@ -301,7 +329,7 @@ const ChangePassword = () => {
             <Link to="/signup">Create account</Link>
           </div> */}
 
-          <button disabled={loading} className="button is-medium is-warning">
+          <button disabled={!formValid()||loading} className="button is-medium is-warning">
             Submit
           </button>
         </form>

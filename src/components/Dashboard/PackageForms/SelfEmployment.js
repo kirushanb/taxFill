@@ -4,9 +4,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -70,7 +73,7 @@ const getMonths = (fromDate, toDate) => {
       months.push({ year, month, amount: "" });
     }
   }
-  
+
   return months;
 };
 
@@ -113,7 +116,7 @@ export const getMonthsWithDataAdd = (fromDate, toDate, data) => {
           id: data.filter((x) => x.month === month)[0].id,
         });
       } else {
-        months.push({ year, month, amount: "" });
+        months.push({ year, month, amount: "0" });
       }
     }
   }
@@ -137,7 +140,7 @@ const SelfEmployment = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: 0,
+      amount: '0',
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -185,7 +188,11 @@ const SelfEmployment = () => {
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
-  const taxYear = cookies?.order?.taxYear ? cookies.order.taxYear : getQueryStringParam("reference") ? getQueryStringParam("reference") : 0;
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
@@ -283,7 +290,7 @@ const SelfEmployment = () => {
       setExpensesList([{ description: "", amount: "" }]);
       setAddress("");
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -304,7 +311,9 @@ const SelfEmployment = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Self employment" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Self employment" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -314,7 +323,7 @@ const SelfEmployment = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -370,15 +379,17 @@ const SelfEmployment = () => {
   const handleInputMonth = (i, event) => {
     const values = [...monthsList];
     const { name, value } = event.target;
-    values[i]["amount"] = value.replace(/[^\dA-Z]/g, '');
+    values[i]["amount"] = value.replace(/[^\d.]/g, "")
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+    .replace(/(\.\d{1,2}).*/g, "$1");
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     }
   };
@@ -386,17 +397,19 @@ const SelfEmployment = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    if(name==='description'){
+    if (name === "description") {
       values[i][name] = value;
-    }else{
-      values[i][name] = value.replace(/[^\dA-Z]/g, '');
+    } else {
+      values[i][name] = value.replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1");
     }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
       );
     } else {
       setOverallexpenses(false);
@@ -407,11 +420,11 @@ const SelfEmployment = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: 0,
+      amount: '0',
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      expensesList.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
@@ -420,12 +433,16 @@ const SelfEmployment = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + parseInt(curr.amount), 0)
+      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
     );
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setOverallexpensesValue(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"))
+    );
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -435,8 +452,15 @@ const SelfEmployment = () => {
 
   const handleStartDate = (e) => {
     const date = new Date(e.target.value);
-    if(!(date.getFullYear()===parseInt(taxYear) || date.getFullYear()===(parseInt(taxYear)-1))){
-      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+    if (
+      !(
+        date.getFullYear() === parseInt(taxYear) ||
+        date.getFullYear() === parseInt(taxYear) - 1
+      )
+    ) {
+      toast.error(
+        `You could only select dates between selected Tax Year ${taxYear}`
+      );
       return;
     }
     setStartDate(e.target.value);
@@ -444,20 +468,25 @@ const SelfEmployment = () => {
 
   const handleEndDate = (e) => {
     const date = new Date(e.target.value);
-    const selectedYear=date.getFullYear();
-    if(!startDate){
+    const selectedYear = date.getFullYear();
+    if (!startDate) {
       toast.warn(`Please select start date first`);
       return;
-    }else if(selectedYear!==(parseInt(taxYear))){
-      toast.error(`You could only select dates between slected Tax Year ${taxYear}`);
+    } else if (selectedYear !== parseInt(taxYear)) {
+      toast.error(
+        `You could only select dates between selected Tax Year ${taxYear}`
+      );
       return;
-    }else if(new Date(startDate).getFullYear()===selectedYear){
-      if(new Date(startDate).getMonth() > date.getMonth()){
+    } else if (new Date(startDate).getFullYear() === selectedYear) {
+      if (new Date(startDate).getMonth() > date.getMonth()) {
         toast.error(`End date should be greater than start date`);
         return;
       }
-    }else if(new Date(startDate).getFullYear()===selectedYear && new Date(startDate).getMonth()===date.getMonth()){
-      if(new Date(startDate).getDate()> date.getDate()){
+    } else if (
+      new Date(startDate).getFullYear() === selectedYear &&
+      new Date(startDate).getMonth() === date.getMonth()
+    ) {
+      if (new Date(startDate).getDate() > date.getDate()) {
         toast.error(`End date should be greater than start date`);
         return;
       }
@@ -494,8 +523,17 @@ const SelfEmployment = () => {
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {
-    setValue("totalTurnover", e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
-    setTotalTurnover(e.target.value=e.target.value.replace(/[^\dA-Z]/g, ''));
+    setValue(
+      "totalTurnover",
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"))
+    );
+    setTotalTurnover(
+      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"))
+    );
   };
 
   useEffect(() => {
@@ -552,20 +590,17 @@ const SelfEmployment = () => {
         )
       );
 
-      if (response.data.result?.attachments?.length > 0) {
-        setUrls([
-          ...response.data.result.attachments.map((n) => {
-            return { url: n.url, id: n.id };
-          }),
-        ]);
-      }
-
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return { url: n.url, id: n.id };
+        }),
+      ]);
       setOverallexpensesValue(response.data.result.totalExpenses);
+      setLoading(false);
     } catch (err) {
       // console.log(err);
       setLoading(false);
     }
-    setLoading(false);
   };
 
   return (
@@ -576,10 +611,16 @@ const SelfEmployment = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+          <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -844,7 +885,6 @@ const SelfEmployment = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                         
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}
@@ -890,6 +930,7 @@ const SelfEmployment = () => {
                   ))}
                   <Grid item xs={12} sm={12}>
                     <UploadFiles handleUpload={handleUpload} />
+
                     {packageId && (
                       <>
                         <ol style={{ padding: "1rem" }}>
@@ -910,32 +951,36 @@ const SelfEmployment = () => {
           </Container>
 
           <div className="footer-save-button">
-            {packageId?<button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Edit'}
-            </button>:<><button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save'}
-            </button>
-            
-            <button
-              className="button is-success"
-              onClick={handleSubmit(onSubmitAndAddAnother)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save and Add another'}
-              
-            </button></>}
-            
+            {packageId ? (
+              <button
+                className="button is-warning"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
+              >
+                <SaveIcon />
+                {isLoading ? "Submitting" : "Edit"}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="button is-warning"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save"}
+                </button>
+
+                <button
+                  className="button is-success"
+                  onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save and Add another"}
+                </button>
+              </>
+            )}
           </div>
         </form>
       )}

@@ -4,9 +4,12 @@ import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
 import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
-  Box, CircularProgress,
+  Box,
+  CircularProgress,
   Container,
-  Fab, Grid, InputLabel
+  Fab,
+  Grid,
+  InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import TextField from "@mui/material/TextField";
@@ -132,10 +135,10 @@ const BankInterest = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       bankName: "",
-      accountNumber:"",
+      accountNumber: "",
       grossInterest: 0,
       receivedDate: "",
-      bankInterestIncome:"",
+      bankInterestIncome: "",
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -156,9 +159,7 @@ const BankInterest = () => {
   const formOptions = {
     mode: "onChange",
     resolver: yupResolver(validationSchema),
-    defaultValues: {
-     
-    },
+    defaultValues: {},
   };
 
   const {
@@ -173,10 +174,15 @@ const BankInterest = () => {
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
+  const taxYear = cookies?.order?.taxYear
+    ? cookies.order.taxYear
+    : getQueryStringParam("reference")
+    ? getQueryStringParam("reference")
+    : 0;
 
   const postCall = (data) => {
     const response = axiosPrivate.post(
-      'https://tax.api.cyberozunu.com/api/v1.1/BankDetail',
+      "https://tax.api.cyberozunu.com/api/v1.1/BankDetail",
       {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
 
@@ -204,28 +210,27 @@ const BankInterest = () => {
 
   const putCall = (data) => {
     const response = axiosPrivate.put(
-      'https://tax.api.cyberozunu.com/api/v1.1/BankDetail',
+      "https://tax.api.cyberozunu.com/api/v1.1/BankDetail",
       {
         id: packageId,
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         details:
-        expensesList.length === 0
-          ? []
-          : expensesList.length === 1 && expensesList[0].bankName === ""
-          ? []
-          : [
-              ...expensesList.map((n) => {
-                return {
-                  id:n.id,
-                  bankName: n.bankName,
-                  accountNumber: n.accountNumber,
-                  grossInterest: parseInt(n.grossInterest),
-                  receivedDate: n.receivedDate,
-                  // bankInterestIncome: n.bankInterestIncome.toString()
-                };
-              }),
-            ],
-        
+          expensesList.length === 0
+            ? []
+            : expensesList.length === 1 && expensesList[0].bankName === ""
+            ? []
+            : [
+                ...expensesList.map((n) => {
+                  return {
+                    id: n.id,
+                    bankName: n.bankName,
+                    accountNumber: n.accountNumber,
+                    grossInterest: parseInt(n.grossInterest),
+                    receivedDate: n.receivedDate,
+                    // bankInterestIncome: n.bankInterestIncome.toString()
+                  };
+                }),
+              ],
       }
     );
 
@@ -239,16 +244,18 @@ const BankInterest = () => {
 
       setLoading(false);
       reset();
-      setExpensesList([{
-        bankName: "",
-        accountNumber:"",
-        grossInterest: 0,
-        receivedDate: "",
-        bankInterestIncome:"",
-      },]);
+      setExpensesList([
+        {
+          bankName: "",
+          accountNumber: "",
+          grossInterest: 0,
+          receivedDate: "",
+          bankInterestIncome: "",
+        },
+      ]);
       setAddress("");
       setLoading(false);
-      
+
       setUrls([]);
       setOverallexpensesValue("");
       setTotalTurnover("");
@@ -261,9 +268,7 @@ const BankInterest = () => {
         if (params.orderId) {
           navigate("/account");
         } else {
-          
           if (cookies.order.selectedPackages.length > 1) {
-           
             const filteredEmployement = cookies.order.selectedPackages.filter(
               (n) => n.package.name === "Bank interest"
             );
@@ -271,7 +276,9 @@ const BankInterest = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) => n.package.name !== "Bank interest" && n.package.name !== "Capital gain"
+              (n) =>
+                n.package.name !== "Bank interest" &&
+                n.package.name !== "Capital gain"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -281,7 +288,7 @@ const BankInterest = () => {
               "order",
               {
                 oderId: cookies.order.oderId,
-                selectedPackages: [ ...filteredOther, ...filteredEmployement ],
+                selectedPackages: [...filteredOther, ...filteredEmployement],
               },
               {
                 path: "/",
@@ -318,13 +325,15 @@ const BankInterest = () => {
       const response = await postCall(data);
 
       reset();
-      setExpensesList([{
-        bankName: "",
-        accountNumber: "",
-        grossInterest: 0,
-        receivedDate: "",
-        bankInterestIncome:"",
-      },]);
+      setExpensesList([
+        {
+          bankName: "",
+          accountNumber: "",
+          grossInterest: 0,
+          receivedDate: "",
+          bankInterestIncome: "",
+        },
+      ]);
       setLoading(false);
       toast.success("Bank Interest Details Saved Successfully");
       setUrls([]);
@@ -359,13 +368,12 @@ const BankInterest = () => {
   function handleChangeInput(i, event) {
     const values = [...expensesList];
     const { name, value } = event.target;
-    if(name==='grossInterest'){
-      values[i][name] = value.replace(/[^\dA-Z]/g, '');
-    }else{
+    if (name === "grossInterest") {
+      values[i][name] = value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1");
+    } else {
       values[i][name] = value;
     }
     setExpensesList(values);
-    
   }
 
   function handleAddInput() {
@@ -375,14 +383,12 @@ const BankInterest = () => {
       amount: 0,
     });
     setExpensesList(values);
-    
   }
 
   function handleRemoveInput(i) {
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
-   
   }
 
   const handleOverallExpenses = (e) => {
@@ -448,24 +454,36 @@ const BankInterest = () => {
       const response = await axiosPrivate.get(
         `https://tax.api.cyberozunu.com/api/v1.1/BankDetail/${packageId}`
       );
-      
+
       if (response.data.result.details.length > 0) {
         setExpensesList([
           ...response.data.result.details.map((n) => {
-            return { id: n.id, bankName: n.bankName,accountNumber:n.accountNumber, grossInterest: n.grossInterest, receivedDate:n.receivedDate,bankInterestIncome:n.bankInterestIncome };
+            return {
+              id: n.id,
+              bankName: n.bankName,
+              accountNumber: n.accountNumber,
+              grossInterest: n.grossInterest,
+              receivedDate: n.receivedDate,
+              bankInterestIncome: n.bankInterestIncome,
+            };
           }),
         ]);
       } else {
-        setExpensesList([{
-          bankName: "",
-          accountNumber:'',
-          grossInterest: 0,
-          receivedDate: "",
-          bankInterestIncome:"",
-        },]);
+        setExpensesList([
+          {
+            bankName: "",
+            accountNumber: "",
+            grossInterest: 0,
+            receivedDate: "",
+            bankInterestIncome: "",
+          },
+        ]);
       }
-
-      
+      setUrls([
+        ...response.data.result.attachments.map((n) => {
+          return { url: n.url, id: n.id };
+        }),
+      ]);
     } catch (err) {
       // console.log(err);
       setLoading(false);
@@ -481,10 +499,16 @@ const BankInterest = () => {
         <form>
           <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="back-button" onClick={() => navigate(-1)}>
-            <ArrowBackIosNewIcon className="back-icon" />
-            <h5 className="title is-5">Back</h5>
-          </div>
+            <div className="heading-form">
+              <div className="back-button" onClick={() => navigate(-1)}>
+                <ArrowBackIosNewIcon className="back-icon" />
+                <h5 className="title is-5">Back</h5>
+              </div>
+              <h5 className="title is-5">
+                {taxYear ? `Tax Year ${taxYear}` : ""}
+              </h5>
+              <div> </div>
+            </div>
             <Box
               sx={{
                 // marginTop: 8,
@@ -502,12 +526,6 @@ const BankInterest = () => {
               <p className="title is-3">Bank Interest</p>
               <Box sx={{ mt: 1 }}>
                 <Grid container spacing={3}>
-                  
-
-                 
-
-                  
-                 
                   {expensesList.map((field, idx) => (
                     <React.Fragment key={field + "-" + idx}>
                       <Grid item xs={11} sm={11}>
@@ -524,11 +542,10 @@ const BankInterest = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Bank Name"
                         />
-                       
                       </Grid>
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        Account Number
+                          Account Number
                         </InputLabel>
                         <TextField
                           required
@@ -540,11 +557,10 @@ const BankInterest = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Account Number"
                         />
-                       
                       </Grid>
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        Gross Interest
+                          Gross Interest
                         </InputLabel>
                         <TextField
                           required
@@ -555,12 +571,11 @@ const BankInterest = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Gross Interest"
                         />
-                       
                       </Grid>
-                      
+
                       <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
-                        Received Date
+                          Received Date
                         </InputLabel>
                         <TextField
                           required
@@ -572,7 +587,6 @@ const BankInterest = () => {
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Received Date"
                         />
-                       
                       </Grid>
                       {/* <Grid item xs={11} sm={11}>
                         <InputLabel htmlFor="payee" required>
@@ -622,39 +636,42 @@ const BankInterest = () => {
                       </Grid>
                     </React.Fragment>
                   ))}
-                  
                 </Grid>
               </Box>
             </Box>
           </Container>
 
           <div className="footer-save-button">
-            {packageId?<button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Edit'}
-            </button>:<><button
-              className="button is-warning"
-              onClick={handleSubmit(onSubmit)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save'}
-            </button>
-            
-            <button
-              className="button is-success"
-              onClick={handleSubmit(onSubmitAndAddAnother)}
-              disabled={isLoading}
-            >
-              <SaveIcon />
-              {isLoading?'Submitting':'Save and Add another'}
-              
-            </button></>}
-            
+            {packageId ? (
+              <button
+                className="button is-warning"
+                onClick={handleSubmit(onSubmit)}
+                disabled={isLoading}
+              >
+                <SaveIcon />
+                {isLoading ? "Submitting" : "Edit"}
+              </button>
+            ) : (
+              <>
+                <button
+                  className="button is-warning"
+                  onClick={handleSubmit(onSubmit)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save"}
+                </button>
+
+                <button
+                  className="button is-success"
+                  onClick={handleSubmit(onSubmitAndAddAnother)}
+                  disabled={isLoading}
+                >
+                  <SaveIcon />
+                  {isLoading ? "Submitting" : "Save and Add another"}
+                </button>
+              </>
+            )}
           </div>
         </form>
       )}

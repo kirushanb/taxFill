@@ -70,7 +70,6 @@ const OTP = () => {
         const response = await axiosClient.post('https://tax.api.cyberozunu.com/api/v1.1/Authentication/2FA-authentication',
             JSON.stringify({ token: auth.accessToken2FA, code: otp })
         );
-        console.log(response?.data.result);
        
         const accessToken = response?.data?.result?.token;
         const refreshToken = response?.data?.result?.refreshToken;
@@ -79,6 +78,9 @@ const OTP = () => {
             path: "/"
           });
         setCookie("refreshToken", refreshToken, {
+          path: "/"
+        });
+        setCookie("userId", response?.data?.result?.userId, {
           path: "/"
         });
         setLoading(false);

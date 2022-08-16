@@ -97,7 +97,6 @@ export default function DataTable() {
           "https://tax.api.cyberozunu.com/api/v1.1/Order"
         );
         setList(response.data.result.data);
-
         const filtered =[
           ...response.data.result.data.map((n) =>
             createData(

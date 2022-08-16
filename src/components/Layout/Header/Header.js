@@ -26,6 +26,12 @@ const Header = () => {
     setCookie("user", "", {
       path: "/"
     });
+    setCookie("refreshToken", "", {
+      path: "/"
+    });
+    setCookie("userId", "", {
+      path: "/"
+    });
     navigate('/');
   }
 

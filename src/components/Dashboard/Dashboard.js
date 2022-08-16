@@ -18,12 +18,12 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { axiosPrivate } from "../../api/axios";
 import "./Dashboard.scss";
 import DataTable from "./DataTable";
 import { mainListItems } from "./routes";
-
 
 const drawerWidth = 240;
 
@@ -75,13 +75,12 @@ function DashboardContent() {
   const [open, setOpen] = React.useState(false);
   const [auth, setAuth] = React.useState(true);
   const [anchorEl, setAnchorEl] = React.useState(null);
-  
+
+  const [userName, setUserName] = React.useState("");
+
   const navigate = useNavigate();
 
   const [cookies, setCookie, removeCookie] = useCookies(["user"]);
-
-
-  
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -94,34 +93,49 @@ function DashboardContent() {
     setOpen(!open);
   };
 
- 
-
   const handleLogout = () => {
     // toast("User Logged Out Successfully");
     setAuth({});
     setCookie("user", "", {
-      path: "/"
+      path: "/",
     });
     setCookie("refreshToken", "", {
-      path: "/"
+      path: "/",
     });
-  //  window.location.href='/'
-  }
-  React.useEffect( () => {
-   
-    if(cookies.order){
+    setCookie("userId", "", {
+      path: "/",
+    });
+    //  window.location.href='/'
+  };
+  React.useEffect(() => {
+    if (cookies.order) {
       removeCookie("order");
-   
     }
-   
+  }, [cookies.order, removeCookie]);
 
-  },[cookies.order, removeCookie])
-  
- 
+  React.useEffect(() => {
+    if (cookies?.userId) {
+      (async () => {
+        try {
+          const response = await axiosPrivate.get(
+            `https://tax.api.cyberozunu.com/api/v1.1/Customer/${cookies?.userId}`
+          );
+          if(response?.data?.result){
+            const result=response?.data?.result;
+            setUserName(`${result.firstName ? result.firstName : ''} ${result.lastName ? result.lastName : ''}`)
+          }
+          
+        } catch (error) {
+          console.log(error);
+        }
+      })();
+    }
+  }, [cookies?.userId]);
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
-      <ToastContainer />
+        <ToastContainer />
         <CssBaseline />
         <AppBar
           position="absolute"
@@ -151,8 +165,8 @@ function DashboardContent() {
                 variant="h6"
                 color="inherit"
                 noWrap
-                sx={{ flexGrow: 1, cursor:"pointer" }}
-                onClick={()=> navigate('/')}
+                sx={{ flexGrow: 1, cursor: "pointer" }}
+                onClick={() => navigate("/")}
               >
                 TaxFill
               </Typography>
@@ -184,7 +198,7 @@ function DashboardContent() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  {/* <MenuItem onClick={handleProfile}>Profile</MenuItem> */}
+                  <MenuItem >{userName}</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </div>
@@ -249,16 +263,16 @@ function DashboardContent() {
                 >
                   <div className="header-button">
                     <p className="title is-4">Past Orders</p>
-                    <button className="button is-success" onClick={()=>navigate('/addnew')}>
+                    <button
+                      className="button is-success"
+                      onClick={() => navigate("/addnew")}
+                    >
                       <AddIcon />
                       Add New
                     </button>
                   </div>
                   <div className="data-table">
                     <DataTable />
-                    
-                    
-                    
                   </div>
                 </Paper>
               </Grid>
@@ -274,8 +288,8 @@ function DashboardContent() {
                   }}
                 >
                   <PieChartComponent/> */}
-                  {/* <Deposits /> */}
-                {/* </Paper>
+              {/* <Deposits /> */}
+              {/* </Paper>
               </Grid> */}
               {/* Recent Orders */}
             </Grid>

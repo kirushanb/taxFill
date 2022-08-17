@@ -376,15 +376,25 @@ const Partnership = () => {
     }
     setExpensesList(values);
     if (value) {
+     
       setOverallexpenses(true);
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
       );
       setNetProfit(
-        parseFloat(totalTurnover) -
-          parseFloat(values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2))
+        parseFloat(totalTurnover.replace(/\,/g,'')) -
+          parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
       );
     } else {
+      const filtered = values.filter((a,key)=> key===i);
+      const other = values.filter((a,key)=> key!==i);
+      setOverallexpensesValue(
+        parseFloat([...other,{amount:0,description:filtered[0].description }].reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+      );
+      setNetProfit(
+        parseFloat(totalTurnover.replace(/\,/g,'')) -
+          parseFloat([...other,{amount:0,description:filtered[0].description }].reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+      );
       setOverallexpenses(false);
     }
   }
@@ -404,7 +414,7 @@ const Partnership = () => {
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
     );
   }
 
@@ -422,7 +432,7 @@ const Partnership = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
     );
   }
 
@@ -433,12 +443,19 @@ const Partnership = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1")
-    ));
+    if(e.target.value===""){
+      setOverallexpensesValue(e.target.value);
+      setNetProfit(parseFloat(totalTurnover.replace(/\,/g,'')));
+    }else{
+      setOverallexpensesValue(
+        (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1")
+      ));
+      setNetProfit(parseFloat(totalTurnover.replace(/\,/g,'')) - parseFloat(e.target.value.replace(/\,/g,'')));
+    }
+    
     if (e.target.value) {
       setExpenseListHide(true);
-      setNetProfit(parseFloat(totalTurnover) - parseFloat(e.target.value));
+      
     } else {
       setExpenseListHide(false);
     }
@@ -987,7 +1004,7 @@ const Partnership = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                          type="number"
+                          
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}

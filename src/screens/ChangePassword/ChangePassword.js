@@ -183,7 +183,7 @@ const ChangePassword = () => {
 
   return (
     <div className="ChangePassword">
-      <ToastContainer />
+     
       <div className="login-form">
         <div className="header">
           <button

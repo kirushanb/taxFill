@@ -26,6 +26,7 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import useAxiosPrivate from "../../../hooks/useAxiosPrivate";
 import UploadFiles from "./UploadFiles";
+import { getValue } from "@testing-library/user-event/dist/utils";
 
 export function getQueryStringParam(paramName) {
   const urlParams = new URLSearchParams(window.location.search);
@@ -35,6 +36,8 @@ export function getQueryStringParam(paramName) {
 const Employment = () => {
   let navigate = useNavigate();
   const [overallexpenseValue, setOverallexpensesValue] = React.useState("");
+  const [incomeFrom, setIncomeFrom] = React.useState("");
+  const [taxFrom, setTaxFrom] = React.useState("");
 
   const [urls, setUrls] = useState([]);
 
@@ -46,7 +49,7 @@ const Employment = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: '0',
+      amount: "0",
     },
   ]);
   const params = useParams();
@@ -70,13 +73,8 @@ const Employment = () => {
     },
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState,
-    reset,
-    setValue,
-  } = useForm(formOptions);
+  const { register, handleSubmit, formState, reset, setValue } =
+    useForm(formOptions);
   const { errors } = formState;
 
   const packageId = getQueryStringParam("packageId");
@@ -91,9 +89,13 @@ const Employment = () => {
       orderId: params.orderId ? params.orderId : cookies.order.oderId,
       name: data.employerName,
       paye: data.payee,
-      incomeFromP60_P45: data.incomeFrom,
-      taxFromP60_P45: data.taxFrom,
-      totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+      incomeFromP60_P45: parseFloat(data.incomeFrom.replace(/\,/g, "")).toFixed(
+        2
+      ),
+      taxFromP60_P45: parseFloat(data.taxFrom.replace(/\,/g, "")).toFixed(2),
+      totalExpenses: overallexpenseValue
+        ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+        : 0,
       expenses:
         expensesList.length === 0
           ? []
@@ -103,7 +105,9 @@ const Employment = () => {
               ...expensesList.map((n) => {
                 return {
                   description: n.description,
-                  amount: parseInt(n.amount),
+                  amount: n.amount
+                    ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2)
+                    : 0,
                 };
               }),
             ],
@@ -123,9 +127,13 @@ const Employment = () => {
       orderId: params.orderId,
       name: data.employerName,
       paye: data.payee,
-      incomeFromP60_P45: data.incomeFrom,
-      taxFromP60_P45: data.taxFrom,
-      totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+      incomeFromP60_P45: parseFloat(data.incomeFrom.replace(/\,/g, "")).toFixed(
+        2
+      ),
+      taxFromP60_P45: parseFloat(data.taxFrom.replace(/\,/g, "")).toFixed(2),
+      totalExpenses: overallexpenseValue
+        ? parseFloat(overallexpenseValue).toFixed(2)
+        : 0,
       expenses:
         expensesList.length === 0
           ? []
@@ -136,7 +144,9 @@ const Employment = () => {
                 return {
                   id: n.id,
                   description: n.description,
-                  amount: parseInt(n.amount),
+                  amount: n.amount
+                    ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2)
+                    : 0,
                 };
               }),
             ],
@@ -163,7 +173,7 @@ const Employment = () => {
       setUrls([]);
       setOverallexpensesValue("");
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -252,9 +262,39 @@ const Employment = () => {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
     } else {
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      setOverallexpensesValue(
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
       setOverallexpenses(false);
     }
   }
@@ -263,20 +303,67 @@ const Employment = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: '0',
+      amount: "0",
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
   function handleRemoveInput(i) {
+    if (packageId) {
+      const values = [...expensesList];
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      values.splice(i, 1);
+      setExpensesList([
+        ...other,
+        { amount: "0", description: "", id: filtered[0]?.id },
+      ]);
+      setOverallexpensesValue(
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      return;
+    }
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
@@ -294,12 +381,17 @@ const Employment = () => {
   };
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(
-      (e.target.value = e.target.value
-        .replace(/[^\d.]/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        .replace(/(\.\d{1,2}).*/g, "$1"))
-    );
+    if (e.target.value === "") {
+      setOverallexpensesValue(e.target.value);
+    } else {
+      setOverallexpensesValue(
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+    }
+
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -317,18 +409,36 @@ const Employment = () => {
         const fields = ["employerName", "payee", "incomeFrom", "taxFrom"];
 
         const packages = {
-          employerName: response.data.result.name,
-          payee: response.data.result.paye,
-          incomeFrom: response.data.result.incomeFromP60_P45,
-          taxFrom: response.data.result.taxFromP60_P45,
+          employerName: response?.data?.result?.name,
+          payee: response?.data?.result?.paye,
+          incomeFrom: response?.data?.result?.incomeFromP60_P45
+            .toString()
+            .replace(/[^\d.]/g, "")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/(\.\d{1,2}).*/g, "$1"),
+          taxFrom: response?.data?.result?.taxFromP60_P45
+            .toString()
+            .replace(/[^\d.]/g, "")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/(\.\d{1,2}).*/g, "$1"),
         };
 
         fields.forEach((field) => setValue(field, packages[field]));
+        setIncomeFrom(packages.incomeFrom);
+        setTaxFrom(packages.taxFrom);
 
         if (response.data.result.expenses.length > 0) {
           setExpensesList([
             ...response.data.result.expenses.map((n) => {
-              return { id: n.id, description: n.description, amount: n.amount };
+              return {
+                id: n.id,
+                description: n.description,
+                amount: n.amount
+                  .toString()
+                  .replace(/[^\d.]/g, "")
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                  .replace(/(\.\d{1,2}).*/g, "$1"),
+              };
             }),
           ]);
         } else {
@@ -340,7 +450,10 @@ const Employment = () => {
             return { url: n.url, id: n.id };
           }),
         ]);
-        setOverallexpensesValue(response.data.result.totalExpenses);
+        setOverallexpensesValue(response.data.result.totalExpenses.toString()
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"));
       } catch (err) {
         // console.log(err);
         setLoading(false);
@@ -363,7 +476,6 @@ const Employment = () => {
         <CircularProgress />
       ) : (
         <form>
-          <ToastContainer />
           <Container component="main" maxWidth="lg">
             <div className="heading-form">
               <div className="back-button" onClick={() => navigate(-1)}>
@@ -383,7 +495,6 @@ const Employment = () => {
                 alignItems: "center",
               }}
             >
-              
               <p className="title is-3">Employment Details</p>
               <Box sx={{ mt: 1 }}>
                 <Grid container spacing={3}>
@@ -444,15 +555,17 @@ const Employment = () => {
                       fullWidth
                       id="incomeFrom"
                       name="incomeFrom"
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setValue(
                           "incomeFrom",
                           (e.target.value = e.target.value
                             .replace(/[^\d.]/g, "")
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             .replace(/(\.\d{1,2}).*/g, "$1"))
-                        )
-                      }
+                        );
+                        setIncomeFrom(e.target.value);
+                      }}
+                      value={incomeFrom}
                       // {...register("incomeFrom")}
                       placeholder="Income from P60/P45"
                     />
@@ -473,16 +586,18 @@ const Employment = () => {
                       fullWidth
                       id="taxFrom"
                       name="taxFrom"
-                      // {...register("taxFrom")}
-                      onChange={(e) =>
+                      onChange={(e) => {
                         setValue(
                           "taxFrom",
                           (e.target.value = e.target.value
                             .replace(/[^\d.]/g, "")
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
                             .replace(/(\.\d{1,2}).*/g, "$1"))
-                        )
-                      }
+                        );
+                        setTaxFrom(e.target.value);
+                      }}
+                      value={taxFrom}
+                      // {...register("taxFrom")}
                       placeholder="Tax from P60/P45"
                     />
                     <Typography variant="body2" color="error" align="left">
@@ -595,8 +710,8 @@ const Employment = () => {
                     {packageId && (
                       <>
                         <ol style={{ padding: "1rem" }}>
-                          {urls.map((n) => (
-                            <li key={n.id}>
+                          {urls.map((n, i) => (
+                            <li key={n.id + i}>
                               <a
                                 target={"_blank"}
                                 href={n.url}

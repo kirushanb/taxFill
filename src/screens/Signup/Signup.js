@@ -228,7 +228,7 @@ const Signup = () => {
 
   return (
     <div className="Signup">
-      <ToastContainer />
+      
       <div className="login-form">
         <div className="header">
           <button

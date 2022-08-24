@@ -60,7 +60,6 @@ const UploadFilesBankTransfer = (props) => {
       ) : (
         <>
           <div>
-            <ToastContainer />
             {/* Provide a drop zone and an alternative button inside it to upload files. */}
             <div
               className="form-container"

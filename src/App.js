@@ -27,6 +27,7 @@ import BankTransfer from "./components/Dashboard/AddNew/BankTransfer";
 import ChangePassword from "./screens/ChangePassword/ChangePassword";
 import ResetPassword from "./screens/ResetPassword/ResetPassword";
 import OTPChangePassword from "./components/Login/OTPChangePassword/OTPChangePassword";
+import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 
 

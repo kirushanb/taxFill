@@ -90,7 +90,10 @@ export const getMonthsWithData = (fromDate, toDate, data) => {
       months.push({
         year,
         month,
-        amount: data.filter((x) => x.month === mL[month])[0].amount,
+        amount: data.filter((x) => x.month === mL[month])[0].amount.toString()
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"),
         id: data.filter((x) => x.month === mL[month])[0].id,
       });
     }
@@ -140,7 +143,7 @@ const SelfEmployment = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: '0',
+      amount: "0",
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -205,13 +208,13 @@ const SelfEmployment = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
-        totalTurnOver: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
+        totalTurnOver: data.totalTurnover ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2) : 0,
         turnOver: [
           ...monthsList.map((n) => {
-            return { month: mL[n.month], amount: parseInt(n.amount) };
+            return { month: mL[n.month], amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) };
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        totalExpenses: overallexpenseValue ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2) : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -221,7 +224,7 @@ const SelfEmployment = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -248,13 +251,13 @@ const SelfEmployment = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
-        totalTurnOver: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
+        totalTurnOver: data.totalTurnover ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2) : 0,
         turnOver: [
           ...monthsList.map((n) => {
-            return { id: n.id, month: mL[n.month], amount: parseInt(n.amount) };
+            return { id: n.id, month: mL[n.month], amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2)};
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        totalExpenses: overallexpenseValue ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2) : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -265,7 +268,7 @@ const SelfEmployment = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -298,7 +301,7 @@ const SelfEmployment = () => {
       setEndDate("");
       setMonthsList([]);
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -379,17 +382,36 @@ const SelfEmployment = () => {
   const handleInputMonth = (i, event) => {
     const values = [...monthsList];
     const { name, value } = event.target;
-    values[i]["amount"] = value.replace(/[^\d.]/g, "")
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    .replace(/(\.\d{1,2}).*/g, "$1");
+    values[i]["amount"] = value
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1");
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
     }
   };
@@ -400,18 +422,50 @@ const SelfEmployment = () => {
     if (name === "description") {
       values[i][name] = value;
     } else {
-      values[i][name] = value.replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1");
+      values[i][name] = value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1");
     }
+
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
     } else {
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      setOverallexpensesValue(
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
       setOverallexpenses(false);
     }
   }
@@ -420,29 +474,82 @@ const SelfEmployment = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: '0',
+      amount: "0",
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
   function handleRemoveInput(i) {
+    if (packageId) {
+      const values = [...expensesList];
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      values.splice(i, 1);
+      setExpensesList([
+        ...other,
+        { amount: "0", description: "", id: filtered[0]?.id },
+      ]);
+      setOverallexpensesValue(
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      return;
+    }
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"))
-    );
+    if (e.target.value === "") {
+      setOverallexpensesValue(e.target.value);
+    } else {
+      setOverallexpensesValue(
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+    }
+
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -525,14 +632,16 @@ const SelfEmployment = () => {
   const handleTotalTurnover = (e) => {
     setValue(
       "totalTurnover",
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"))
+      (e.target.value = e.target.value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"))
     );
     setTotalTurnover(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"))
+      (e.target.value = e.target.value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"))
     );
   };
 
@@ -560,16 +669,31 @@ const SelfEmployment = () => {
         businessName: response.data.result.name,
         descriptionOfBusiness: response.data.result.descriptionOfBusiness,
         address: response.data.result.address,
-        totalTurnover: response.data.result.totalTurnOver,
+        totalTurnover: response.data.result.totalTurnOver
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"),
       };
 
-      setTotalTurnover(response.data.result.totalTurnOver);
+      setTotalTurnover(response.data.result.totalTurnOver.toString()
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"));
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
       if (response.data.result.expenses.length > 0) {
         setExpensesList([
           ...response.data.result.expenses.map((n) => {
-            return { id: n.id, description: n.description, amount: n.amount };
+            return {
+              id: n.id,
+              description: n.description,
+              amount: n.amount
+                .toString()
+                .replace(/[^\d.]/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                .replace(/(\.\d{1,2}).*/g, "$1"),
+            };
           }),
         ]);
       } else {
@@ -589,13 +713,20 @@ const SelfEmployment = () => {
           response.data.result.turnOver
         )
       );
-
-      setUrls([
-        ...response.data.result.attachments.map((n) => {
-          return { url: n.url, id: n.id };
-        }),
-      ]);
-      setOverallexpensesValue(response.data.result.totalExpenses);
+      
+      if(response?.data?.result?.attachments && response?.data?.result?.attachments.length>0){
+        setUrls([
+          ...response.data.result.attachments.map((n) => {
+            return { url: n.url, id: n.id };
+          }),
+        ]);
+      }
+      
+      
+      setOverallexpensesValue(response.data.result.totalExpenses.toString()
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"));
       setLoading(false);
     } catch (err) {
       // console.log(err);
@@ -609,9 +740,8 @@ const SelfEmployment = () => {
         <CircularProgress />
       ) : (
         <form>
-          <ToastContainer />
           <Container component="main" maxWidth="lg">
-          <div className="heading-form">
+            <div className="heading-form">
               <div className="back-button" onClick={() => navigate(-1)}>
                 <ArrowBackIosNewIcon className="back-icon" />
                 <h5 className="title is-5">Back</h5>

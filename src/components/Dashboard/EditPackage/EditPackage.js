@@ -162,7 +162,6 @@ const EditPackage = () => {
 
   return (
     <React.Fragment>
-      <ToastContainer />
       {loading ? (
         <React.Fragment>
           {loading && (

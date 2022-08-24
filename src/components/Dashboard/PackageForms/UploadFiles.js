@@ -20,6 +20,7 @@ const UploadFiles = (props) => {
   const [isLoading, setLoading] = React.useState(false);
 
   const handleSubmit = async (e) => {
+    if(files.length===0) return;
     e.preventDefault();
     setLoading(true);
 
@@ -48,6 +49,14 @@ const UploadFiles = (props) => {
     }
   };
 
+  const formValid = () => {
+    if (files.length===0) {
+        return false;
+    }
+
+    return true;
+};
+
   return (
     <div className="UploadFiles">
       {isLoading ? (
@@ -55,7 +64,7 @@ const UploadFiles = (props) => {
       ) : (
         <>
           <div>
-            <ToastContainer />
+           
             {/* Provide a drop zone and an alternative button inside it to upload files. */}
             <div
               className="form-container"
@@ -121,7 +130,7 @@ const UploadFiles = (props) => {
           </div>
 
           <div className="submit">
-            <button disabled={isLoading} className="button is-link" onClick={handleSubmit}>
+            <button type="button" disabled={isLoading || !formValid()} className="button is-link" onClick={handleSubmit}>
               {isLoading?'Submitting':'Submit'}
             </button>
           </div>

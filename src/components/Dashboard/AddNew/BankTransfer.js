@@ -366,7 +366,6 @@ const BankTransfer = () => {
         <CircularProgress />
       ) : (
         <form>
-          <ToastContainer />
           <Container component="main" maxWidth="lg">
             <Box
               sx={{

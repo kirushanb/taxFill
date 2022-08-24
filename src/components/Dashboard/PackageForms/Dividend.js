@@ -503,7 +503,6 @@ const Dividend = () => {
         <CircularProgress />
       ) : (
         <form>
-          <ToastContainer />
           <Container component="main" maxWidth="lg">
             <div className="heading-form">
               <div className="back-button" onClick={() => navigate(-1)}>

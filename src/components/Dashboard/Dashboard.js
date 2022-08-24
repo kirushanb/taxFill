@@ -18,7 +18,6 @@ import Typography from "@mui/material/Typography";
 import * as React from "react";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { axiosPrivate } from "../../api/axios";
 import "./Dashboard.scss";
@@ -135,7 +134,6 @@ function DashboardContent() {
   return (
     <>
       <Box sx={{ display: "flex" }}>
-        <ToastContainer />
         <CssBaseline />
         <AppBar
           position="absolute"

@@ -97,7 +97,7 @@ const OTPChangePassword = () => {
 
   return (
     <React.Fragment>
-       <ToastContainer />
+      
  {loading? <React.Fragment>{loading && <div className="OTP"><div id="loading" className="loading" /> </div>}</React.Fragment>:
  <div className="OTPChangePassword">
    

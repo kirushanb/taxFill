@@ -147,7 +147,7 @@ const Login = () => {
 
   return (
     <React.Fragment>
-      <ToastContainer />
+     
       {loading ? (
         <React.Fragment>
           {loading && (

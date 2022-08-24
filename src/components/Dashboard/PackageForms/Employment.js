@@ -132,7 +132,7 @@ const Employment = () => {
       ),
       taxFromP60_P45: parseFloat(data.taxFrom.replace(/\,/g, "")).toFixed(2),
       totalExpenses: overallexpenseValue
-        ? parseFloat(overallexpenseValue).toFixed(2)
+        ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
         : 0,
       expenses:
         expensesList.length === 0

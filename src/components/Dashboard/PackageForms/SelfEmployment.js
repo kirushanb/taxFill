@@ -90,10 +90,12 @@ export const getMonthsWithData = (fromDate, toDate, data) => {
       months.push({
         year,
         month,
-        amount: data.filter((x) => x.month === mL[month])[0].amount.toString()
-        .replace(/[^\d.]/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        .replace(/(\.\d{1,2}).*/g, "$1"),
+        amount: data
+          .filter((x) => x.month === mL[month])[0]
+          .amount.toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"),
         id: data.filter((x) => x.month === mL[month])[0].id,
       });
     }
@@ -208,13 +210,20 @@ const SelfEmployment = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
-        totalTurnOver: data.totalTurnover ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2) : 0,
+        totalTurnOver: data.totalTurnover
+          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          : 0,
         turnOver: [
           ...monthsList.map((n) => {
-            return { month: mL[n.month], amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) };
+            return {
+              month: mL[n.month],
+              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+            };
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2) : 0,
+        totalExpenses: overallexpenseValue
+          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -251,13 +260,21 @@ const SelfEmployment = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
-        totalTurnOver: data.totalTurnover ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2) : 0,
+        totalTurnOver: data.totalTurnover
+          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          : 0,
         turnOver: [
           ...monthsList.map((n) => {
-            return { id: n.id, month: mL[n.month], amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2)};
+            return {
+              id: n.id,
+              month: mL[n.month],
+              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+            };
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2) : 0,
+        totalExpenses: overallexpenseValue
+          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -559,6 +576,7 @@ const SelfEmployment = () => {
 
   const handleStartDate = (e) => {
     const date = new Date(e.target.value);
+    const selectedYear = date.getFullYear();
     if (
       !(
         date.getFullYear() === parseInt(taxYear) ||
@@ -569,7 +587,20 @@ const SelfEmployment = () => {
         `You could only select dates between selected Tax Year ${taxYear}`
       );
       return;
+    } else if (endDate) {
+      if (new Date(endDate).getFullYear() === selectedYear) {
+        if (new Date(endDate).getMonth() < date.getMonth()) {
+          toast.error(`Start date should be smaller than end date`);
+          return;
+        }else if (new Date(endDate).getMonth() === date.getMonth()) {
+          if (new Date(endDate).getDate() < date.getDate()) {
+            toast.error(`Start date should be smaller than end date`);
+            return;
+          }
+        }
+      } 
     }
+
     setStartDate(e.target.value);
   };
 
@@ -588,16 +619,13 @@ const SelfEmployment = () => {
       if (new Date(startDate).getMonth() > date.getMonth()) {
         toast.error(`End date should be greater than start date`);
         return;
+      }else if (new Date(startDate).getMonth() === date.getMonth()) {
+        if (new Date(startDate).getDate() > date.getDate()) {
+          toast.error(`End date should be greater than start date`);
+          return;
+        }
       }
-    } else if (
-      new Date(startDate).getFullYear() === selectedYear &&
-      new Date(startDate).getMonth() === date.getMonth()
-    ) {
-      if (new Date(startDate).getDate() > date.getDate()) {
-        toast.error(`End date should be greater than start date`);
-        return;
-      }
-    }
+    } 
     setEndDate(e.target.value);
     if (packageId) {
       setMonthsList(
@@ -676,10 +704,13 @@ const SelfEmployment = () => {
           .replace(/(\.\d{1,2}).*/g, "$1"),
       };
 
-      setTotalTurnover(response.data.result.totalTurnOver.toString()
-      .replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"));
+      setTotalTurnover(
+        response.data.result.totalTurnOver
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1")
+      );
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
       if (response.data.result.expenses.length > 0) {
@@ -713,20 +744,25 @@ const SelfEmployment = () => {
           response.data.result.turnOver
         )
       );
-      
-      if(response?.data?.result?.attachments && response?.data?.result?.attachments.length>0){
+
+      if (
+        response?.data?.result?.attachments &&
+        response?.data?.result?.attachments.length > 0
+      ) {
         setUrls([
           ...response.data.result.attachments.map((n) => {
             return { url: n.url, id: n.id };
           }),
         ]);
       }
-      
-      
-      setOverallexpensesValue(response.data.result.totalExpenses.toString()
-      .replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"));
+
+      setOverallexpensesValue(
+        response.data.result.totalExpenses
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1")
+      );
       setLoading(false);
     } catch (err) {
       // console.log(err);

@@ -140,7 +140,7 @@ const RentalIncome = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: '0',
+      amount: "0",
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -197,8 +197,8 @@ const RentalIncome = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         propertyName: data.propertyName,
         address: JSON.stringify(address ?? {}),
-        rentalIncome: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        rentalIncome: data.totalTurnover ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2): 0,
+        totalExpense: overallexpenseValue ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2) : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -208,7 +208,7 @@ const RentalIncome = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -231,8 +231,8 @@ const RentalIncome = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         propertyName: data.propertyName,
         address: JSON.stringify(address ?? {}),
-        rentalIncome: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        rentalIncome: data.totalTurnover ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2): 0,
+        totalExpense: overallexpenseValue ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2) : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -243,7 +243,7 @@ const RentalIncome = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -261,7 +261,7 @@ const RentalIncome = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = packageId ? await putCall(data) : await postCall(data);
+      packageId ? await putCall(data) : await postCall(data);
 
       setLoading(false);
       reset();
@@ -276,7 +276,7 @@ const RentalIncome = () => {
       setEndDate("");
       setMonthsList([]);
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -328,6 +328,7 @@ const RentalIncome = () => {
     } catch (err) {
       setLoading(false);
       toast.error(err);
+      console.log(err);
     }
   };
 
@@ -361,11 +362,29 @@ const RentalIncome = () => {
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
     }
   };
@@ -376,16 +395,26 @@ const RentalIncome = () => {
     if (name === "description") {
       values[i][name] = value;
     } else {
-      values[i][name] = value .replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1");
+      values[i][name] = value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1");
     }
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
     } else {
       setOverallexpenses(false);
@@ -396,11 +425,20 @@ const RentalIncome = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: '0',
+      amount: "0",
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      values
+        .reduce(
+          (acc, curr) =>
+            acc +
+            (isNaN(curr.amount.replace(/\,/g, ""))
+              ? 0
+              : parseFloat(curr.amount.replace(/\,/g, ""))),
+          0
+        )
+        .toFixed(2)
     );
   }
 
@@ -409,14 +447,31 @@ const RentalIncome = () => {
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+      values
+        .reduce(
+          (acc, curr) =>
+            acc +
+            (isNaN(curr.amount.replace(/\,/g, ""))
+              ? 0
+              : parseFloat(curr.amount.replace(/\,/g, ""))),
+          0
+        )
+        .toFixed(2)
     );
   }
 
   const handleOverallExpenses = (e) => {
-    setOverallexpensesValue(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
-    );
+    if (e.target.value === "") {
+      setOverallexpensesValue(e.target.value);
+    } else {
+      setOverallexpensesValue(
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+    }
+
     if (e.target.value) {
       setExpenseListHide(true);
     } else {
@@ -463,10 +518,16 @@ const RentalIncome = () => {
   const handleTotalTurnover = (e) => {
     setValue(
       "totalTurnover",
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+      (e.target.value = e.target.value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"))
     );
     setTotalTurnover(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
+      (e.target.value = e.target.value
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"))
     );
   };
 
@@ -525,15 +586,20 @@ const RentalIncome = () => {
           }),
         ]);
       }
-      setUrls([
-        ...response.data.result.attachments.map((n) => {
-          return { url: n.url, id: n.id };
-        }),
-      ]);
-      setOverallexpensesValue(response.data.result.totalExpenses);
+      if(response.data.result.attachments.length){
+        setUrls([
+          ...response.data.result.attachments.map((n) => {
+            return { url: n.url, id: n.id };
+          }),
+        ]);
+      }
+
+      
+      setOverallexpensesValue(response.data.result.totalExpense);
     } catch (err) {
       // console.log(err);
       setLoading(false);
+      console.log(err);
     }
     setLoading(false);
   };
@@ -544,9 +610,8 @@ const RentalIncome = () => {
         <CircularProgress />
       ) : (
         <form>
-         
           <Container component="main" maxWidth="lg">
-          <div className="heading-form">
+            <div className="heading-form">
               <div className="back-button" onClick={() => navigate(-1)}>
                 <ArrowBackIosNewIcon className="back-icon" />
                 <h5 className="title is-5">Back</h5>

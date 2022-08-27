@@ -93,7 +93,7 @@ const Partnership = () => {
   const [expensesList, setExpensesList] = React.useState([
     {
       description: "",
-      amount: '0',
+      amount: "0",
     },
   ]);
   const [partnershipList, setPartnershipList] = React.useState([
@@ -168,13 +168,20 @@ const Partnership = () => {
             return { name: n.fullName, percentage: parseInt(n.share) };
           }),
         ],
-        totalTurnOver: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
+        totalTurnOver: data.totalTurnover
+          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          : 0,
         turnOver: [
           ...monthsList.map((n) => {
-            return { month: mL[n.month], amount: parseInt(n.amount) };
+            return {
+              month: mL[n.month],
+              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+            };
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        totalExpenses: overallexpenseValue
+          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -184,7 +191,7 @@ const Partnership = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: n.amount ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) : 0,
                   };
                 }),
               ],
@@ -211,7 +218,9 @@ const Partnership = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
-        totalTurnOver: data.totalTurnover ? parseInt(data.totalTurnover) : 0,
+        totalTurnOver: data.totalTurnover
+          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          : 0,
         shares: [
           ...partnershipList.map((n) => {
             return {
@@ -223,10 +232,16 @@ const Partnership = () => {
         ],
         turnOver: [
           ...monthsList.map((n) => {
-            return { id: n.id, month: mL[n.month], amount: parseInt(n.amount) };
+            return {
+              id: n.id,
+              month: mL[n.month],
+              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+            };
           }),
         ],
-        totalExpenses: overallexpenseValue ? parseInt(overallexpenseValue) : 0,
+        totalExpenses: overallexpenseValue
+          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -237,7 +252,7 @@ const Partnership = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: parseInt(n.amount),
+                    amount: n.amount ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) : 0,
                   };
                 }),
               ],
@@ -253,9 +268,10 @@ const Partnership = () => {
   };
 
   const onSubmit = async (data) => {
+    
     setLoading(true);
     try {
-      const response = packageId ? await putCall(data) : await postCall(data);
+      packageId ? await putCall(data) : await postCall(data);
       setLoading(false);
       reset();
       setExpensesList([{ description: "", amount: "" }]);
@@ -268,7 +284,7 @@ const Partnership = () => {
       setOverallexpensesValue("");
       setTotalTurnover("");
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -320,6 +336,7 @@ const Partnership = () => {
     } catch (err) {
       setLoading(false);
       toast.error(err);
+      console.log(err);
     }
   };
 
@@ -348,17 +365,35 @@ const Partnership = () => {
     const values = [...monthsList];
     const { name, value } = event.target;
     values[i]["amount"] = value
-    .replace(/[^\d.]/g, "")
-    .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-    .replace(/(\.\d{1,2}).*/g, "$1");
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1");
     setMonthsList(values);
     if (value) {
       setTotalTurnover(
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
       setValue(
         "totalTurnover",
-        values.reduce((acc, curr) => acc + (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))), 0).toFixed(2)
+        values
+          .reduce(
+            (acc, curr) =>
+              acc +
+              (isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))),
+            0
+          )
+          .toFixed(2)
       );
     }
   };
@@ -370,30 +405,79 @@ const Partnership = () => {
       values[i][name] = value;
     } else {
       values[i][name] = value
-      .replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1");
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1");
     }
     setExpensesList(values);
     if (value) {
-     
       setOverallexpenses(true);
       setOverallexpensesValue(
-        parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
       setNetProfit(
-        parseFloat(totalTurnover.replace(/\,/g,'')) -
-          parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+        parseFloat(totalTurnover.replace(/\,/g, "")) -
+          parseFloat(
+            values.reduce(
+              (acc, curr) =>
+                acc +
+                (curr.amount
+                  ? isNaN(curr.amount.replace(/\,/g, ""))
+                    ? 0
+                    : parseFloat(curr.amount.replace(/\,/g, ""))
+                  : 0),
+              0
+            )
+          ).toFixed(2)
       );
     } else {
-      const filtered = values.filter((a,key)=> key===i);
-      const other = values.filter((a,key)=> key!==i);
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
       setOverallexpensesValue(
-        parseFloat([...other,{amount:0,description:filtered[0].description }].reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
       setNetProfit(
-        parseFloat(totalTurnover.replace(/\,/g,'')) -
-          parseFloat([...other,{amount:0,description:filtered[0].description }].reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+        parseFloat(totalTurnover.replace(/\,/g, "")) -
+          parseFloat(
+            [
+              ...other,
+              { amount: 0, description: filtered[0].description },
+            ].reduce(
+              (acc, curr) =>
+                acc +
+                (curr.amount
+                  ? isNaN(curr.amount.replace(/\,/g, ""))
+                    ? 0
+                    : parseFloat(curr.amount.replace(/\,/g, ""))
+                  : 0),
+              0
+            )
+          ).toFixed(2)
       );
       setOverallexpenses(false);
     }
@@ -410,11 +494,22 @@ const Partnership = () => {
     const values = [...expensesList];
     values.push({
       description: "",
-      amount: '0',
+      amount: "0",
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
@@ -428,11 +523,47 @@ const Partnership = () => {
   }
 
   function handleRemoveInput(i) {
+    if (packageId) {
+      const values = [...expensesList];
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      values.splice(i, 1);
+      setExpensesList([
+        ...other,
+        { amount: "0", description: "", id: filtered[0]?.id },
+      ]);
+      setOverallexpensesValue(
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      return;
+    }
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      parseFloat(values.reduce((acc, curr) => acc + (curr.amount ? (isNaN(curr.amount.replace(/\,/g,'')) ? 0 : parseFloat(curr.amount.replace(/\,/g,''))) : 0), 0)).toFixed(2)
+      parseFloat(
+        values.reduce(
+          (acc, curr) =>
+            acc +
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
+          0
+        )
+      ).toFixed(2)
     );
   }
 
@@ -443,19 +574,24 @@ const Partnership = () => {
   }
 
   const handleOverallExpenses = (e) => {
-    if(e.target.value===""){
+    if (e.target.value === "") {
       setOverallexpensesValue(e.target.value);
-      setNetProfit(parseFloat(totalTurnover.replace(/\,/g,'')));
-    }else{
+      setNetProfit(parseFloat(totalTurnover.replace(/\,/g, "")));
+    } else {
       setOverallexpensesValue(
-        (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1")
-      ));
-      setNetProfit(parseFloat(totalTurnover.replace(/\,/g,'')) - parseFloat(e.target.value.replace(/\,/g,'')));
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+      setNetProfit(
+        (parseFloat(totalTurnover.replace(/\,/g, "")) -
+          parseFloat(e.target.value.replace(/\,/g, "")))
+      );
     }
-    
+
     if (e.target.value) {
       setExpenseListHide(true);
-      
     } else {
       setExpenseListHide(false);
     }
@@ -469,6 +605,7 @@ const Partnership = () => {
 
   const handleStartDate = (e) => {
     const date = new Date(e.target.value);
+    const selectedYear = date.getFullYear();
     if (
       !(
         date.getFullYear() === parseInt(taxYear) ||
@@ -479,7 +616,20 @@ const Partnership = () => {
         `You could only select dates between selected Tax Year ${taxYear}`
       );
       return;
+    } else if (endDate) {
+      if (new Date(endDate).getFullYear() === selectedYear) {
+        if (new Date(endDate).getMonth() < date.getMonth()) {
+          toast.error(`Start date should be smaller than end date`);
+          return;
+        } else if (new Date(endDate).getMonth() === date.getMonth()) {
+          if (new Date(endDate).getDate() < date.getDate()) {
+            toast.error(`Start date should be smaller than end date`);
+            return;
+          }
+        }
+      }
     }
+
     setStartDate(e.target.value);
   };
 
@@ -498,14 +648,11 @@ const Partnership = () => {
       if (new Date(startDate).getMonth() > date.getMonth()) {
         toast.error(`End date should be greater than start date`);
         return;
-      }
-    } else if (
-      new Date(startDate).getFullYear() === selectedYear &&
-      new Date(startDate).getMonth() === date.getMonth()
-    ) {
-      if (new Date(startDate).getDate() > date.getDate()) {
-        toast.error(`End date should be greater than start date`);
-        return;
+      } else if (new Date(startDate).getMonth() === date.getMonth()) {
+        if (new Date(startDate).getDate() > date.getDate()) {
+          toast.error(`End date should be greater than start date`);
+          return;
+        }
       }
     }
     setEndDate(e.target.value);
@@ -541,13 +688,33 @@ const Partnership = () => {
   };
 
   const handleTotalTurnover = (e) => {
-    setValue(
-      "totalTurnover",
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
-    );
-    setTotalTurnover(
-      (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
-    );
+    if (e.target.value === "") {
+      setValue(
+        "totalTurnover",
+        e.target.value
+      );
+      setTotalTurnover(e.target.value)
+      setNetProfit(0-overallexpenseValue);
+    }else{
+      setValue(
+        "totalTurnover",
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+      setTotalTurnover(
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+      setNetProfit(
+        parseFloat(e.target.value.replace(/\,/g, "")).toFixed(2) -
+        overallexpenseValue
+      );
+    }
+    
   };
 
   const handleCalculateProfit = (share) => {
@@ -579,16 +746,25 @@ const Partnership = () => {
         partnershipName: response.data.result.name,
         descriptionOfBusiness: response.data.result.descriptionOfBusiness,
         address: response.data.result.address,
-        totalTurnover: response.data.result.totalTurnOver,
+        totalTurnover: response.data.result.totalTurnOver.toString()
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"),
       };
 
-      setTotalTurnover(response.data.result.totalTurnOver);
+      setTotalTurnover(response.data.result.totalTurnOver.toString()
+      .replace(/[^\d.]/g, "")
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+      .replace(/(\.\d{1,2}).*/g, "$1"));
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
       if (response.data.result.expenses.length > 0) {
         setExpensesList([
           ...response.data.result.expenses.map((n) => {
-            return { id: n.id, description: n.description, amount: n.amount };
+            return { id: n.id, description: n.description, amount: n.amount.toString()
+              .replace(/[^\d.]/g, "")
+              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              .replace(/(\.\d{1,2}).*/g, "$1") };
           }),
         ]);
       } else {
@@ -635,13 +811,16 @@ const Partnership = () => {
             response.data.result.totalExpenses
         );
       } else if (response.data.result.totalTurnOver) {
-        setNetProfit(parseInt(response.data.result.totalTurnOver.toString()));
+        setNetProfit(parseFloat(response.data.result.totalTurnOver.toString()).toFixed(2));
       }
-      setUrls([
-        ...response.data.result.attachments.map((n) => {
-          return { url: n.url, id: n.id };
-        }),
-      ]);
+      if(response.data.result.attachments.length){
+        setUrls([
+          ...response.data.result.attachments.map((n) => {
+            return { url: n.url, id: n.id };
+          }),
+        ]);
+      }
+      
     } catch (err) {
       console.log(err);
       setLoading(false);
@@ -698,7 +877,7 @@ const Partnership = () => {
                       id="partnershipName"
                       placeholder="Enter your partnership name"
                       autoFocus
-                      error={errors.partnershipName?.message}
+                      // error={errors.partnershipName?.message}
                       {...register("partnershipName")}
                     />
 
@@ -1003,7 +1182,6 @@ const Partnership = () => {
                           id="amount"
                           name="amount"
                           value={field.amount}
-                          
                           // {...register("description")}
                           onChange={(e) => handleChangeInput(idx, e)}
                           // {...register("amount")}
@@ -1031,7 +1209,7 @@ const Partnership = () => {
                           </Fab>
                         ) : (
                           <Fab
-                            onClick={handleRemoveInput}
+                          onClick={() => handleRemoveInput(idx)}
                             color="primary"
                             size="small"
                             aria-label="add"

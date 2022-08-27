@@ -196,7 +196,7 @@ const BankInterest = () => {
                   return {
                     bankName: n.bankName,
                     accountNumber: n.accountNumber,
-                    grossInterest: parseInt(n.grossInterest),
+                    grossInterest: parseFloat(n.grossInterest.toString().replace(/\,/g, "")).toFixed(2),
                     receivedDate: n.receivedDate,
                     // bankInterestIncome:  n.bankInterestIncome.toString()
                   };
@@ -225,7 +225,7 @@ const BankInterest = () => {
                     id: n.id,
                     bankName: n.bankName,
                     accountNumber: n.accountNumber,
-                    grossInterest: parseInt(n.grossInterest),
+                    grossInterest: parseFloat(n.grossInterest.toString().replace(/\,/g, "")).toFixed(2),
                     receivedDate: n.receivedDate,
                     // bankInterestIncome: n.bankInterestIncome.toString()
                   };
@@ -240,7 +240,7 @@ const BankInterest = () => {
   const onSubmit = async (data) => {
     setLoading(true);
     try {
-      const response = packageId ? await putCall(data) : await postCall(data);
+     packageId ? await putCall(data) : await postCall(data);
 
       setLoading(false);
       reset();
@@ -263,7 +263,7 @@ const BankInterest = () => {
       setEndDate("");
       setMonthsList([]);
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -315,6 +315,7 @@ const BankInterest = () => {
     } catch (err) {
       setLoading(false);
       toast.error(err);
+      console.log(err);
     }
   };
 

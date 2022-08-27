@@ -32,7 +32,8 @@ const Input = styled("input")({
 const Pension = () => {
   let navigate = useNavigate();
   const [overallexpenseValue, setOverallexpensesValue] = React.useState("");
-
+  const [pensionFrom, setPensionFrom] = React.useState("");
+  const [taxFrom, setTaxFrom] = React.useState("");
   const [urls, setUrls] = useState([]);
 
   const [overallexpenses, setOverallexpenses] = React.useState(false);
@@ -167,9 +168,11 @@ const Pension = () => {
       setLoading(false);
 
       setUrls([]);
+      setPensionFrom('');
+      setTaxFrom('');
       setOverallexpensesValue("");
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");
@@ -228,9 +231,11 @@ const Pension = () => {
   const onSubmitAndAddAnother = async (data) => {
     setLoading(true);
     try {
-      const response = await postCall(data);
+      await postCall(data);
 
       reset();
+      setPensionFrom('');
+      setTaxFrom('');
       setExpensesList([{ description: "", amount: "" }]);
       setLoading(false);
       toast.success("Pension Details Saved Successfully");
@@ -317,12 +322,19 @@ const Pension = () => {
       const packages = {
         pensionProvider: response.data.result.name,
         payee: response.data.result.paye,
-        pensionFrom: response.data.result.pensionFromP60,
-        taxFrom: response.data.result.taxFromP60,
+        pensionFrom: response.data.result.pensionFromP60.toString()
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"),
+        taxFrom: response.data.result.taxFromP60.toString()
+        .replace(/[^\d.]/g, "")
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        .replace(/(\.\d{1,2}).*/g, "$1"),
       };
 
       fields.forEach((field) => setValue(field, packages[field]));
-
+      setPensionFrom(packages.pensionFrom);
+      setTaxFrom(packages.taxFrom);
       if (response.data.result.expenses.length > 0) {
         setExpensesList([
           ...response.data.result.expenses.map((n) => {
@@ -332,12 +344,14 @@ const Pension = () => {
       } else {
         setExpensesList([{ description: "", amount: 0 }]);
       }
-
-      setUrls([
-        ...response.data.result.attachments.map((n) => {
-          return { url: n.url, id: n.id };
-        }),
-      ]);
+      if(response.data.result.attachments.length){
+        setUrls([
+          ...response.data.result.attachments.map((n) => {
+            return { url: n.url, id: n.id };
+          }),
+        ]);
+      }
+      
       setOverallexpensesValue(response.data.result.totalExpenses);
     } catch (err) {
       // console.log(err);
@@ -439,11 +453,15 @@ const Pension = () => {
                       name="pensionFrom"
                       // type={"number"}
                       // {...register("pensionFrom")}
-                      onChange={(e) =>
+                      value={pensionFrom}
+                      onChange={(e) =>{
                         setValue(
                           "pensionFrom",
                           (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
                         )
+                        setPensionFrom(e.target.value);
+                      }
+                       
                       }
                       placeholder="Pension from P60"
                     />
@@ -466,11 +484,15 @@ const Pension = () => {
                       name="taxFrom"
                       // type={"number"}
                       // {...register("taxFrom")}
-                      onChange={(e) =>
+                      value={taxFrom}
+                      onChange={(e) => {
                         setValue(
                           "taxFrom",
                           (e.target.value = e.target.value.replace(/[^\d.]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",").replace(/(\.\d{1,2}).*/g, "$1"))
-                        )
+                        );
+                        setTaxFrom(e.target.value);
+                      }
+                       
                       }
                       placeholder="Tax from P60"
                     />

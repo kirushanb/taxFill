@@ -197,7 +197,7 @@ const Dividend = () => {
                   return {
                     companyName: n.companyName,
                     noOfShares: parseInt(n.noOfShares),
-                    dividend: parseInt(n.dividend),
+                    dividend: parseFloat(n.dividend.toString().replace(/\,/g, "")).toFixed(2),
                     receivedDate: n.receivedDate,
                     // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
                   };
@@ -226,7 +226,7 @@ const Dividend = () => {
                     id: n.id,
                     companyName: n.companyName,
                     noOfShares: parseInt(n.noOfShares),
-                    dividend: parseInt(n.dividend),
+                    dividend: parseFloat(n.dividend.toString().replace(/\,/g, "")).toFixed(2),
                     receivedDate: n.receivedDate,
                     // dividentIncome: parseFloat(n.dividentIncome).toFixed(2)
                   };
@@ -264,7 +264,7 @@ const Dividend = () => {
       setEndDate("");
       setMonthsList([]);
       if (packageId) {
-        navigate(`/edit/${params.orderId}`);
+        navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
       } else {
         if (params.orderId) {
           navigate("/account");

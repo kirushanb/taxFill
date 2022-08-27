@@ -171,6 +171,8 @@ const Employment = () => {
       setExpensesList([{ description: "", amount: 0 }]);
       setLoading(false);
       setUrls([]);
+      setIncomeFrom('');
+      setTaxFrom('');
       setOverallexpensesValue("");
       if (packageId) {
         navigate(`/edit/${params.orderId}/?reference=${taxYear}`);
@@ -238,6 +240,8 @@ const Employment = () => {
       setLoading(false);
       toast.success("Employment Details Saved Successfully");
       setUrls([]);
+      setIncomeFrom('');
+      setTaxFrom('');
       setOverallexpensesValue("");
     } catch (err) {
       setLoading(false);

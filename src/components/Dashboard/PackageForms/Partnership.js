@@ -631,6 +631,17 @@ const Partnership = () => {
     }
 
     setStartDate(e.target.value);
+    if (packageId && endDate) {
+      setMonthsList(
+        getMonthsWithDataAdd(
+          new Date(e.target.value),
+          new Date(endDate),
+          monthsList
+        )
+      );
+    } else if(endDate) {
+      setMonthsList(getMonths(new Date(e.target.value), new Date(endDate)));
+    }
   };
 
   const handleEndDate = (e) => {

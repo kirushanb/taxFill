@@ -131,6 +131,10 @@ function DashboardContent() {
     }
   }, [cookies?.userId]);
 
+  const handleEditAccount = () => {
+    navigate('/account-edit');
+  }
+
   return (
     <>
       <Box sx={{ display: "flex" }}>
@@ -196,7 +200,7 @@ function DashboardContent() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem >{userName}</MenuItem>
+                  <MenuItem onClick={handleEditAccount}>{userName}</MenuItem>
                   <MenuItem onClick={handleLogout}>Logout</MenuItem>
                 </Menu>
               </div>

@@ -206,7 +206,7 @@ const SelfEmployment = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         name: data.businessName,
         descriptionOfBusiness: data.descriptionOfBusiness,
-        address: JSON.stringify(address ?? {}),
+        address: data.address,
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
@@ -256,7 +256,7 @@ const SelfEmployment = () => {
         orderId: params.orderId,
         name: data.businessName,
         descriptionOfBusiness: data.descriptionOfBusiness,
-        address: JSON.stringify(address ?? {}),
+        address: data.address,
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
@@ -654,7 +654,7 @@ const SelfEmployment = () => {
   };
 
   const handleAddress = (value) => {
-    setAddress(value);
+    // setAddress(value);
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {

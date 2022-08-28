@@ -29,7 +29,7 @@ import ResetPassword from "./screens/ResetPassword/ResetPassword";
 import OTPChangePassword from "./components/Login/OTPChangePassword/OTPChangePassword";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
-
+import EditAccount from "./components/EditAccount/EditAccount";
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -45,87 +45,90 @@ function App() {
     <React.Fragment>
       <ToastContainer />
       <Routes>
-      <Route
-        path="/"
-        element={
-          <Layout>
-            <Home />
-          </Layout>
-        }
-      />
-      <Route path="/login" element={<Login />} />
-      <Route path="/forgot-password" element={<ResetPassword />} />
-      <Route path="/change-password" element={<ChangePassword />} />
-      <Route path="/otp" element={<OTP />} />
-      <Route path="/otp-change-password" element={<OTPChangePassword />} />
-      <Route path="/signup" element={<Signup />} />
-      <Route element={<RequireAuth />}>
-        <Route path="/account" element={<Dashboard />} />
-      </Route>
-      <Route element={<RequireAuth />}>
         <Route
-          path="/addnew"
+          path="/"
           element={
             <Layout>
-              <AddNew />
+              <Home />
             </Layout>
           }
         />
-      </Route>
-      <Route element={<RequireAuth />}>
-        <Route
-          path="/bank-transfer"
-          element={
-            <Layout>
-              <BankTransfer />
-            </Layout>
-          }
-        />
-      </Route>
-
-      <Route element={<RequireAuth />}>
-        <Route
-          path="/success"
-          element={
-            <Layout>
-              <PaymentSuccess />
-            </Layout>
-          }
-        />
-      </Route>
-      <Route element={<RequireAuth />}>
-        <Route
-          path="/fail"
-          element={
-            <Layout>
-              <PaymentFilure />
-            </Layout>
-          }
-        />
-      </Route>
-
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="select"
-          element={
-            <Layout>
-              <SelectPackage />
-            </Layout>
-          }
-        >
+        <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ResetPassword />} />
+        <Route path="/change-password" element={<ChangePassword />} />
+        <Route path="/otp" element={<OTP />} />
+        <Route path="/otp-change-password" element={<OTPChangePassword />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route element={<RequireAuth />}>
+          <Route path="/account" element={<Dashboard />} />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route path="/account-edit" element={<EditAccount />} />
+        </Route>
+        <Route element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="/addnew"
+            element={
+              <Layout>
+                <AddNew />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route
+            path="/bank-transfer"
+            element={
+              <Layout>
+                <BankTransfer />
+              </Layout>
+            }
+          />
+        </Route>
+
+        <Route element={<RequireAuth />}>
+          <Route
+            path="/success"
+            element={
+              <Layout>
+                <PaymentSuccess />
+              </Layout>
+            }
+          />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route
+            path="/fail"
+            element={
+              <Layout>
+                <PaymentFilure />
+              </Layout>
+            }
+          />
+        </Route>
+
+        <Route path="*" element={<RequireAuth />}>
+          <Route
+            path="select"
             element={
               <Layout>
                 <SelectPackage />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <SelectPackage />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/select" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/select" replace />} />
-      </Route>
-      {/* <Route path="/select" element={<Layout><SelectPackage /></Layout>} /> */}
-      <Route element={<RequireAuth />}>
+        {/* <Route path="/select" element={<Layout><SelectPackage /></Layout>} /> */}
+        <Route element={<RequireAuth />}>
           <Route
             path="/edit/:orderId"
             element={
@@ -134,154 +137,152 @@ function App() {
               </Layout>
             }
           />
-       
-      </Route>
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="employment"
-          element={
-            <Layout>
-              <Employment />
-            </Layout>
-          }
-        >
+        </Route>
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="employment"
             element={
               <Layout>
                 <Employment />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <Employment />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/employment" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/employment" replace />} />
-      </Route>
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="rentalincome"
-          element={
-            <Layout>
-              <RentalIncome />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="rentalincome"
             element={
               <Layout>
                 <RentalIncome />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <RentalIncome />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/rentalincome" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/rentalincome" replace />} />
-      </Route>
 
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="selfemployment"
-          element={
-            <Layout>
-              <SelfEmployment />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="selfemployment"
             element={
               <Layout>
                 <SelfEmployment />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <SelfEmployment />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/selfemployment" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/selfemployment" replace />} />
-      </Route>
 
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="pensionincome"
-          element={
-            <Layout>
-              <Pension />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="pensionincome"
             element={
               <Layout>
                 <Pension />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <Pension />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/pensionincome" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/pensionincome" replace />} />
-      </Route>
 
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="partnership"
-          element={
-            <Layout>
-              <Partnership />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="partnership"
             element={
               <Layout>
                 <Partnership />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <Partnership />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/partnership" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/partnership" replace />} />
-      </Route>
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="dividend"
-          element={
-            <Layout>
-              <Dividend />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="dividend"
             element={
               <Layout>
                 <Dividend />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <Dividend />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/dividend" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/dividend" replace />} />
-      </Route>
-      <Route path="*" element={<RequireAuth />}>
-        <Route
-          path="bankinterest"
-          element={
-            <Layout>
-              <BankInterest />
-            </Layout>
-          }
-        >
+        <Route path="*" element={<RequireAuth />}>
           <Route
-            path=":orderId"
+            path="bankinterest"
             element={
               <Layout>
                 <BankInterest />
               </Layout>
             }
-          />
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <BankInterest />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/bankinterest" replace />} />
         </Route>
-        <Route path="*" element={<Navigate to="/bankinterest" replace />} />
-      </Route>
-    </Routes>
+      </Routes>
     </React.Fragment>
-    
   );
 }
 

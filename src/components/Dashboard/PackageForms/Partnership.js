@@ -159,7 +159,7 @@ const Partnership = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         name: data.partnershipName,
         descriptionOfBusiness: data.descriptionOfBusiness,
-        address: JSON.stringify(address ?? {}),
+        address: data.address,
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
@@ -214,7 +214,7 @@ const Partnership = () => {
         orderId: params.orderId,
         name: data.partnershipName,
         descriptionOfBusiness: data.descriptionOfBusiness,
-        address: JSON.stringify(address ?? {}),
+        address: data.address,
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
@@ -683,7 +683,7 @@ const Partnership = () => {
   };
 
   const handleAddress = (value) => {
-    setAddress(value);
+    
     setValue("address", JSON.stringify(value));
   };
 

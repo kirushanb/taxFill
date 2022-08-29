@@ -169,18 +169,18 @@ const Partnership = () => {
           }),
         ],
         totalTurnOver: data.totalTurnover
-          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         turnOver: [
           ...monthsList.map((n) => {
             return {
               month: mL[n.month],
-              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
             };
           }),
         ],
         totalExpenses: overallexpenseValue
-          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         expenses:
           expensesList.length === 0
@@ -191,7 +191,7 @@ const Partnership = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: n.amount ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) : 0,
+                    amount: n.amount ? parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2) : 0,
                   };
                 }),
               ],
@@ -235,7 +235,7 @@ const Partnership = () => {
             return {
               id: n.id,
               month: mL[n.month],
-              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
             };
           }),
         ],
@@ -252,7 +252,7 @@ const Partnership = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: n.amount ? parseFloat(n.amount.replace(/\,/g, "")).toFixed(2) : 0,
+                    amount: n.amount ? parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2) : 0,
                   };
                 }),
               ],
@@ -394,6 +394,44 @@ const Partnership = () => {
             0
           )
           .toFixed(2)
+      );
+    }else{
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      setTotalTurnover(
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      setValue(
+        "totalTurnover",
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
     }
   };
@@ -788,7 +826,8 @@ const Partnership = () => {
       setEndDate(
         moment(response.data.result.accountPeriodTo).format("YYYY-MM-DD")
       );
-      if (response.data.result.turnOver.length > 0) {
+      
+      if (response.data.result.turnOver.length) {
         setMonthsList(
           getMonthsWithData(
             new Date(response.data.result.accountingPeriodFrom),
@@ -798,7 +837,7 @@ const Partnership = () => {
         );
       }
 
-      if (response.data.result?.attachments?.length > 0) {
+      if (response.data.result?.attachments?.length) {
         setUrls([
           ...response.data.result.attachments.map((n) => {
             return { url: n.url, id: n.id };
@@ -824,13 +863,7 @@ const Partnership = () => {
       } else if (response.data.result.totalTurnOver) {
         setNetProfit(parseFloat(response.data.result.totalTurnOver.toString()).toFixed(2));
       }
-      if(response.data.result.attachments.length){
-        setUrls([
-          ...response.data.result.attachments.map((n) => {
-            return { url: n.url, id: n.id };
-          }),
-        ]);
-      }
+      
       
     } catch (err) {
       console.log(err);

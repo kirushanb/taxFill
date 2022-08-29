@@ -70,10 +70,9 @@ const getMonths = (fromDate, toDate) => {
     let month = year === fromYear ? fromMonth : 0;
     const monthLimit = year === toYear ? toMonth : 11;
     for (; month <= monthLimit; month++) {
-      months.push({ year, month, amount: "" });
+      months.push({ year, month, amount: "0" });
     }
   }
-
   return months;
 };
 
@@ -211,18 +210,18 @@ const SelfEmployment = () => {
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
         totalTurnOver: data.totalTurnover
-          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         turnOver: [
           ...monthsList.map((n) => {
             return {
               month: mL[n.month],
-              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
             };
           }),
         ],
         totalExpenses: overallexpenseValue
-          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         expenses:
           expensesList.length === 0
@@ -233,7 +232,7 @@ const SelfEmployment = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -261,19 +260,19 @@ const SelfEmployment = () => {
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
         totalTurnOver: data.totalTurnover
-          ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         turnOver: [
           ...monthsList.map((n) => {
             return {
               id: n.id,
               month: mL[n.month],
-              amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
             };
           }),
         ],
         totalExpenses: overallexpenseValue
-          ? parseFloat(overallexpenseValue.replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
           : 0,
         expenses:
           expensesList.length === 0
@@ -285,7 +284,7 @@ const SelfEmployment = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: parseFloat(n.amount.replace(/\,/g, "")).toFixed(2),
+                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
                   };
                 }),
               ],
@@ -429,6 +428,44 @@ const SelfEmployment = () => {
             0
           )
           .toFixed(2)
+      );
+    }else {
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      setTotalTurnover(
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      setValue(
+        "totalTurnover",
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
       );
     }
   };
@@ -669,21 +706,31 @@ const SelfEmployment = () => {
     setValue("address", JSON.stringify(value));
   };
   const handleTotalTurnover = (e) => {
-    setValue(
-      "totalTurnover",
-      (e.target.value = e.target.value
-        .replace(/[^\d.]/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        .replace(/(\.\d{1,2}).*/g, "$1"))
-    );
-    setTotalTurnover(
-      (e.target.value = e.target.value
-        .replace(/[^\d.]/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        .replace(/(\.\d{1,2}).*/g, "$1"))
-    );
+    if (e.target.value === "") {
+      setValue(
+        "totalTurnover",
+        e.target.value
+      );
+      setTotalTurnover(e.target.value)
+      
+    }else{
+      setValue(
+        "totalTurnover",
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+      setTotalTurnover(
+        (e.target.value = e.target.value
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"))
+      );
+    }
+    
   };
-
+  
   useEffect(() => {
     if (packageId) {
       // get user and set form fields
@@ -748,13 +795,16 @@ const SelfEmployment = () => {
       setEndDate(
         moment(response.data.result.accountPeriodTo).format("YYYY-MM-DD")
       );
-      setMonthsList(
-        getMonthsWithData(
-          new Date(response.data.result.accountingPeriodFrom),
-          new Date(response.data.result.accountPeriodTo),
-          response.data.result.turnOver
-        )
-      );
+      if(response.data.result.turnOver.length){
+        setMonthsList(
+          getMonthsWithData(
+            new Date(response.data.result.accountingPeriodFrom),
+            new Date(response.data.result.accountPeriodTo),
+            response.data.result.turnOver
+          )
+        );
+      }
+      
 
       if (
         response?.data?.result?.attachments &&

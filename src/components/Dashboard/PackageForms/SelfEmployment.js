@@ -91,11 +91,11 @@ export const getMonthsWithData = (fromDate, toDate, data) => {
         month,
         amount: data
           .filter((x) => x.month === mL[month])[0]
-          .amount.toString()
+          ?.amount.toString()
           .replace(/[^\d.]/g, "")
           .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-          .replace(/(\.\d{1,2}).*/g, "$1"),
-        id: data.filter((x) => x.month === mL[month])[0].id,
+          .replace(/(\.\d{1,2}).*/g, "$1") ?? 0,
+        id: data.filter((x) => x.month === mL[month])[0]?.id,
       });
     }
   }
@@ -116,8 +116,8 @@ export const getMonthsWithDataAdd = (fromDate, toDate, data) => {
         months.push({
           year,
           month,
-          amount: data.filter((x) => x.month === month)[0].amount,
-          id: data.filter((x) => x.month === month)[0].id,
+          amount: data.filter((x) => x.month === month)[0]?.amount,
+          id: data.filter((x) => x.month === month)[0]?.id,
         });
       } else {
         months.push({ year, month, amount: "0" });
@@ -828,6 +828,7 @@ const SelfEmployment = () => {
     } catch (err) {
       // console.log(err);
       setLoading(false);
+      console.log(err);
     }
   };
 
@@ -1156,7 +1157,7 @@ const SelfEmployment = () => {
                     </React.Fragment>
                   ))}
                   <Grid item xs={12} sm={12}>
-                    <UploadFiles handleUpload={handleUpload} />
+                    <UploadFiles handleUpload={handleUpload} taxYear={taxYear}/>
 
                     {packageId && (
                       <>

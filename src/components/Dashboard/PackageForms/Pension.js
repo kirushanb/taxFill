@@ -605,7 +605,7 @@ const Pension = () => {
                   </React.Fragment>
                 ))} */}
                   <Grid item xs={12} sm={12}>
-                    <UploadFiles handleUpload={handleUpload} />
+                    <UploadFiles handleUpload={handleUpload} taxYear={taxYear}/>
                     {packageId && (
                       <>
                         <ol style={{ padding: "1rem" }}>

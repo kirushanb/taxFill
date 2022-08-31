@@ -31,7 +31,7 @@ const UploadFiles = (props) => {
 
           formData.append("file", n);
           const response = await axiosPrivate.post(
-            "/Document/upload-document",
+            `/Document/upload-document?watermarkstring=${props.taxYear}`,
             formData
           );
           return response;

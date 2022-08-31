@@ -90,8 +90,8 @@ export const getMonthsWithData = (fromDate, toDate, data) => {
       months.push({
         year,
         month,
-        amount: data.filter((x) => x.month === mL[month])[0].amount,
-        id: data.filter((x) => x.month === mL[month])[0].id,
+        amount: data.filter((x) => x.month === mL[month])[0]?.amount ?? 0,
+        id: data.filter((x) => x.month === mL[month])[0]?.id,
       });
     }
   }
@@ -112,8 +112,8 @@ export const getMonthsWithDataAdd = (fromDate, toDate, data) => {
         months.push({
           year,
           month,
-          amount: data.filter((x) => x.month === month)[0].amount,
-          id: data.filter((x) => x.month === month)[0].id,
+          amount: data.filter((x) => x.month === month)[0]?.amount ?? 0,
+          id: data.filter((x) => x.month === month)[0]?.id,
         });
       } else {
         months.push({ year, month, amount: "0" });

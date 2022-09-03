@@ -885,7 +885,7 @@ const Partnership = () => {
                 <h5 className="title is-5">Back</h5>
               </div>
               <h5 className="title is-5">
-                {taxYear ? `Tax Year ${taxYear}` : ""}
+                {taxYear ? `Tax Year ${taxYear-1}-${taxYear}` : ""}
               </h5>
               <div> </div>
             </div>
@@ -1072,7 +1072,7 @@ const Partnership = () => {
                       }}
                       value={startDate}
                       onChange={handleStartDate}
-                      placeholder="Enter your business address"
+                      onKeyDown={(e) => e.preventDefault()}
                     />
                     <Typography variant="body2" color="error" align="left">
                       {errors.startDate?.message}
@@ -1097,7 +1097,7 @@ const Partnership = () => {
                       }}
                       value={endDate}
                       onChange={handleEndDate}
-                      placeholder="Enter your business address"
+                      onKeyDown={(e) => e.preventDefault()}
                     />
                     <Typography variant="body2" color="error" align="left">
                       {errors.endDate?.message}

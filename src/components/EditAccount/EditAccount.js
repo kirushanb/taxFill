@@ -390,7 +390,7 @@ const EditAccount = () => {
           </div> */}
 
             <button disabled={loading} className="button is-medium is-warning">
-              Edit
+              Update
             </button>
           </form>
         )}

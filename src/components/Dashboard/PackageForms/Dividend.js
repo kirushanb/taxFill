@@ -510,7 +510,7 @@ const Dividend = () => {
                 <h5 className="title is-5">Back</h5>
               </div>
               <h5 className="title is-5">
-                {taxYear ? `Tax Year ${taxYear}` : ""}
+                {taxYear ? `Tax Year ${taxYear-1}-${taxYear}` : ""}
               </h5>
               <div> </div>
             </div>

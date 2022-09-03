@@ -405,6 +405,12 @@ export default function StepWizard() {
                     </div>
                     <div className="message-body">
                       <div className="total-wrapper">
+                      {baseRate && (
+                          <div className="total">
+                            <p className="title is-6">{"Processing Rate"}</p>
+                            <p className="title is-6">{`£${baseRate}`}</p>
+                          </div>
+                        )}
                         {selectedlist.map((n) => (
                           <div className="total" key={n.name}>
                             <p className="title is-6">{n.name}</p>
@@ -425,12 +431,7 @@ export default function StepWizard() {
                             <p className="title is-6">{"£5"}</p>
                           </div>
                         )}
-                        {baseRate && (
-                          <div className="total">
-                            <p className="title is-6">{"Base Rate"}</p>
-                            <p className="title is-6">{`£${baseRate}`}</p>
-                          </div>
-                        )}
+                        
                         <div className="total-last">
                           <p className="title is-5">Total</p>
                           <p className="title is-5">

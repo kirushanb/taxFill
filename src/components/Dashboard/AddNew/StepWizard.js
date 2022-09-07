@@ -133,11 +133,11 @@ export default function StepWizard() {
       return;
     } else if (!checkedEmail && !checkedSMS) {
       toast.warn(
-        "Please select atleast one preffered method of progress notification"
+        "Please select atleast one preferred method of progress notification"
       );
       return;
     } else if (!payment) {
-      toast.warn("Please select atleast one preffered method of payment");
+      toast.warn("Please select atleast one preferred method of payment");
       return;
     }
     if (payment === "stripe") {
@@ -303,7 +303,7 @@ export default function StepWizard() {
                       id="panel2d-header"
                     >
                       <Typography>
-                        Select your preffered method of progress notification:
+                        Select your preferred method of progress notification:
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -350,7 +350,7 @@ export default function StepWizard() {
                       id="panel3d-header"
                     >
                       <Typography>
-                        Select your preffered method of payment
+                        Select your preferred method of payment
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>

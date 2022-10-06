@@ -5,9 +5,11 @@ import RemoveIcon from "@mui/icons-material/Remove";
 import SaveIcon from "@mui/icons-material/Save";
 import {
   Box,
+  Checkbox,
   CircularProgress,
   Container,
   Fab,
+  FormControlLabel,
   Grid,
   InputLabel,
 } from "@mui/material";
@@ -141,6 +143,7 @@ const RentalIncome = () => {
     {
       description: "",
       amount: "0",
+      isMortgage: false,
     },
   ]);
   const [totalTurnover, setTotalTurnover] = React.useState("");
@@ -197,8 +200,16 @@ const RentalIncome = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         propertyName: data.propertyName,
         address: JSON.stringify(address ?? {}),
-        rentalIncome: data.totalTurnover ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2): 0,
-        totalExpense: overallexpenseValue ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2) : 0,
+        rentalIncome: data.totalTurnover
+          ? parseFloat(
+              data.totalTurnover.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
+        totalExpense: overallexpenseValue
+          ? parseFloat(
+              overallexpenseValue.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -208,7 +219,10 @@ const RentalIncome = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
+                    amount: parseFloat(
+                      n.amount.toString().replace(/\,/g, "")
+                    ).toFixed(2),
+                    isMortgage: n.isMortgage,
                   };
                 }),
               ],
@@ -231,8 +245,16 @@ const RentalIncome = () => {
         orderId: params.orderId ? params.orderId : cookies.order.oderId,
         propertyName: data.propertyName,
         address: JSON.stringify(address ?? {}),
-        rentalIncome: data.totalTurnover ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2): 0,
-        totalExpense: overallexpenseValue ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2) : 0,
+        rentalIncome: data.totalTurnover
+          ? parseFloat(
+              data.totalTurnover.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
+        totalExpense: overallexpenseValue
+          ? parseFloat(
+              overallexpenseValue.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
         expenses:
           expensesList.length === 0
             ? []
@@ -243,7 +265,10 @@ const RentalIncome = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
+                    amount: parseFloat(
+                      n.amount.toString().replace(/\,/g, "")
+                    ).toFixed(2),
+                    isMortgage: n.isMortgage,
                   };
                 }),
               ],
@@ -265,7 +290,7 @@ const RentalIncome = () => {
 
       setLoading(false);
       reset();
-      setExpensesList([{ description: "", amount: "" }]);
+      setExpensesList([{ description: "", amount: "", isMortgage: false }]);
       setAddress("");
       setLoading(false);
 
@@ -289,9 +314,7 @@ const RentalIncome = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) =>
-                n.package.name !== "Rental Income" &&
-                n.package.name !== "Capital gain"
+              (n) => n.package.name !== "Rental Income"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -339,7 +362,7 @@ const RentalIncome = () => {
       const response = await postCall(data);
 
       reset();
-      setExpensesList([{ description: "", amount: "" }]);
+      setExpensesList([{ description: "", amount: "", isMortgage: false }]);
       setLoading(false);
       toast.success("Rental Income Details Saved Successfully");
       setUrls([]);
@@ -391,8 +414,10 @@ const RentalIncome = () => {
 
   function handleChangeInput(i, event) {
     const values = [...expensesList];
-    const { name, value } = event.target;
-    if (name === "description") {
+    const { name, value, checked } = event.target;
+    if (name === "isMortgage") {
+      values[i][name] = checked;
+    } else if (name === "description") {
       values[i][name] = value;
     } else {
       values[i][name] = value
@@ -400,63 +425,117 @@ const RentalIncome = () => {
         .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         .replace(/(\.\d{1,2}).*/g, "$1");
     }
+
     setExpensesList(values);
     if (value) {
       setOverallexpenses(true);
 
       setOverallexpensesValue(
-        values
-          .reduce(
+        parseFloat(
+          values.reduce(
             (acc, curr) =>
               acc +
-              (isNaN(curr.amount.replace(/\,/g, ""))
-                ? 0
-                : parseFloat(curr.amount.replace(/\,/g, ""))),
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
             0
           )
-          .toFixed(2)
+        ).toFixed(2)
       );
     } else {
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      setOverallexpensesValue(
+        parseFloat(
+          [
+            ...other,
+            { amount: 0, description: filtered[0].description, isMortgage:false },
+          ].reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
       setOverallexpenses(false);
     }
   }
+
+  
 
   function handleAddInput() {
     const values = [...expensesList];
     values.push({
       description: "",
       amount: "0",
+      isMortgage: false
     });
     setExpensesList(values);
     setOverallexpensesValue(
-      values
-        .reduce(
+      parseFloat(
+        values.reduce(
           (acc, curr) =>
             acc +
-            (isNaN(curr.amount.replace(/\,/g, ""))
-              ? 0
-              : parseFloat(curr.amount.replace(/\,/g, ""))),
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
           0
         )
-        .toFixed(2)
+      ).toFixed(2)
     );
   }
 
   function handleRemoveInput(i) {
+    if (packageId) {
+      const values = [...expensesList];
+      const filtered = values.filter((a, key) => key === i);
+      const other = values.filter((a, key) => key !== i);
+      values.splice(i, 1);
+      setExpensesList([
+        ...other,
+        { amount: "0", description: "", id: filtered[0]?.id, isMortgage: false },
+      ]);
+      setOverallexpensesValue(
+        parseFloat(
+          values.reduce(
+            (acc, curr) =>
+              acc +
+              (curr.amount
+                ? isNaN(curr.amount.replace(/\,/g, ""))
+                  ? 0
+                  : parseFloat(curr.amount.replace(/\,/g, ""))
+                : 0),
+            0
+          )
+        ).toFixed(2)
+      );
+      return;
+    }
     const values = [...expensesList];
     values.splice(i, 1);
     setExpensesList(values);
     setOverallexpensesValue(
-      values
-        .reduce(
+      parseFloat(
+        values.reduce(
           (acc, curr) =>
             acc +
-            (isNaN(curr.amount.replace(/\,/g, ""))
-              ? 0
-              : parseFloat(curr.amount.replace(/\,/g, ""))),
+            (curr.amount
+              ? isNaN(curr.amount.replace(/\,/g, ""))
+                ? 0
+                : parseFloat(curr.amount.replace(/\,/g, ""))
+              : 0),
           0
         )
-        .toFixed(2)
+      ).toFixed(2)
     );
   }
 
@@ -555,14 +634,20 @@ const RentalIncome = () => {
       setTotalTurnover(response.data.result.rentalIncome);
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
+      
       if (response.data.result.expenses.length > 0) {
         setExpensesList([
           ...response.data.result.expenses.map((n) => {
-            return { id: n.id, description: n.description, amount: n.amount };
+            return {
+              id: n.id,
+              description: n.description,
+              amount: n.amount,
+              isMortgage: n.isMortgage,
+            };
           }),
         ]);
       } else {
-        setExpensesList([{ description: "", amount: 0 }]);
+        setExpensesList([{ description: "", amount: 0, isMortgage: false }]);
       }
 
       setStartDate(
@@ -586,7 +671,7 @@ const RentalIncome = () => {
           }),
         ]);
       }
-      if(response.data.result.attachments.length){
+      if (response.data.result.attachments.length) {
         setUrls([
           ...response.data.result.attachments.map((n) => {
             return { url: n.url, id: n.id };
@@ -594,7 +679,6 @@ const RentalIncome = () => {
         ]);
       }
 
-      
       setOverallexpensesValue(response.data.result.totalExpense);
     } catch (err) {
       // console.log(err);
@@ -617,7 +701,7 @@ const RentalIncome = () => {
                 <h5 className="title is-5">Back</h5>
               </div>
               <h5 className="title is-5">
-                {taxYear ? `Tax Year ${taxYear-1}-${taxYear}` : ""}
+                {taxYear ? `Tax Year ${taxYear - 1}-${taxYear}` : ""}
               </h5>
               <div> </div>
             </div>
@@ -847,7 +931,6 @@ const RentalIncome = () => {
                       fullWidth
                       id="overallExpenses"
                       name="overallExpenses"
-                      type={"number"}
                       value={overallexpenseValue}
                       onChange={handleOverallExpenses}
                       placeholder="Enter your overall expenses"
@@ -930,10 +1013,26 @@ const RentalIncome = () => {
                           </Fab>
                         )}
                       </Grid>
+                      <Grid item xs={12} sm={12}>
+                        <FormControlLabel
+                          label="Tick if this a mortgage expense"
+                          control={
+                            <Checkbox
+                              id="isMortgage"
+                              name="isMortgage"
+                              checked={field.isMortgage}
+                              onChange={(e) => handleChangeInput(idx, e)}
+                            />
+                          }
+                        />
+                      </Grid>
                     </React.Fragment>
                   ))}
                   <Grid item xs={12} sm={12}>
-                    <UploadFiles handleUpload={handleUpload} taxYear={taxYear}/>
+                    <UploadFiles
+                      handleUpload={handleUpload}
+                      taxYear={taxYear}
+                    />
                     {packageId && (
                       <>
                         <ol style={{ padding: "1rem" }}>

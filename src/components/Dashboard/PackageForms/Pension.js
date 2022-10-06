@@ -187,8 +187,7 @@ const Pension = () => {
 
             const filteredOther = cookies.order.selectedPackages.filter(
               (n) =>
-                n.package.name !== "Pension Income" &&
-                n.package.name !== "Capital gain"
+                n.package.name !== "Pension Income"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true

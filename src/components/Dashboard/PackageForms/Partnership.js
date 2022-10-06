@@ -126,6 +126,7 @@ const Partnership = () => {
     ),
     address: Yup.string().required("Business address must not be empty."),
     totalTurnover: Yup.string().required("Total turnover must not be empty"),
+    myShare: Yup.string().required("My Share must not be empty"),
   });
 
   const formOptions = {
@@ -136,6 +137,7 @@ const Partnership = () => {
       descriptionOfBusiness: "",
       address: "",
       totalTurnover: "",
+      myShare: "",
     },
   };
 
@@ -163,24 +165,31 @@ const Partnership = () => {
         postalCode: data.postalCode,
         accountingPeriodFrom: startDate,
         accountPeriodTo: endDate,
+        myShare: partnershipList[0]["share"],
         shares: [
           ...partnershipList.map((n) => {
             return { name: n.fullName, percentage: parseInt(n.share) };
           }),
         ],
         totalTurnOver: data.totalTurnover
-          ? parseFloat(data.totalTurnover.toString().replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(
+              data.totalTurnover.toString().replace(/\,/g, "")
+            ).toFixed(2)
           : 0,
         turnOver: [
           ...monthsList.map((n) => {
             return {
               month: mL[n.month],
-              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(
+                n.amount.toString().replace(/\,/g, "")
+              ).toFixed(2),
             };
           }),
         ],
         totalExpenses: overallexpenseValue
-          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(
+              overallexpenseValue.toString().replace(/\,/g, "")
+            ).toFixed(2)
           : 0,
         expenses:
           expensesList.length === 0
@@ -191,7 +200,11 @@ const Partnership = () => {
                 ...expensesList.map((n) => {
                   return {
                     description: n.description,
-                    amount: n.amount ? parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2) : 0,
+                    amount: n.amount
+                      ? parseFloat(
+                          n.amount.toString().replace(/\,/g, "")
+                        ).toFixed(2)
+                      : 0,
                   };
                 }),
               ],
@@ -221,6 +234,7 @@ const Partnership = () => {
         totalTurnOver: data.totalTurnover
           ? parseFloat(data.totalTurnover.replace(/\,/g, "")).toFixed(2)
           : 0,
+        myShare: partnershipList[0]["share"],
         shares: [
           ...partnershipList.map((n) => {
             return {
@@ -235,12 +249,16 @@ const Partnership = () => {
             return {
               id: n.id,
               month: mL[n.month],
-              amount: parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2),
+              amount: parseFloat(
+                n.amount.toString().replace(/\,/g, "")
+              ).toFixed(2),
             };
           }),
         ],
         totalExpenses: overallexpenseValue
-          ? parseFloat(overallexpenseValue.toString().replace(/\,/g, "")).toFixed(2)
+          ? parseFloat(
+              overallexpenseValue.toString().replace(/\,/g, "")
+            ).toFixed(2)
           : 0,
         expenses:
           expensesList.length === 0
@@ -252,7 +270,11 @@ const Partnership = () => {
                   return {
                     id: n.id,
                     description: n.description,
-                    amount: n.amount ? parseFloat(n.amount.toString().replace(/\,/g, "")).toFixed(2) : 0,
+                    amount: n.amount
+                      ? parseFloat(
+                          n.amount.toString().replace(/\,/g, "")
+                        ).toFixed(2)
+                      : 0,
                   };
                 }),
               ],
@@ -268,7 +290,6 @@ const Partnership = () => {
   };
 
   const onSubmit = async (data) => {
-    
     setLoading(true);
     try {
       packageId ? await putCall(data) : await postCall(data);
@@ -297,9 +318,7 @@ const Partnership = () => {
             filteredEmployement[0].package.recordsAdded = true;
 
             const filteredOther = cookies.order.selectedPackages.filter(
-              (n) =>
-                n.package.name !== "Partnership" &&
-                n.package.name !== "Capital gain"
+              (n) => n.package.name !== "Partnership"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -395,7 +414,7 @@ const Partnership = () => {
           )
           .toFixed(2)
       );
-    }else{
+    } else {
       const filtered = values.filter((a, key) => key === i);
       const other = values.filter((a, key) => key !== i);
       setTotalTurnover(
@@ -623,8 +642,8 @@ const Partnership = () => {
           .replace(/(\.\d{1,2}).*/g, "$1"))
       );
       setNetProfit(
-        (parseFloat(totalTurnover.replace(/\,/g, "")) -
-          parseFloat(e.target.value.replace(/\,/g, "")))
+        parseFloat(totalTurnover.replace(/\,/g, "")) -
+          parseFloat(e.target.value.replace(/\,/g, ""))
       );
     }
 
@@ -677,7 +696,7 @@ const Partnership = () => {
           monthsList
         )
       );
-    } else if(endDate) {
+    } else if (endDate) {
       setMonthsList(getMonths(new Date(e.target.value), new Date(endDate)));
     }
   };
@@ -732,19 +751,15 @@ const Partnership = () => {
   };
 
   const handleAddress = (value) => {
-    
     setValue("address", JSON.stringify(value));
   };
 
   const handleTotalTurnover = (e) => {
     if (e.target.value === "") {
-      setValue(
-        "totalTurnover",
-        e.target.value
-      );
-      setTotalTurnover(e.target.value)
-      setNetProfit(0-overallexpenseValue);
-    }else{
+      setValue("totalTurnover", e.target.value);
+      setTotalTurnover(e.target.value);
+      setNetProfit(0 - overallexpenseValue);
+    } else {
       setValue(
         "totalTurnover",
         (e.target.value = e.target.value
@@ -760,10 +775,9 @@ const Partnership = () => {
       );
       setNetProfit(
         parseFloat(e.target.value.replace(/\,/g, "")).toFixed(2) -
-        overallexpenseValue
+          overallexpenseValue
       );
     }
-    
   };
 
   const handleCalculateProfit = (share) => {
@@ -789,31 +803,42 @@ const Partnership = () => {
         "descriptionOfBusiness",
         "address",
         "totalTurnover",
+        "myShare",
       ];
 
       const packages = {
         partnershipName: response.data.result.name,
         descriptionOfBusiness: response.data.result.descriptionOfBusiness,
         address: response.data.result.address,
-        totalTurnover: response.data.result.totalTurnOver.toString()
-        .replace(/[^\d.]/g, "")
-        .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        .replace(/(\.\d{1,2}).*/g, "$1"),
+        totalTurnover: response.data.result.totalTurnOver
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1"),
+        myShare: response.data.result.myShare,
       };
 
-      setTotalTurnover(response.data.result.totalTurnOver.toString()
-      .replace(/[^\d.]/g, "")
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-      .replace(/(\.\d{1,2}).*/g, "$1"));
+      setTotalTurnover(
+        response.data.result.totalTurnOver
+          .toString()
+          .replace(/[^\d.]/g, "")
+          .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          .replace(/(\.\d{1,2}).*/g, "$1")
+      );
       fields.forEach((field) => setValue(field, packages[field]));
       setAddress(JSON.parse(response.data.result.address));
       if (response.data.result.expenses.length > 0) {
         setExpensesList([
           ...response.data.result.expenses.map((n) => {
-            return { id: n.id, description: n.description, amount: n.amount.toString()
-              .replace(/[^\d.]/g, "")
-              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-              .replace(/(\.\d{1,2}).*/g, "$1") };
+            return {
+              id: n.id,
+              description: n.description,
+              amount: n.amount
+                .toString()
+                .replace(/[^\d.]/g, "")
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                .replace(/(\.\d{1,2}).*/g, "$1"),
+            };
           }),
         ]);
       } else {
@@ -826,7 +851,7 @@ const Partnership = () => {
       setEndDate(
         moment(response.data.result.accountPeriodTo).format("YYYY-MM-DD")
       );
-      
+
       if (response.data.result.turnOver.length) {
         setMonthsList(
           getMonthsWithData(
@@ -861,15 +886,28 @@ const Partnership = () => {
             response.data.result.totalExpenses
         );
       } else if (response.data.result.totalTurnOver) {
-        setNetProfit(parseFloat(response.data.result.totalTurnOver.toString()).toFixed(2));
+        setNetProfit(
+          parseFloat(response.data.result.totalTurnOver.toString()).toFixed(2)
+        );
       }
-      
-      
     } catch (err) {
       console.log(err);
       setLoading(false);
     }
     setLoading(false);
+  };
+
+  const handleMyShare = (e) => {
+    setValue("myShare", e.target.value);
+    const values = [...partnershipList];
+    if (values[0]["fullName"] === "My Share") {
+      values[0]["share"] = e.target.value;
+      setPartnershipList(values);
+      return;
+    }
+    const property = { fullName: "My Share", share: e.target.value };
+    values.unshift(property);
+    setPartnershipList(values);
   };
 
   return (
@@ -885,7 +923,7 @@ const Partnership = () => {
                 <h5 className="title is-5">Back</h5>
               </div>
               <h5 className="title is-5">
-                {taxYear ? `Tax Year ${taxYear-1}-${taxYear}` : ""}
+                {taxYear ? `Tax Year ${taxYear - 1}-${taxYear}` : ""}
               </h5>
               <div> </div>
             </div>
@@ -982,71 +1020,100 @@ const Partnership = () => {
                     </InputLabel>
                   </Grid>
 
-                  {partnershipList.map((field, idx) => (
-                    <React.Fragment key={field + "-" + idx}>
-                      <Grid item xs={12} sm={5.5}>
-                        <InputLabel htmlFor="payee" required>
-                          Full Name
-                        </InputLabel>
-                        <TextField
-                          required
-                          fullWidth
-                          id="fullName"
-                          name="fullName"
-                          value={field.fullName}
-                          // {...register("description")}
-                          onChange={(e) => handleChangeInputPartnership(idx, e)}
-                          placeholder="Full Name"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={5.5}>
-                        <InputLabel htmlFor="payee" required>
-                          Share of profit (%)
-                        </InputLabel>
-                        <TextField
-                          required
-                          fullWidth
-                          id="share"
-                          name="share"
-                          value={field.share}
-                          type="share"
-                          onChange={(e) => handleChangeInputPartnership(idx, e)}
-                          placeholder="Share of profit (%)"
-                        />
-                      </Grid>
-                      <Grid item xs={12} sm={1}>
-                        {idx === 0 ? (
-                          <Fab
-                            onClick={handleAddInputPartnerShip}
-                            color="primary"
-                            size="small"
-                            aria-label="add"
-                            sx={{
-                              background: "#49c68d",
-                              alignSelf: "center",
-                              marginTop: "1.8rem",
-                            }}
-                          >
-                            <AddIcon />
-                          </Fab>
-                        ) : (
-                          <Fab
-                            onClick={() => handleRemoveInputPartnership(idx)}
-                            color="primary"
-                            size="small"
-                            aria-label="add"
-                            sx={{
-                              background: "#49c68d",
-                              alignSelf: "center",
-                              marginTop: "1.8rem",
-                            }}
-                          >
-                            <RemoveIcon />
-                          </Fab>
-                        )}
-                      </Grid>
-                    </React.Fragment>
-                  ))}
+                  <React.Fragment>
+                    <Grid item xs={12} sm={12}>
+                      <InputLabel htmlFor="payee" required>
+                        My Share (%)
+                      </InputLabel>
+                      <TextField
+                        required
+                        fullWidth
+                        id="myShare"
+                        name="myShare"
+                        placeholder="Share of profit (%)"
+                        value={partnershipList[0]["share"]}
+                        onChange={handleMyShare}
+                      />
+                      <Typography variant="body2" color="error" align="left">
+                        {errors.myShare?.message}
+                      </Typography>
+                    </Grid>
+                  </React.Fragment>
+
+                  {partnershipList.map((field, idx) => {
+                    if (idx === 0) {
+                      return null;
+                    }
+                    return (
+                      <React.Fragment key={field + "-" + idx}>
+                        <Grid item xs={12} sm={5.5}>
+                          <InputLabel htmlFor="payee" required>
+                            Full Name
+                          </InputLabel>
+                          <TextField
+                            required
+                            fullWidth
+                            id="fullName"
+                            name="fullName"
+                            value={field.fullName}
+                            // {...register("description")}
+                            onChange={(e) =>
+                              handleChangeInputPartnership(idx, e)
+                            }
+                            placeholder="Full Name"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={5.5}>
+                          <InputLabel htmlFor="payee" required>
+                            Share of profit (%)
+                          </InputLabel>
+                          <TextField
+                            required
+                            fullWidth
+                            id="share"
+                            name="share"
+                            value={field.share}
+                            type="share"
+                            onChange={(e) =>
+                              handleChangeInputPartnership(idx, e)
+                            }
+                            placeholder="Share of profit (%)"
+                          />
+                        </Grid>
+                        <Grid item xs={12} sm={1}>
+                          {idx === 1 ? (
+                            <Fab
+                              onClick={handleAddInputPartnerShip}
+                              color="primary"
+                              size="small"
+                              aria-label="add"
+                              sx={{
+                                background: "#49c68d",
+                                alignSelf: "center",
+                                marginTop: "1.8rem",
+                              }}
+                            >
+                              <AddIcon />
+                            </Fab>
+                          ) : (
+                            <Fab
+                              onClick={() => handleRemoveInputPartnership(idx)}
+                              color="primary"
+                              size="small"
+                              aria-label="add"
+                              sx={{
+                                background: "#49c68d",
+                                alignSelf: "center",
+                                marginTop: "1.8rem",
+                              }}
+                            >
+                              <RemoveIcon />
+                            </Fab>
+                          )}
+                        </Grid>
+                      </React.Fragment>
+                    );
+                  })}
                   <Grid item xs={12} sm={12}>
                     <InputLabel htmlFor="payee" sx={{ fontWeight: "600" }}>
                       Accounting period
@@ -1253,7 +1320,7 @@ const Partnership = () => {
                           </Fab>
                         ) : (
                           <Fab
-                          onClick={() => handleRemoveInput(idx)}
+                            onClick={() => handleRemoveInput(idx)}
                             color="primary"
                             size="small"
                             aria-label="add"
@@ -1317,7 +1384,10 @@ const Partnership = () => {
                     </React.Fragment>
                   ))}
                   <Grid item xs={12} sm={12}>
-                    <UploadFiles handleUpload={handleUpload} taxYear={taxYear}/>
+                    <UploadFiles
+                      handleUpload={handleUpload}
+                      taxYear={taxYear}
+                    />
                     {packageId && (
                       <>
                         <ol style={{ padding: "1rem" }}>

@@ -189,8 +189,7 @@ const Employment = () => {
 
             const filteredOther = cookies.order.selectedPackages.filter(
               (n) =>
-                n.package.name !== "Employment" &&
-                n.package.name !== "Capital gain"
+                n.package.name !== "Employment"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true

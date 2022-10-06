@@ -14,7 +14,6 @@ const useRefreshToken = () => {
             Authorization: `Bearer ${cookies.user}`,
             "accept": "*/*"
         } });
-        console.log(response)
         setAuth(prev => {
             console.log(JSON.stringify(prev));
             console.log(response.data.result.token);

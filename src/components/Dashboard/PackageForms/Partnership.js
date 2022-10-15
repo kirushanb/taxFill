@@ -329,6 +329,7 @@ const Partnership = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

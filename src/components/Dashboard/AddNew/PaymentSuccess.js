@@ -8,6 +8,7 @@ const PaymentSuccess = () => {
   const [cookies, setCookie, removeCookie] = useCookies(["order"]);
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(async () => {
    
     if(cookies.payment){

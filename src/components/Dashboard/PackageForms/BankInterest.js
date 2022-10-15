@@ -277,8 +277,7 @@ const BankInterest = () => {
 
             const filteredOther = cookies.order.selectedPackages.filter(
               (n) =>
-                n.package.name !== "Bank interest" &&
-                n.package.name !== "Capital gain"
+                n.package.name !== "Bank interest"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -289,6 +288,7 @@ const BankInterest = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

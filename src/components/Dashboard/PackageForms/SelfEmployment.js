@@ -342,6 +342,7 @@ const SelfEmployment = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

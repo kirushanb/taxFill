@@ -222,6 +222,7 @@ const CapitalGain = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

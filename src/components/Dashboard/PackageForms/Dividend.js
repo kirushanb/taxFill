@@ -289,6 +289,7 @@ const Dividend = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

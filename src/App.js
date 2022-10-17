@@ -31,6 +31,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import EditAccount from "./components/EditAccount/EditAccount";
 import CapitalGain from "./components/Dashboard/PackageForms/CapitalGain";
+import CalculateTax from "./components/Dashboard/CalculateTax/CalculateTax";
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -65,6 +66,11 @@ function App() {
         </Route>
         <Route element={<RequireAuth />}>
           <Route path="/account-edit" element={<EditAccount />} />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route path="/calculate-tax/:orderId" element={ <Layout>
+                <CalculateTax />
+              </Layout>} />
         </Route>
         <Route element={<RequireAuth />}>
           <Route

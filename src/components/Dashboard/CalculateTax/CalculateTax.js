@@ -28,14 +28,13 @@ const CalculateTax = () => {
         `https://tax.api.cyberozunu.com/api/v1.1/Order/calculate-tax?orderId=${params.orderId}`
       );
       setList(response.data.result);
-      console.log(response.data.result);
       setIsLoading(false);
     } catch (err) {
       console.error(err);
       // navigate('/', { state: { from: location }, replace: true });
       setIsLoading(false);
     }
-  }, [params.orderId, axiosPrivate]);
+  }, [params.orderId]);
 
   useEffect(() => {
     if (params.orderId) {
@@ -68,7 +67,10 @@ const CalculateTax = () => {
   };
 
   const getPersonalAllowance = () => {
-    if (!list["personalAllowance"]) {
+    if (
+      list["personalAllowance"] === "" ||
+      list["personalAllowance"] === undefined
+    ) {
       return [];
     }
     return [
@@ -441,53 +443,68 @@ const CalculateTax = () => {
     return [
       {
         description: "Total Income",
-        value1:list["ukResidentialPropertyCapitalGain"]["income"],
-        value2:'',
+        value1: list["ukResidentialPropertyCapitalGain"]["income"],
+        value2: "",
       },
       {
         description: "Starter",
         value1: "",
-        value2: '',
+        value2: "",
       },
       {
         description: "basic",
         value1: `${list["ukResidentialPropertyCapitalGain"]["basicRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]}% =`,
-        value2: parseFloat(
-          list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
-        ) *
-        (parseInt(list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]) /
-          100),
+        value2:
+          parseFloat(
+            list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
+          ) *
+          (parseInt(
+            list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]
+          ) /
+            100),
       },
       {
         description: "higher",
         value1: `${list["ukResidentialPropertyCapitalGain"]["higherRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]}% =`,
-        value2: parseFloat(
-          list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
-        ) *
-        (parseInt(list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]) /
-          100),
+        value2:
+          parseFloat(
+            list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
+          ) *
+          (parseInt(
+            list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]
+          ) /
+            100),
       },
       {
         description: "Capital Gain Capital",
-        value1: '',
-        value2: (parseFloat(
-          list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
-        ) *
-        (parseInt(list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]) /
-          100)) + parseFloat(
-          list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
-        ) *
-        (parseInt(list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]) /
-          100),
+        value1: "",
+        value2:
+          parseFloat(
+            list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
+          ) *
+            (parseInt(
+              list["ukResidentialPropertyCapitalGain"][
+                "basicRateBandPercentage"
+              ]
+            ) /
+              100) +
+          parseFloat(
+            list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
+          ) *
+            (parseInt(
+              list["ukResidentialPropertyCapitalGain"][
+                "higherRateBandPercentage"
+              ]
+            ) /
+              100),
       },
       {
         description: "Total Income Tax Due",
-        value1: '',
+        value1: "",
         value2: list["ukResidentialPropertyCapitalGain"]["totalIncomeTaxDue"],
       },
-      
     ];
-  }
+  };
 
   const getPaymentSummary = () => {
     if (!list["paymentSummary"]) {
@@ -496,32 +513,47 @@ const CalculateTax = () => {
 
     return [
       {
-        description: list["paymentSummary"]['firstPaymentLabel'],
-        value:'',
-        
+        description: list["paymentSummary"]["firstPaymentLabel"],
+        value: "",
       },
       {
-        description: list["paymentSummary"]['firstPayment'] && Object.keys(list["paymentSummary"]['firstPayment'])[0],
-        value: list["paymentSummary"]['firstPayment'] && Object.values(list["paymentSummary"]['firstPayment'])[0],
-        
+        description:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.keys(list["paymentSummary"]["firstPayment"])[0],
+        value:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.values(list["paymentSummary"]["firstPayment"])[0],
       },
       {
-        description: list["paymentSummary"]['firstPayment'] && Object.keys(list["paymentSummary"]['firstPayment'])[1],
-        value: list["paymentSummary"]['firstPayment'] && Object.values(list["paymentSummary"]['firstPayment'])[1],
-        
+        description:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.keys(list["paymentSummary"]["firstPayment"])[1],
+        value:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.values(list["paymentSummary"]["firstPayment"])[1],
       },
       {
-        description: list["paymentSummary"]['firstPayment'] && Object.keys(list["paymentSummary"]['firstPayment'])[2],
-        value: list["paymentSummary"]['firstPayment'] && Object.values(list["paymentSummary"]['firstPayment'])[2],
-        
+        description:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.keys(list["paymentSummary"]["firstPayment"])[2],
+        value:
+          list["paymentSummary"]["firstPayment"] &&
+          Object.values(list["paymentSummary"]["firstPayment"])[2],
       },
       {
-        description: list["paymentSummary"]['secondPaymentLabel'],
-        value:'',
-        
+        description: list["paymentSummary"]["secondPaymentLabel"],
+        value: "",
+      },
+      {
+        description:
+          list["paymentSummary"]["secondPayment"] &&
+          Object.keys(list["paymentSummary"]["secondPayment"])[0],
+        value:
+          list["paymentSummary"]["secondPayment"] &&
+          Object.values(list["paymentSummary"]["secondPayment"])[0],
       },
     ];
-  } 
+  };
 
   return (
     <div className="CalculateTax">
@@ -534,7 +566,7 @@ const CalculateTax = () => {
               <ArrowBackIosNewIcon className="back-icon" />
               <h5 className="title is-5">Back</h5>
             </div>
-            <div style={{ margin: "1rem" }}>
+            {getTotalIncomes().length > 0 && <div style={{ margin: "1rem" }}>
               <p className="title">Total Income</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -573,8 +605,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getPersonalAllowance().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Add up Allowances</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -607,8 +639,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getPersonalAllowanceDeductions().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">
                 Take deductions and allowances away from income in order of
                 priority
@@ -650,8 +682,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getRateBands().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">
                 Assign the taxable income to the available rate bands
               </p>
@@ -876,8 +908,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getRateBandsPercentage().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Calculate the tax due at each rate band</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -946,8 +978,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getRentalIncomeTaxAdjustment().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Apply tax adjustments</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -1003,8 +1035,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getClassNIC().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Calculate Tax Due</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -1041,8 +1073,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getTaxPaidAtSource().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Deduct tax paid etc</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -1077,8 +1109,8 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getNonUKResidentialPropertyCapitalGain().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">
                 Add Capital Gains tax (Non UK Residential Property)
               </p>
@@ -1108,7 +1140,6 @@ const CalculateTax = () => {
                             </TableCell>
                             <TableCell align="right">{row.value1}</TableCell>
                             <TableCell align="right">{row.value2}</TableCell>
-                            
                           </TableRow>
                         );
                       }
@@ -1119,7 +1150,6 @@ const CalculateTax = () => {
                             "&:last-child td, &:last-child th": { border: 0 },
                             "&:nth-last-child(2) td:last-child": {
                               borderBottom: "4px double black",
-                              
                             },
                             "&:last-child th": { fontWeight: "bold" },
                           }}
@@ -1135,10 +1165,10 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
+            </div>}
+            {getUkResidentialPropertyCapitalGain().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">
-              Add Capital Gains tax (UK Residential Property)
+                Add Capital Gains tax (UK Residential Property)
               </p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -1166,10 +1196,9 @@ const CalculateTax = () => {
                             </TableCell>
                             <TableCell align="right">{row.value1}</TableCell>
                             <TableCell align="right">{row.value2}</TableCell>
-                            
                           </TableRow>
                         );
-                      }else if (i === +3) {
+                      } else if (i === +3) {
                         return (
                           <TableRow
                             key={row.name}
@@ -1184,7 +1213,6 @@ const CalculateTax = () => {
                             </TableCell>
                             <TableCell align="right">{row.value1}</TableCell>
                             <TableCell align="right">{row.value2}</TableCell>
-                            
                           </TableRow>
                         );
                       }
@@ -1195,7 +1223,6 @@ const CalculateTax = () => {
                             "&:last-child td, &:last-child th": { border: 0 },
                             "&:nth-last-child(2) td:last-child": {
                               borderBottom: "4px double black",
-                              
                             },
                             "&:last-child th": { fontWeight: "bold" },
                           }}
@@ -1211,30 +1238,26 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
-            <div style={{ margin: "1rem", marginTop: "2rem" }}>
-              <p className="title">
-              Payment Summary
-              </p>
+            </div>}
+            {getPaymentSummary().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
+              <p className="title">Payment Summary</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
                   <TableHead>
                     <TableRow>
                       <TableCell>Description</TableCell>
                       <TableCell align="right">£</TableCell>
-                      
                     </TableRow>
                   </TableHead>
                   <TableBody>
                     {getPaymentSummary()?.map((row, i) => {
-                      
                       return (
                         <TableRow
                           key={row.name}
                           sx={{
                             "&:last-child td, &:last-child th": { border: 0 },
-                            
-                            "&:last-child th": { fontWeight: "bold" },
+
+                            "&:nth-child(5) th": { fontWeight: "bold" },
                             "&:first-child th": { fontWeight: "bold" },
                           }}
                         >
@@ -1242,14 +1265,13 @@ const CalculateTax = () => {
                             {row.description}
                           </TableCell>
                           <TableCell align="right">{row.value}</TableCell>
-                          
                         </TableRow>
                       );
                     })}
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>
+            </div>}
           </React.Fragment>
         )}
       </Card>

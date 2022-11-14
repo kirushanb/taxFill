@@ -278,8 +278,7 @@ const Dividend = () => {
 
             const filteredOther = cookies.order.selectedPackages.filter(
               (n) =>
-                n.package.name !== "Dividend" &&
-                n.package.name !== "Capital gain"
+                n.package.name !== "Dividend"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -290,6 +289,7 @@ const Dividend = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

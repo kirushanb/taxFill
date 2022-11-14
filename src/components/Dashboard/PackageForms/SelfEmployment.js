@@ -331,8 +331,7 @@ const SelfEmployment = () => {
 
             const filteredOther = cookies.order.selectedPackages.filter(
               (n) =>
-                n.package.name !== "Self employment" &&
-                n.package.name !== "Capital gain"
+                n.package.name !== "Self employment"
             );
             const filtered = filteredOther.filter(
               (n) => n.package.recordsAdded !== true
@@ -343,6 +342,7 @@ const SelfEmployment = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
+                taxYear
               },
               {
                 path: "/",

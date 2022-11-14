@@ -30,6 +30,8 @@ import OTPChangePassword from "./components/Login/OTPChangePassword/OTPChangePas
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import EditAccount from "./components/EditAccount/EditAccount";
+import CapitalGain from "./components/Dashboard/PackageForms/CapitalGain";
+import CalculateTax from "./components/Dashboard/CalculateTax/CalculateTax";
 
 function App() {
   const [cookies, setCookie] = useCookies();
@@ -64,6 +66,11 @@ function App() {
         </Route>
         <Route element={<RequireAuth />}>
           <Route path="/account-edit" element={<EditAccount />} />
+        </Route>
+        <Route element={<RequireAuth />}>
+          <Route path="/calculate-tax/:orderId" element={ <Layout>
+                <CalculateTax />
+              </Layout>} />
         </Route>
         <Route element={<RequireAuth />}>
           <Route
@@ -280,6 +287,26 @@ function App() {
             />
           </Route>
           <Route path="*" element={<Navigate to="/bankinterest" replace />} />
+        </Route>
+        <Route path="*" element={<RequireAuth />}>
+          <Route
+            path="capitalgain"
+            element={
+              <Layout>
+                <CapitalGain />
+              </Layout>
+            }
+          >
+            <Route
+              path=":orderId"
+              element={
+                <Layout>
+                  <CapitalGain />
+                </Layout>
+              }
+            />
+          </Route>
+          <Route path="*" element={<Navigate to="/capitalgain" replace />} />
         </Route>
       </Routes>
     </React.Fragment>

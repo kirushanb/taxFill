@@ -13,6 +13,7 @@ import useAxiosPrivate from "../../hooks/useAxiosPrivate";
 import { useNavigate } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
 import moment from "moment";
+import { PaidOutlined } from "@mui/icons-material";
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: "#2a2d3e",
@@ -36,14 +37,14 @@ const columns = [
   {
     id: "packages",
     label: "Packages",
-    minWidth: 210,
+    minWidth: 170,
     align: "right",
     // format: (value) => value.toLocaleString('en-US'),
   },
   {
     id: "options",
     label: "Options",
-    minWidth: 170,
+    minWidth: 210,
     align: "right",
     // format: (value) => value.toFixed(2),
   },
@@ -88,6 +89,10 @@ export default function DataTable() {
     const taxYear = list.filter(n=> n.id===id)[0]?.taxYear;
     navigate(`/edit/${id}/?reference=${taxYear}`);
   },[navigate]);
+
+  const handleOnClickCalculateTax = React.useCallback((id) => {
+    navigate(`/calculate-tax/${id}`);
+  },[navigate]);
   
   React.useEffect(() => {
     const getData = async () => {
@@ -103,7 +108,7 @@ export default function DataTable() {
               n.serialNo,
               moment(n.createdOn).format("DD/MM/YYYY, HH:mm:ss"),
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
-              <div style={{width:'240px'}} key={n.serialNo}>
+              <div style={{width:'400px'}} key={n.serialNo}>
                 <button
                   onClick={() => handleOnClickAddData(n.id, response.data.result.data)}
                   className="button is-info is-small"
@@ -118,6 +123,14 @@ export default function DataTable() {
                 >
                   <AddchartIcon />
                   <p style={{ marginLeft: "0.5rem" }}>{"Edit Data"}</p>
+                </button>
+                <button
+                  style={{ marginLeft: "0.5rem" }}
+                  onClick={() => handleOnClickCalculateTax(n.id, response.data.result.data)}
+                  className="button is-danger is-small"
+                >
+                  <PaidOutlined />
+                  <p style={{ marginLeft: "0.5rem" }}>{"Calculate Tax"}</p>
                 </button>
               </div>
             )

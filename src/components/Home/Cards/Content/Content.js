@@ -15,7 +15,7 @@ const Content = (props) => {
                 <p className="title is-4">{n.name}</p>
                 <p className="title is-4">{"£" + n.price}</p>
                 <div className="list">
-                {n.tags.split(',').map((l) => (
+                {n?.tags?.split(',')?.map((l) => (
                     <span key={l} className="icon-text">
                     <span className="icon is-large">
                         <i className="fas fa-arrow-right"></i>

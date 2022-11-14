@@ -1,0 +1,13 @@
+
+.CalculateTax{
+    margin: 1rem;
+    .back-button{
+        display: flex;
+        flex-direction: row;
+        gap:1rem;
+        margin-top: 1rem;
+        margin-bottom: 2rem;
+        cursor: pointer;
+    }
+    
+}

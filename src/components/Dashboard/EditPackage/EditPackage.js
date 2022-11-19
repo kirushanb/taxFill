@@ -261,7 +261,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -339,7 +339,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -410,7 +410,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -481,7 +481,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -552,7 +552,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -624,7 +624,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -695,7 +695,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"
@@ -766,7 +766,7 @@ const EditPackage = () => {
                                         onClick={() => hanclickEdit(p.id, l)}
                                         style={{ marginRight: "1rem" }}
                                       >
-                                        Edit
+                                        Update
                                       </button>{" "}
                                       <button
                                         className="button is-danger"

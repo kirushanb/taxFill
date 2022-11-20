@@ -329,7 +329,7 @@ const Partnership = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
-                taxYear
+                taxYear,
               },
               {
                 path: "/",
@@ -545,6 +545,16 @@ const Partnership = () => {
     const values = [...partnershipList];
     const { name, value } = event.target;
     values[i][name] = value;
+    if (name === "share") {
+      const totalShare = values.reduce(
+        (prev, curr) => prev + parseFloat(curr.share),
+        0
+      );
+      if (totalShare > 100) {
+        toast.warn("Total share can't be more than 100%");
+        return;
+      }
+    }
     setPartnershipList(values);
   }
 
@@ -899,15 +909,31 @@ const Partnership = () => {
   };
 
   const handleMyShare = (e) => {
-    setValue("myShare", e.target.value);
     const values = [...partnershipList];
+    setValue("myShare", e.target.value);
     if (values[0]["fullName"] === "My Share") {
       values[0]["share"] = e.target.value;
+      const totalShare = values.reduce(
+        (prev, curr) => prev + parseFloat(curr.share),
+        0
+      );
+      if (totalShare > 100) {
+        toast.warn("Total share can't be more than 100%");
+        return;
+      }
       setPartnershipList(values);
       return;
     }
     const property = { fullName: "My Share", share: e.target.value };
     values.unshift(property);
+    const totalShare = values.reduce(
+      (prev, curr) => prev + parseFloat(curr.share),
+      0
+    );
+    if (totalShare > 100) {
+      toast.warn("Total share can't be more than 100%");
+      return;
+    }
     setPartnershipList(values);
   };
 
@@ -1208,7 +1234,6 @@ const Partnership = () => {
                       >
                         <InputLabel
                           htmlFor="payee"
-                          required
                           sx={{
                             fontWeight: "bold",
                             alignSelf: "flex-end",
@@ -1220,7 +1245,6 @@ const Partnership = () => {
                       </Grid>
                       <Grid item xs={12} sm={10}>
                         <TextField
-                          required
                           fullWidth
                           id="monthExpense"
                           name="monthExpense"

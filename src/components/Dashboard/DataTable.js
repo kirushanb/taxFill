@@ -30,7 +30,7 @@ const columns = [
   {
     id: "timeDAte",
     label: "Time & Date",
-    minWidth: 170,
+    minWidth: 120,
     align: "right",
     // format: (value) => value.toLocaleString('en-US'),
   },
@@ -42,6 +42,13 @@ const columns = [
     // format: (value) => value.toLocaleString('en-US'),
   },
   {
+    id: "status",
+    label: "Status",
+    minWidth: 120,
+    align: "right",
+    // format: (value) => value.toFixed(2),
+  },
+  {
     id: "options",
     label: "Options",
     minWidth: 210,
@@ -50,8 +57,8 @@ const columns = [
   },
 ];
 
-function createData(orderID, timeDAte, packages, options) {
-  return { orderID, timeDAte, packages, options };
+function createData(orderID, timeDAte, packages, status,options) {
+  return { orderID, timeDAte, packages, status, options };
 }
 
 // const rows = [
@@ -98,6 +105,9 @@ export default function DataTable() {
     const getData = async () => {
       setLoading(true);
       try {
+        const response1 = await axiosPrivate.get(
+          "https://tax.api.cyberozunu.com/api/v1.1/Configuration/order-status"
+        );
         const response = await axiosPrivate.get(
           "https://tax.api.cyberozunu.com/api/v1.1/Order"
         );
@@ -108,6 +118,7 @@ export default function DataTable() {
               n.serialNo,
               moment(n.createdOn).format("DD/MM/YYYY, HH:mm:ss"),
               n.selectedPackages.map((p) => " " + p.package.name).join(","),
+              response1?.data?.result?.find(l=> l.id===n?.status)?.values ?? '-',
               <div style={{width:'400px'}} key={n.serialNo}>
                 <button
                   onClick={() => handleOnClickAddData(n.id, response.data.result.data)}
@@ -126,7 +137,7 @@ export default function DataTable() {
                 </button>
                 <button
                   style={{ marginLeft: "0.5rem" }}
-                  onClick={() => handleOnClickCalculateTax(n.id, response.data.result.data)}
+                  onClick={() => handleOnClickCalculateTax(n.id)}
                   className="button is-danger is-small"
                 >
                   <PaidOutlined />

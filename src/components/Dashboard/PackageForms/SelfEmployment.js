@@ -1029,7 +1029,6 @@ const SelfEmployment = () => {
                       >
                         <InputLabel
                           htmlFor="payee"
-                          required
                           sx={{
                             fontWeight: "bold",
                             alignSelf: "flex-end",
@@ -1041,7 +1040,6 @@ const SelfEmployment = () => {
                       </Grid>
                       <Grid item xs={12} sm={10}>
                         <TextField
-                          required
                           fullWidth
                           id="monthExpense"
                           name="monthExpense"

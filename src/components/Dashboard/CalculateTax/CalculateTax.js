@@ -42,469 +42,469 @@ const CalculateTax = () => {
     }
   }, [getData, navigate, params.orderId]);
 
-  const getTotalIncomes = () => {
-    if (!list["totalIncomes"]) {
-      return [];
-    }
-    const nonSaving =
-      list["totalIncomes"] &&
-      list["totalIncomes"].reduce((prev, curr) => prev + curr.nonSaving, 0);
-    const saving =
-      list["totalIncomes"] &&
-      list["totalIncomes"].reduce((prev, curr) => prev + curr.saving, 0);
-    const divident =
-      list["totalIncomes"] &&
-      list["totalIncomes"].reduce((prev, curr) => prev + curr.divident, 0);
-    return [
-      ...list["totalIncomes"],
-      {
-        description: "Total",
-        nonSaving: nonSaving,
-        saving: saving,
-        divident: divident,
-      },
-    ];
-  };
+  // const getTotalIncomes = () => {
+  //   if (!list["totalIncomes"]) {
+  //     return [];
+  //   }
+  //   const nonSaving =
+  //     list["totalIncomes"] &&
+  //     list["totalIncomes"].reduce((prev, curr) => prev + curr.nonSaving, 0);
+  //   const saving =
+  //     list["totalIncomes"] &&
+  //     list["totalIncomes"].reduce((prev, curr) => prev + curr.saving, 0);
+  //   const divident =
+  //     list["totalIncomes"] &&
+  //     list["totalIncomes"].reduce((prev, curr) => prev + curr.divident, 0);
+  //   return [
+  //     ...list["totalIncomes"],
+  //     {
+  //       description: "Total",
+  //       nonSaving: nonSaving,
+  //       saving: saving,
+  //       divident: divident,
+  //     },
+  //   ];
+  // };
 
-  const getPersonalAllowance = () => {
-    if (
-      list["personalAllowance"] === "" ||
-      list["personalAllowance"] === undefined
-    ) {
-      return [];
-    }
-    return [
-      {
-        description: "Personal allowance",
-        value1: list["personalAllowance"],
-        value2: "",
-      },
-      {
-        description: "Total Allowances",
-        value1: "",
-        value2: list["personalAllowance"],
-      },
-    ];
-  };
+  // const getPersonalAllowance = () => {
+  //   if (
+  //     list["personalAllowance"] === "" ||
+  //     list["personalAllowance"] === undefined
+  //   ) {
+  //     return [];
+  //   }
+  //   return [
+  //     {
+  //       description: "Personal allowance",
+  //       value1: list["personalAllowance"],
+  //       value2: "",
+  //     },
+  //     {
+  //       description: "Total Allowances",
+  //       value1: "",
+  //       value2: list["personalAllowance"],
+  //     },
+  //   ];
+  // };
 
-  const getPersonalAllowanceDeductions = () => {
-    if (!list["personalAllowanceDeductions"]) {
-      return [];
-    }
-    const income =
-      list["personalAllowanceDeductions"] &&
-      list["personalAllowanceDeductions"].reduce(
-        (prev, curr) => prev + curr.income,
-        0
-      );
-    const deductionAndAllowance =
-      list["personalAllowanceDeductions"] &&
-      list["personalAllowanceDeductions"].reduce(
-        (prev, curr) => prev + curr.deductionAndAllowance,
-        0
-      );
-    const taxableAmount =
-      list["personalAllowanceDeductions"] &&
-      list["personalAllowanceDeductions"].reduce(
-        (prev, curr) => prev + curr.taxableAmount,
-        0
-      );
-    return [
-      ...list["personalAllowanceDeductions"],
-      {
-        description: "Total",
-        income: income,
-        deductionAndAllowance: deductionAndAllowance,
-        taxableAmount: taxableAmount,
-      },
-    ];
-  };
+  // const getPersonalAllowanceDeductions = () => {
+  //   if (!list["personalAllowanceDeductions"]) {
+  //     return [];
+  //   }
+  //   const income =
+  //     list["personalAllowanceDeductions"] &&
+  //     list["personalAllowanceDeductions"].reduce(
+  //       (prev, curr) => prev + curr.income,
+  //       0
+  //     );
+  //   const deductionAndAllowance =
+  //     list["personalAllowanceDeductions"] &&
+  //     list["personalAllowanceDeductions"].reduce(
+  //       (prev, curr) => prev + curr.deductionAndAllowance,
+  //       0
+  //     );
+  //   const taxableAmount =
+  //     list["personalAllowanceDeductions"] &&
+  //     list["personalAllowanceDeductions"].reduce(
+  //       (prev, curr) => prev + curr.taxableAmount,
+  //       0
+  //     );
+  //   return [
+  //     ...list["personalAllowanceDeductions"],
+  //     {
+  //       description: "Total",
+  //       income: income,
+  //       deductionAndAllowance: deductionAndAllowance,
+  //       taxableAmount: taxableAmount,
+  //     },
+  //   ];
+  // };
 
-  const getRateBands = () => {
-    if (!list["rateBands"]) {
-      return [];
-    }
+  // const getRateBands = () => {
+  //   if (!list["rateBands"]) {
+  //     return [];
+  //   }
 
-    return [...list["rateBands"]];
-  };
+  //   return [...list["rateBands"]];
+  // };
 
-  const getRateBandsPercentage = () => {
-    if (!list["rateBands"]) {
-      return [];
-    }
+  // const getRateBandsPercentage = () => {
+  //   if (!list["rateBands"]) {
+  //     return [];
+  //   }
 
-    const totalDue =
-      parseFloat(list["rateBands"][0]["basicRateBand"]) *
-        (parseInt(list["rateBands"][0]["basicRateBandPercentage"]) / 100) +
-      parseFloat(list["rateBands"][1]["basicRateBand"]) *
-        (parseInt(list["rateBands"][1]["basicRateBandPercentage"]) / 100) +
-      parseFloat(list["rateBands"][2]["basicRateBand"]) *
-        (parseInt(list["rateBands"][2]["basicRateBandPercentage"]) / 100) +
-      (parseFloat(list["rateBands"][0]["higherRateBand"]) *
-        (parseInt(list["rateBands"][0]["higherRateBandPercentage"]) / 100) +
-        parseFloat(list["rateBands"][1]["higherRateBand"]) *
-          (parseInt(list["rateBands"][1]["higherRateBandPercentage"]) / 100) +
-        parseFloat(list["rateBands"][2]["higherRateBand"]) *
-          (parseInt(list["rateBands"][2]["higherRateBandPercentage"]) / 100)) +
-      (parseFloat(list["rateBands"][0]["additionalRateBand"]) *
-        (parseInt(list["rateBands"][0]["additionalRateBandPercentage"]) / 100) +
-        parseFloat(list["rateBands"][1]["additionalRateBand"]) *
-          (parseInt(list["rateBands"][1]["additionalRateBandPercentage"]) /
-            100) +
-        parseFloat(list["rateBands"][2]["additionalRateBand"]) *
-          (parseInt(list["rateBands"][2]["additionalRateBandPercentage"]) /
-            100)) -
-      list["rateBands"].reduce((prev, curr) => prev + curr.allowance, 0);
-    return [
-      {
-        description: "Non savings income",
-        value1: [
-          {
-            description: "Personal allowance",
-            value1: list["rateBands"][0]["allowance"],
-            value2: list["rateBands"][0]["allowance"],
-          },
-          {
-            description: "Basic",
-            value1: `${list["rateBands"][0]["basicRateBand"]} @ ${list["rateBands"][0]["basicRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][0]["basicRateBand"]) *
-              (parseInt(list["rateBands"][0]["basicRateBandPercentage"]) / 100),
-          },
-          {
-            description: "Higher",
-            value1: `${list["rateBands"][0]["higherRateBand"]} @ ${list["rateBands"][0]["higherRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][0]["higherRateBand"]) *
-              (parseInt(list["rateBands"][0]["higherRateBandPercentage"]) /
-                100),
-          },
-          {
-            description: "Additional",
-            value1: `${list["rateBands"][0]["additionalRateBand"]} @ ${list["rateBands"][0]["additionalRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][0]["additionalRateBand"]) *
-              (parseInt(list["rateBands"][0]["additionalRateBandPercentage"]) /
-                100),
-          },
-        ],
-      },
-      {
-        description: "Savings income",
-        value1: [
-          {
-            description: "PSA",
-            value1: list["rateBands"][1]["allowance"],
-            value2: list["rateBands"][1]["allowance"],
-          },
-          {
-            description: "Basic",
-            value1: `${list["rateBands"][1]["basicRateBand"]} @ ${list["rateBands"][1]["basicRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][1]["basicRateBand"]) *
-              (parseInt(list["rateBands"][1]["basicRateBandPercentage"]) / 100),
-          },
-          {
-            description: "Higher",
-            value1: `${list["rateBands"][1]["higherRateBand"]} @ ${list["rateBands"][1]["higherRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][1]["higherRateBand"]) *
-              (parseInt(list["rateBands"][1]["higherRateBandPercentage"]) /
-                100),
-          },
-          {
-            description: "Additional",
-            value1: `${list["rateBands"][1]["additionalRateBand"]} @ ${list["rateBands"][1]["additionalRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][1]["additionalRateBand"]) *
-              (parseInt(list["rateBands"][1]["additionalRateBandPercentage"]) /
-                100),
-          },
-        ],
-      },
-      {
-        description: "Dividend income",
-        value1: [
-          {
-            description: "Dividend Allowance",
-            value1: list["rateBands"][2]["allowance"],
-            value2: list["rateBands"][2]["allowance"],
-          },
-          {
-            description: "Basic",
-            value1: `${list["rateBands"][2]["basicRateBand"]} @ ${list["rateBands"][2]["basicRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][2]["basicRateBand"]) *
-              (parseInt(list["rateBands"][2]["basicRateBandPercentage"]) / 100),
-          },
-          {
-            description: "Higher",
-            value1: `${list["rateBands"][2]["higherRateBand"]} @ ${list["rateBands"][2]["higherRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][2]["higherRateBand"]) *
-              (parseInt(list["rateBands"][2]["higherRateBandPercentage"]) /
-                100),
-          },
-          {
-            description: "Additional",
-            value1: `${list["rateBands"][2]["additionalRateBand"]} @ ${list["rateBands"][2]["additionalRateBandPercentage"]}% =`,
-            value2:
-              parseFloat(list["rateBands"][2]["additionalRateBand"]) *
-              (parseInt(list["rateBands"][2]["additionalRateBandPercentage"]) /
-                100),
-          },
-        ],
-      },
-      {
-        description: "Total Income Tax Due",
-        value1: [
-          {
-            description: "",
-            value1: "",
-            value2: totalDue,
-          },
-        ],
-      },
-    ];
-  };
+  //   const totalDue =
+  //     parseFloat(list["rateBands"][0]["basicRateBand"]) *
+  //       (parseInt(list["rateBands"][0]["basicRateBandPercentage"]) / 100) +
+  //     parseFloat(list["rateBands"][1]["basicRateBand"]) *
+  //       (parseInt(list["rateBands"][1]["basicRateBandPercentage"]) / 100) +
+  //     parseFloat(list["rateBands"][2]["basicRateBand"]) *
+  //       (parseInt(list["rateBands"][2]["basicRateBandPercentage"]) / 100) +
+  //     (parseFloat(list["rateBands"][0]["higherRateBand"]) *
+  //       (parseInt(list["rateBands"][0]["higherRateBandPercentage"]) / 100) +
+  //       parseFloat(list["rateBands"][1]["higherRateBand"]) *
+  //         (parseInt(list["rateBands"][1]["higherRateBandPercentage"]) / 100) +
+  //       parseFloat(list["rateBands"][2]["higherRateBand"]) *
+  //         (parseInt(list["rateBands"][2]["higherRateBandPercentage"]) / 100)) +
+  //     (parseFloat(list["rateBands"][0]["additionalRateBand"]) *
+  //       (parseInt(list["rateBands"][0]["additionalRateBandPercentage"]) / 100) +
+  //       parseFloat(list["rateBands"][1]["additionalRateBand"]) *
+  //         (parseInt(list["rateBands"][1]["additionalRateBandPercentage"]) /
+  //           100) +
+  //       parseFloat(list["rateBands"][2]["additionalRateBand"]) *
+  //         (parseInt(list["rateBands"][2]["additionalRateBandPercentage"]) /
+  //           100)) -
+  //     list["rateBands"].reduce((prev, curr) => prev + curr.allowance, 0);
+  //   return [
+  //     {
+  //       description: "Non savings income",
+  //       value1: [
+  //         {
+  //           description: "Personal allowance",
+  //           value1: list["rateBands"][0]["allowance"],
+  //           value2: list["rateBands"][0]["allowance"],
+  //         },
+  //         {
+  //           description: "Basic",
+  //           value1: `${list["rateBands"][0]["basicRateBand"]} @ ${list["rateBands"][0]["basicRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][0]["basicRateBand"]) *
+  //             (parseInt(list["rateBands"][0]["basicRateBandPercentage"]) / 100),
+  //         },
+  //         {
+  //           description: "Higher",
+  //           value1: `${list["rateBands"][0]["higherRateBand"]} @ ${list["rateBands"][0]["higherRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][0]["higherRateBand"]) *
+  //             (parseInt(list["rateBands"][0]["higherRateBandPercentage"]) /
+  //               100),
+  //         },
+  //         {
+  //           description: "Additional",
+  //           value1: `${list["rateBands"][0]["additionalRateBand"]} @ ${list["rateBands"][0]["additionalRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][0]["additionalRateBand"]) *
+  //             (parseInt(list["rateBands"][0]["additionalRateBandPercentage"]) /
+  //               100),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       description: "Savings income",
+  //       value1: [
+  //         {
+  //           description: "PSA",
+  //           value1: list["rateBands"][1]["allowance"],
+  //           value2: list["rateBands"][1]["allowance"],
+  //         },
+  //         {
+  //           description: "Basic",
+  //           value1: `${list["rateBands"][1]["basicRateBand"]} @ ${list["rateBands"][1]["basicRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][1]["basicRateBand"]) *
+  //             (parseInt(list["rateBands"][1]["basicRateBandPercentage"]) / 100),
+  //         },
+  //         {
+  //           description: "Higher",
+  //           value1: `${list["rateBands"][1]["higherRateBand"]} @ ${list["rateBands"][1]["higherRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][1]["higherRateBand"]) *
+  //             (parseInt(list["rateBands"][1]["higherRateBandPercentage"]) /
+  //               100),
+  //         },
+  //         {
+  //           description: "Additional",
+  //           value1: `${list["rateBands"][1]["additionalRateBand"]} @ ${list["rateBands"][1]["additionalRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][1]["additionalRateBand"]) *
+  //             (parseInt(list["rateBands"][1]["additionalRateBandPercentage"]) /
+  //               100),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       description: "Dividend income",
+  //       value1: [
+  //         {
+  //           description: "Dividend Allowance",
+  //           value1: list["rateBands"][2]["allowance"],
+  //           value2: list["rateBands"][2]["allowance"],
+  //         },
+  //         {
+  //           description: "Basic",
+  //           value1: `${list["rateBands"][2]["basicRateBand"]} @ ${list["rateBands"][2]["basicRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][2]["basicRateBand"]) *
+  //             (parseInt(list["rateBands"][2]["basicRateBandPercentage"]) / 100),
+  //         },
+  //         {
+  //           description: "Higher",
+  //           value1: `${list["rateBands"][2]["higherRateBand"]} @ ${list["rateBands"][2]["higherRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][2]["higherRateBand"]) *
+  //             (parseInt(list["rateBands"][2]["higherRateBandPercentage"]) /
+  //               100),
+  //         },
+  //         {
+  //           description: "Additional",
+  //           value1: `${list["rateBands"][2]["additionalRateBand"]} @ ${list["rateBands"][2]["additionalRateBandPercentage"]}% =`,
+  //           value2:
+  //             parseFloat(list["rateBands"][2]["additionalRateBand"]) *
+  //             (parseInt(list["rateBands"][2]["additionalRateBandPercentage"]) /
+  //               100),
+  //         },
+  //       ],
+  //     },
+  //     {
+  //       description: "Total Income Tax Due",
+  //       value1: [
+  //         {
+  //           description: "",
+  //           value1: "",
+  //           value2: totalDue,
+  //         },
+  //       ],
+  //     },
+  //   ];
+  // };
 
-  const getRentalIncomeTaxAdjustment = () => {
-    if (!list["rentalIncomeTaxAdjustment"]) {
-      return [];
-    }
+  // const getRentalIncomeTaxAdjustment = () => {
+  //   if (!list["rentalIncomeTaxAdjustment"]) {
+  //     return [];
+  //   }
 
-    return [
-      {
-        description: "Total Income Tax Due",
-        value1: "",
-        value2: "",
-        value3: list["rentalIncomeTaxAdjustment"]["totalIncomeTaxDue"],
-      },
-      {
-        description: "Relief for finance costs",
-        value1: `${list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]} @ ${list["rentalIncomeTaxAdjustment"]["reliefForFinancialCostCalculationPercentage"]}% =`,
-        value2:
-          parseFloat(
-            list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]
-          ) *
-          (parseInt(
-            list["rentalIncomeTaxAdjustment"][
-              "reliefForFinancialCostCalculationPercentage"
-            ]
-          ) /
-            100),
-        value3: "",
-      },
-      {
-        description: "Total allowances, reliefs and tax reductions",
-        value1: "",
-        value2:
-          parseFloat(
-            list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]
-          ) *
-          (parseInt(
-            list["rentalIncomeTaxAdjustment"][
-              "reliefForFinancialCostCalculationPercentage"
-            ]
-          ) /
-            100),
-        value3: "",
-      },
-      {
-        description: "Income tax due after reliefs and tax reductions",
-        value1: "",
-        value2: "",
-        value3: list["rentalIncomeTaxAdjustment"]["totalIncomeTaxDue"],
-      },
-    ];
-  };
+  //   return [
+  //     {
+  //       description: "Total Income Tax Due",
+  //       value1: "",
+  //       value2: "",
+  //       value3: list["rentalIncomeTaxAdjustment"]["totalIncomeTaxDue"],
+  //     },
+  //     {
+  //       description: "Relief for finance costs",
+  //       value1: `${list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]} @ ${list["rentalIncomeTaxAdjustment"]["reliefForFinancialCostCalculationPercentage"]}% =`,
+  //       value2:
+  //         parseFloat(
+  //           list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]
+  //         ) *
+  //         (parseInt(
+  //           list["rentalIncomeTaxAdjustment"][
+  //             "reliefForFinancialCostCalculationPercentage"
+  //           ]
+  //         ) /
+  //           100),
+  //       value3: "",
+  //     },
+  //     {
+  //       description: "Total allowances, reliefs and tax reductions",
+  //       value1: "",
+  //       value2:
+  //         parseFloat(
+  //           list["rentalIncomeTaxAdjustment"]["reliefForFinancialCost"]
+  //         ) *
+  //         (parseInt(
+  //           list["rentalIncomeTaxAdjustment"][
+  //             "reliefForFinancialCostCalculationPercentage"
+  //           ]
+  //         ) /
+  //           100),
+  //       value3: "",
+  //     },
+  //     {
+  //       description: "Income tax due after reliefs and tax reductions",
+  //       value1: "",
+  //       value2: "",
+  //       value3: list["rentalIncomeTaxAdjustment"]["totalIncomeTaxDue"],
+  //     },
+  //   ];
+  // };
 
-  const getClassNIC = () => {
-    if (!list["classNIC"]) {
-      return [];
-    }
+  // const getClassNIC = () => {
+  //   if (!list["classNIC"]) {
+  //     return [];
+  //   }
 
-    return [
-      {
-        description: "Income tax due per above",
-        value1: "",
-        value2: "",
-        value3: list["classNIC"]["previousTaxDue"],
-      },
-      {
-        description: "Class 4 NIC",
-        value1: "",
-        value2: list["classNIC"]["class4NIC"],
-        value3: "",
-      },
-      {
-        description: "Class 2 NIC",
-        value1: "",
-        value2: list["classNIC"]["class2NIC"],
-        value3: "",
-      },
-      {
-        description: "Total NIC",
-        value1: "",
-        value2: "",
-        value3:
-          parseFloat(list["classNIC"]["class4NIC"]) +
-          parseFloat(list["classNIC"]["class2NIC"]),
-      },
-      {
-        description: "Income tax plus national insurance",
-        value1: "",
-        value2: "",
-        value3: list["classNIC"]["totalIncomeTaxDue"],
-      },
-      {
-        description: "Total Income Tax Due",
-        value1: "",
-        value2: "",
-        value3: list["classNIC"]["totalIncomeTaxDue"],
-      },
-    ];
-  };
+  //   return [
+  //     {
+  //       description: "Income tax due per above",
+  //       value1: "",
+  //       value2: "",
+  //       value3: list["classNIC"]["previousTaxDue"],
+  //     },
+  //     {
+  //       description: "Class 4 NIC",
+  //       value1: "",
+  //       value2: list["classNIC"]["class4NIC"],
+  //       value3: "",
+  //     },
+  //     {
+  //       description: "Class 2 NIC",
+  //       value1: "",
+  //       value2: list["classNIC"]["class2NIC"],
+  //       value3: "",
+  //     },
+  //     {
+  //       description: "Total NIC",
+  //       value1: "",
+  //       value2: "",
+  //       value3:
+  //         parseFloat(list["classNIC"]["class4NIC"]) +
+  //         parseFloat(list["classNIC"]["class2NIC"]),
+  //     },
+  //     {
+  //       description: "Income tax plus national insurance",
+  //       value1: "",
+  //       value2: "",
+  //       value3: list["classNIC"]["totalIncomeTaxDue"],
+  //     },
+  //     {
+  //       description: "Total Income Tax Due",
+  //       value1: "",
+  //       value2: "",
+  //       value3: list["classNIC"]["totalIncomeTaxDue"],
+  //     },
+  //   ];
+  // };
 
-  const getTaxPaidAtSource = () => {
-    if (!list["taxPaidAtSource"]) {
-      return [];
-    }
+  // const getTaxPaidAtSource = () => {
+  //   if (!list["taxPaidAtSource"]) {
+  //     return [];
+  //   }
 
-    return [
-      {
-        description: "Total tax paid at source",
-        value1: list["taxPaidAtSource"]["totalTaxPaidAtSource"],
-        value2: "",
-      },
-      {
-        description: "Total tax deduction",
-        value1: "",
-        value2: list["taxPaidAtSource"]["totalTaxDeduction"],
-      },
-      {
-        description: "Income tax due after deductions",
-        value1: "",
-        value2: list["taxPaidAtSource"]["incomeTaxDueAfterDeductions"],
-      },
-    ];
-  };
+  //   return [
+  //     {
+  //       description: "Total tax paid at source",
+  //       value1: list["taxPaidAtSource"]["totalTaxPaidAtSource"],
+  //       value2: "",
+  //     },
+  //     {
+  //       description: "Total tax deduction",
+  //       value1: "",
+  //       value2: list["taxPaidAtSource"]["totalTaxDeduction"],
+  //     },
+  //     {
+  //       description: "Income tax due after deductions",
+  //       value1: "",
+  //       value2: list["taxPaidAtSource"]["incomeTaxDueAfterDeductions"],
+  //     },
+  //   ];
+  // };
 
-  const getNonUKResidentialPropertyCapitalGain = () => {
-    if (!list["nonUKResidentialPropertyCapitalGain"]) {
-      return [];
-    }
+  // const getNonUKResidentialPropertyCapitalGain = () => {
+  //   if (!list["nonUKResidentialPropertyCapitalGain"]) {
+  //     return [];
+  //   }
 
-    return [
-      {
-        description: "Net capital gains chargeable at 20%",
-        value1: `${list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]} @ ${list["nonUKResidentialPropertyCapitalGain"]["percentage"]}% =`,
-        value2:
-          parseFloat(
-            list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
-          ) *
-          (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
-            100),
-      },
-      {
-        description: "Total CGT charged",
-        value1: "",
-        value2:
-          parseFloat(
-            list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
-          ) *
-          (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
-            100),
-      },
-      {
-        description: "Capital Gains Tax due",
-        value1: "",
-        value2:
-          parseFloat(
-            list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
-          ) *
-          (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
-            100),
-      },
-      {
-        description: "Total Income Tax Due",
-        value1: "",
-        value2:
-          list["nonUKResidentialPropertyCapitalGain"]["totalIncomeTaxDue"],
-      },
-    ];
-  };
+  //   return [
+  //     {
+  //       description: "Net capital gains chargeable at 20%",
+  //       value1: `${list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]} @ ${list["nonUKResidentialPropertyCapitalGain"]["percentage"]}% =`,
+  //       value2:
+  //         parseFloat(
+  //           list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
+  //         ) *
+  //         (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
+  //           100),
+  //     },
+  //     {
+  //       description: "Total CGT charged",
+  //       value1: "",
+  //       value2:
+  //         parseFloat(
+  //           list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
+  //         ) *
+  //         (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
+  //           100),
+  //     },
+  //     {
+  //       description: "Capital Gains Tax due",
+  //       value1: "",
+  //       value2:
+  //         parseFloat(
+  //           list["nonUKResidentialPropertyCapitalGain"]["capitalGainsChargable"]
+  //         ) *
+  //         (parseInt(list["nonUKResidentialPropertyCapitalGain"]["percentage"]) /
+  //           100),
+  //     },
+  //     {
+  //       description: "Total Income Tax Due",
+  //       value1: "",
+  //       value2:
+  //         list["nonUKResidentialPropertyCapitalGain"]["totalIncomeTaxDue"],
+  //     },
+  //   ];
+  // };
 
-  const getUkResidentialPropertyCapitalGain = () => {
-    if (!list["ukResidentialPropertyCapitalGain"]) {
-      return [];
-    }
+  // const getUkResidentialPropertyCapitalGain = () => {
+  //   if (!list["ukResidentialPropertyCapitalGain"]) {
+  //     return [];
+  //   }
 
-    return [
-      {
-        description: "Total Income",
-        value1: list["ukResidentialPropertyCapitalGain"]["income"],
-        value2: "",
-      },
-      {
-        description: "Starter",
-        value1: "",
-        value2: "",
-      },
-      {
-        description: "basic",
-        value1: `${list["ukResidentialPropertyCapitalGain"]["basicRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]}% =`,
-        value2:
-          parseFloat(
-            list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
-          ) *
-          (parseInt(
-            list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]
-          ) /
-            100),
-      },
-      {
-        description: "higher",
-        value1: `${list["ukResidentialPropertyCapitalGain"]["higherRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]}% =`,
-        value2:
-          parseFloat(
-            list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
-          ) *
-          (parseInt(
-            list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]
-          ) /
-            100),
-      },
-      {
-        description: "Capital Gain Capital",
-        value1: "",
-        value2:
-          parseFloat(
-            list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
-          ) *
-            (parseInt(
-              list["ukResidentialPropertyCapitalGain"][
-                "basicRateBandPercentage"
-              ]
-            ) /
-              100) +
-          parseFloat(
-            list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
-          ) *
-            (parseInt(
-              list["ukResidentialPropertyCapitalGain"][
-                "higherRateBandPercentage"
-              ]
-            ) /
-              100),
-      },
-      {
-        description: "Total Income Tax Due",
-        value1: "",
-        value2: list["ukResidentialPropertyCapitalGain"]["totalIncomeTaxDue"],
-      },
-    ];
-  };
+  //   return [
+  //     {
+  //       description: "Total Income",
+  //       value1: list["ukResidentialPropertyCapitalGain"]["income"],
+  //       value2: "",
+  //     },
+  //     {
+  //       description: "Starter",
+  //       value1: "",
+  //       value2: "",
+  //     },
+  //     {
+  //       description: "basic",
+  //       value1: `${list["ukResidentialPropertyCapitalGain"]["basicRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]}% =`,
+  //       value2:
+  //         parseFloat(
+  //           list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
+  //         ) *
+  //         (parseInt(
+  //           list["ukResidentialPropertyCapitalGain"]["basicRateBandPercentage"]
+  //         ) /
+  //           100),
+  //     },
+  //     {
+  //       description: "higher",
+  //       value1: `${list["ukResidentialPropertyCapitalGain"]["higherRateBand"]} @ ${list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]}% =`,
+  //       value2:
+  //         parseFloat(
+  //           list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
+  //         ) *
+  //         (parseInt(
+  //           list["ukResidentialPropertyCapitalGain"]["higherRateBandPercentage"]
+  //         ) /
+  //           100),
+  //     },
+  //     {
+  //       description: "Capital Gain Capital",
+  //       value1: "",
+  //       value2:
+  //         parseFloat(
+  //           list["ukResidentialPropertyCapitalGain"]["basicRateBand"]
+  //         ) *
+  //           (parseInt(
+  //             list["ukResidentialPropertyCapitalGain"][
+  //               "basicRateBandPercentage"
+  //             ]
+  //           ) /
+  //             100) +
+  //         parseFloat(
+  //           list["ukResidentialPropertyCapitalGain"]["higherRateBand"]
+  //         ) *
+  //           (parseInt(
+  //             list["ukResidentialPropertyCapitalGain"][
+  //               "higherRateBandPercentage"
+  //             ]
+  //           ) /
+  //             100),
+  //     },
+  //     {
+  //       description: "Total Income Tax Due",
+  //       value1: "",
+  //       value2: list["ukResidentialPropertyCapitalGain"]["totalIncomeTaxDue"],
+  //     },
+  //   ];
+  // };
 
   const getPaymentSummary = () => {
     if (!list["paymentSummary"]) {
@@ -566,7 +566,7 @@ const CalculateTax = () => {
               <ArrowBackIosNewIcon className="back-icon" />
               <h5 className="title is-5">Back</h5>
             </div>
-            {getTotalIncomes().length > 0 && <div style={{ margin: "1rem" }}>
+            {/* {getTotalIncomes().length > 0 && <div style={{ margin: "1rem" }}>
               <p className="title">Total Income</p>
               <TableContainer component={Paper}>
                 <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -1238,7 +1238,7 @@ const CalculateTax = () => {
                   </TableBody>
                 </Table>
               </TableContainer>
-            </div>}
+            </div>} */}
             {getPaymentSummary().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
               <p className="title">Payment Summary</p>
               <TableContainer component={Paper}>

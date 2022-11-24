@@ -1062,7 +1062,7 @@ const RentalIncome = () => {
                 disabled={isLoading}
               >
                 <SaveIcon />
-                {isLoading ? "Submitting" : "Edit"}
+                {isLoading ? "Submitting" : "Update"}
               </button>
             ) : (
               <>

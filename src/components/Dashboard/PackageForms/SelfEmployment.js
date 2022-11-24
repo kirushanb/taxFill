@@ -1184,7 +1184,7 @@ const SelfEmployment = () => {
                 disabled={isLoading}
               >
                 <SaveIcon />
-                {isLoading ? "Submitting" : "Edit"}
+                {isLoading ? "Submitting" : "Update"}
               </button>
             ) : (
               <>

@@ -522,7 +522,7 @@ const CalculateTax = () => {
           Object.keys(list["paymentSummary"]["firstPayment"])[0],
         value:
           list["paymentSummary"]["firstPayment"] &&
-          Object.values(list["paymentSummary"]["firstPayment"])[0],
+          parseFloat(Object.values(list["paymentSummary"]["firstPayment"])[0]).toFixed(2),
       },
       {
         description:
@@ -530,7 +530,7 @@ const CalculateTax = () => {
           Object.keys(list["paymentSummary"]["firstPayment"])[1],
         value:
           list["paymentSummary"]["firstPayment"] &&
-          Object.values(list["paymentSummary"]["firstPayment"])[1],
+          parseFloat(Object.values(list["paymentSummary"]["firstPayment"])[1]).toFixed(2),
       },
       {
         description:
@@ -538,7 +538,7 @@ const CalculateTax = () => {
           Object.keys(list["paymentSummary"]["firstPayment"])[2],
         value:
           list["paymentSummary"]["firstPayment"] &&
-          Object.values(list["paymentSummary"]["firstPayment"])[2],
+          parseFloat(Object.values(list["paymentSummary"]["firstPayment"])[2]).toFixed(2),
       },
       {
         description: list["paymentSummary"]["secondPaymentLabel"],
@@ -550,7 +550,7 @@ const CalculateTax = () => {
           Object.keys(list["paymentSummary"]["secondPayment"])[0],
         value:
           list["paymentSummary"]["secondPayment"] &&
-          Object.values(list["paymentSummary"]["secondPayment"])[0],
+          parseFloat(Object.values(list["paymentSummary"]["secondPayment"])[0]).toFixed(2),
       },
     ];
   };
@@ -1239,39 +1239,60 @@ const CalculateTax = () => {
                 </Table>
               </TableContainer>
             </div>} */}
-            {getPaymentSummary().length > 0 && <div style={{ margin: "1rem", marginTop: "2rem" }}>
-              <p className="title">Payment Summary</p>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Description</TableCell>
-                      <TableCell align="right">£</TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {getPaymentSummary()?.map((row, i) => {
-                      return (
-                        <TableRow
-                          key={row.name}
-                          sx={{
-                            "&:last-child td, &:last-child th": { border: 0 },
+            {list["paymentSummary"] &&
+              list["paymentSummary"]["firstPayment"] &&
+              Object.values(list["paymentSummary"]["firstPayment"]).length >
+                0 &&
+              Object.values(list["paymentSummary"]["firstPayment"])[0] < 0 ? (
+                <div style={{ margin: "1rem", marginTop: "2rem" }}>
+                  <p className="title">Payment Summary</p>
+                  <p>
+                    {`You will have a tax refund of ${parseFloat(
+                      Object.values(list["paymentSummary"]["firstPayment"])[0]
+                        .toString()
+                        .replace("-", "")
+                    )}`}
+                  </p>
+                </div>
+              ) : (
+                getPaymentSummary().length > 0 && (
+                  <div style={{ margin: "1rem", marginTop: "2rem" }}>
+                    <p className="title">Payment Summary</p>
+                    <TableContainer component={Paper}>
+                      <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                        <TableHead>
+                          <TableRow>
+                            <TableCell>Description</TableCell>
+                            <TableCell align="right">£</TableCell>
+                          </TableRow>
+                        </TableHead>
+                        <TableBody>
+                          {getPaymentSummary()?.map((row, i) => {
+                            return (
+                              <TableRow
+                                key={row.name}
+                                sx={{
+                                  "&:last-child td, &:last-child th": {
+                                    border: 0,
+                                  },
 
-                            "&:nth-child(5) th": { fontWeight: "bold" },
-                            "&:first-child th": { fontWeight: "bold" },
-                          }}
-                        >
-                          <TableCell component="th" scope="row">
-                            {row.description}
-                          </TableCell>
-                          <TableCell align="right">{row.value}</TableCell>
-                        </TableRow>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </div>}
+                                  "&:nth-child(5) th": { fontWeight: "bold" },
+                                  "&:first-child th": { fontWeight: "bold" },
+                                }}
+                              >
+                                <TableCell component="th" scope="row">
+                                  {row.description}
+                                </TableCell>
+                                <TableCell align="right">{row.value}</TableCell>
+                              </TableRow>
+                            );
+                          })}
+                        </TableBody>
+                      </Table>
+                    </TableContainer>
+                  </div>
+                )
+              )}
           </React.Fragment>
         )}
       </Card>

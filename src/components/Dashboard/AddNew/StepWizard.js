@@ -134,11 +134,11 @@ export default function StepWizard() {
       return;
     } else if (!checkedEmail && !checkedSMS) {
       toast.warn(
-        "Please select atleast one preffered method of prgress notification"
+        "Please select atleast one preferred method of progress notification"
       );
       return;
     } else if (!payment) {
-      toast.warn("Please select atleast one preffered method of payment");
+      toast.warn("Please select atleast one preferred method of payment");
       return;
     }
     if (payment === "stripe") {
@@ -307,7 +307,7 @@ export default function StepWizard() {
                       id="panel2d-header"
                     >
                       <Typography>
-                        Select your preffered method of prgress notification:
+                        Select your preferred method of progress notification:
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -354,7 +354,7 @@ export default function StepWizard() {
                       id="panel3d-header"
                     >
                       <Typography>
-                        Select your preffered method of payment
+                        Select your preferred method of payment
                       </Typography>
                     </AccordionSummary>
                     <AccordionDetails>
@@ -424,14 +424,14 @@ export default function StepWizard() {
                         {checkedEmail && (
                           <div className="total">
                             <p className="title is-6">
-                              {"Email notitification"}
+                              {"Email notification"}
                             </p>
                             <p className="title is-6 free">{"Free of cost"}</p>
                           </div>
                         )}
                         {checkedSMS && (
                           <div className="total">
-                            <p className="title is-6">{"SMS notitification"}</p>
+                            <p className="title is-6">{"SMS notification"}</p>
                             <p className="title is-6">{"£5"}</p>
                           </div>
                         )}

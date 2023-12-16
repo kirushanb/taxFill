@@ -16,8 +16,6 @@ const Home = () => {
   const { setAuth } = useAuth();
   const [, setCookie] = useCookies(["client"]);
 
- 
-
   useEffect(() => {
     if (loading) {
       lottie.loadAnimation({
@@ -45,15 +43,15 @@ const Home = () => {
           },
           signal: controller.signal,
         };
-        setAuth({ accessToken:response1.data.result.token });
+        setAuth({ accessToken: response1.data.result.token });
         setCookie("client", response1.data.result.token, {
           path: "/",
         });
         setCookie("refreshToken", response1.data.result.token, {
-          path: "/"
+          path: "/",
         });
         const response2 = await axios.get(
-          "https://tax.api.cyberozunu.com/api/v1.1/Package",
+          "https://tax.api.cyberozunu.com/api/v1.1/Package/package-details/2022",
           config
         );
 
@@ -69,9 +67,9 @@ const Home = () => {
     getUsers();
 
     return () => {
-        isMounted = false;
-        controller.abort();
-    }
+      isMounted = false;
+      controller.abort();
+    };
   }, []);
 
   return (

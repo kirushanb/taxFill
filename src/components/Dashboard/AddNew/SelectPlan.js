@@ -8,7 +8,6 @@ const SelectPlan = (props) => {
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = React.useState(false);
   const axiosClient = useAxiosClient();
-  
 
   useEffect(() => {
     let isMounted = true;
@@ -18,12 +17,12 @@ const SelectPlan = (props) => {
       setLoading(true);
       try {
         const response2 = await axiosClient.get(
-          "https://tax.api.cyberozunu.com/api/v1.1/Package",
+          "https://tax.api.cyberozunu.com/api/v1.1/Package/package-details/2022",
           {
             signal: controller.signal,
           }
         );
-        
+
         isMounted && setList(response2.data?.result?.data);
         setLoading(false);
       } catch (err) {

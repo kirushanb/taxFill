@@ -583,7 +583,7 @@ const BankInterest = () => {
                           id="receivedDate"
                           name="receivedDate"
                           value={field.receivedDate}
-                          type="datetime-local"
+                          type="date"
                           onChange={(e) => handleChangeInput(idx, e)}
                           placeholder="Received Date"
                         />
@@ -649,7 +649,7 @@ const BankInterest = () => {
                 disabled={isLoading}
               >
                 <SaveIcon />
-                {isLoading ? "Submitting" : "Edit"}
+                {isLoading ? "Submitting" : "Update"}
               </button>
             ) : (
               <>

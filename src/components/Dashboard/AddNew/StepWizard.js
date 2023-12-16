@@ -74,7 +74,8 @@ export default function StepWizard() {
   const [expanded2, setExpanded2] = React.useState("panel2");
   const [expanded3, setExpanded3] = React.useState("panel3");
   const [expanded4, setExpanded4] = React.useState("panel4");
-  const [price, setPrice] = React.useState(20);
+  const [baseRate, setBaseRate] = React.useState(0);
+  const [price, setPrice] = React.useState(baseRate);
   const [selectedlist, setSelectedlist] = React.useState([]);
   const [checkedEmail, setCheckedEmail] = React.useState(false);
   const [checkedSMS, setCheckedSMS] = React.useState(false);
@@ -82,7 +83,7 @@ export default function StepWizard() {
   const axiosPrivate = useAxiosPrivate();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
-  const [baseRate, setBaseRate] = React.useState(0);
+
   const [taxYear, setTaxyear] = React.useState(null);
   const [smsPrice, setSmsPrice] = React.useState(0);
   const [isLoading, setIsLoading] = React.useState(false);
@@ -114,7 +115,7 @@ export default function StepWizard() {
     setPrice(
       selected.reduce(
         (previousValue, currentValue) => previousValue + currentValue.price,
-        20
+        baseRate
       )
     );
     setSelectedlist(selected);
@@ -125,10 +126,10 @@ export default function StepWizard() {
   };
 
   const handleCheckout = async () => {
-    if(!taxYear){
+    if (!taxYear) {
       toast.warn("Please select your tax year");
       return;
-    }else if (selectedlist.length === 0) {
+    } else if (selectedlist.length === 0) {
       toast.warn("Please select atleast one plan");
       return;
     } else if (!checkedEmail && !checkedSMS) {
@@ -167,7 +168,7 @@ export default function StepWizard() {
             selectedlist: selectedlist,
             checkedEmail,
             checkedSMS,
-            taxYear
+            taxYear,
           },
           {
             path: "/",
@@ -229,6 +230,7 @@ export default function StepWizard() {
         );
 
         setBaseRate(response.data?.result);
+        setPrice(response.data?.result);
         setIsLoading(false);
       } catch (err) {
         console.error(err);
@@ -238,8 +240,6 @@ export default function StepWizard() {
 
     getUsers();
   }, []);
-
-  
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
@@ -267,6 +267,7 @@ export default function StepWizard() {
                       <Typography>Select a tax year:</Typography>
                     </AccordionSummary>
                     <AccordionDetails sx={{ width: "max-content" }}>
+                      <div style={{display:'flex', gap:'1rem', alignContent:'center'}}>
                       <DatePicker
                         views={["year"]}
                         label="Tax Year"
@@ -278,6 +279,9 @@ export default function StepWizard() {
                           <TextField {...params} helperText={null} />
                         )}
                       />
+                      <p className="title is-6" style={{alignSelf: 'center'}}>{taxYear && `${new Date(taxYear).getFullYear() -1} - ${new Date(taxYear).getFullYear()}`}</p>
+                      </div>
+                      
                     </AccordionDetails>
                   </Accordion>
                   <Accordion
@@ -405,7 +409,7 @@ export default function StepWizard() {
                     </div>
                     <div className="message-body">
                       <div className="total-wrapper">
-                      {baseRate && (
+                        {baseRate && (
                           <div className="total">
                             <p className="title is-6">{"Processing Rate"}</p>
                             <p className="title is-6">{`£${baseRate}`}</p>
@@ -431,7 +435,7 @@ export default function StepWizard() {
                             <p className="title is-6">{"£5"}</p>
                           </div>
                         )}
-                        
+
                         <div className="total-last">
                           <p className="title is-5">Total</p>
                           <p className="title is-5">

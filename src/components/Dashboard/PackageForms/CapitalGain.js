@@ -48,6 +48,7 @@ const CapitalGain = () => {
   const [assetDisposedDate, setAssetDisposedDate] = React.useState("");
   const [valuation, setValuation] = React.useState("");
   const [grossGain, setGrossGain] = React.useState("");
+  const [expensesOnSale, setExpensesOnSale] = React.useState("");
 
   //checkboxes
   const [
@@ -83,7 +84,10 @@ const CapitalGain = () => {
       "Asset Disposed Date must not be empty."
     ),
     valuation: Yup.string().required("Valuation must not be empty."),
-    grossGain: Yup.string().required("Gross Gain / Loss must not be empty."),
+    grossGain: Yup.string(),
+    expensesOnSale: Yup.string().required(
+      "Expenses on sale must not be empty."
+    ),
     realTimeTransactionTaxReturnForTheDisposal: Yup.boolean(),
     qualifiedForBusinessAssetDisposalRelief: Yup.boolean(),
     connectedToPurchaseOrSeller: Yup.boolean(),
@@ -111,6 +115,7 @@ const CapitalGain = () => {
       isBasedOnEstimationOrValuation: false,
       allowAditionalExpenditure: false,
       isDisposal: false,
+      expensesOnSale: "",
     },
   };
 
@@ -126,62 +131,84 @@ const CapitalGain = () => {
     : 0;
 
   const postCall = (data) => {
-    const response = axiosPrivate.post("https://tax.api.cyberozunu.com/api/v1.0/CapitalGain", {
-      orderId: params.orderId ? params.orderId : cookies.order.oderId,
-      assetType: data.assetType,
-      description: data.description,
-      assetAcquiredDate: data.assetAcquiredDate,
-      initialCost:  data.initialCost
-      ? parseFloat(data.initialCost.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      assetDisposedDate: data.assetDisposedDate,
-      valuation:  data.valuation
-      ? parseFloat(data.valuation.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      allowAditionalExpenditure: data.allowAditionalExpenditure,
-      isDisposal: data.isDisposal,
-      grossGain:  data.grossGain
-      ? parseFloat(data.grossGain.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      realTimeTransactionTaxReturnForTheDisposal:
-        data.realTimeTransactionTaxReturnForTheDisposal,
-      qualifiedForBusinessAssetDisposalRelief:
-        data.qualifiedForBusinessAssetDisposalRelief,
-      connectedToPurchaseOrSeller: data.connectedToPurchaseOrSeller,
-      receiveAnyOtherReliefsOrElections: data.receiveAnyOtherReliefsOrElections,
-      isBasedOnEstimationOrValuation: data.isBasedOnEstimationOrValuation,
-    });
+    const response = axiosPrivate.post(
+      "https://tax.api.cyberozunu.com/api/v1.0/CapitalGain",
+      {
+        orderId: params.orderId ? params.orderId : cookies.order.oderId,
+        assetType: data.assetType,
+        description: data.description,
+        assetAcquiredDate: data.assetAcquiredDate,
+        initialCost: data.initialCost
+          ? parseFloat(data.initialCost.toString().replace(/\,/g, "")).toFixed(
+              2
+            )
+          : 0,
+        assetDisposedDate: data.assetDisposedDate,
+        valuation: data.valuation
+          ? parseFloat(data.valuation.toString().replace(/\,/g, "")).toFixed(2)
+          : 0,
+        // allowAditionalExpenditure: data.allowAditionalExpenditure,
+        isDisposal: data.isDisposal,
+        grossGain: data.grossGain
+          ? parseFloat(data.grossGain.toString().replace(/\,/g, "")).toFixed(2)
+          : 0,
+        expensesOnSale: data.expensesOnSale
+          ? parseFloat(
+              data.expensesOnSale.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
+        realTimeTransactionTaxReturnForTheDisposal:
+          data.realTimeTransactionTaxReturnForTheDisposal,
+        qualifiedForBusinessAssetDisposalRelief:
+          data.qualifiedForBusinessAssetDisposalRelief,
+        connectedToPurchaseOrSeller: data.connectedToPurchaseOrSeller,
+        receiveAnyOtherReliefsOrElections:
+          data.receiveAnyOtherReliefsOrElections,
+        isBasedOnEstimationOrValuation: data.isBasedOnEstimationOrValuation,
+      }
+    );
 
     return response;
   };
 
   const putCall = (data) => {
-    const response = axiosPrivate.put("https://tax.api.cyberozunu.com/api/v1.0/CapitalGain", {
-      id: packageId,
-      orderId: params.orderId,
-      assetType: data.assetType,
-      description: data.description,
-      assetAcquiredDate: data.assetAcquiredDate,
-      initialCost:  data.initialCost
-      ? parseFloat(data.initialCost.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      assetDisposedDate: data.assetDisposedDate,
-      valuation:  data.valuation
-      ? parseFloat(data.valuation.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      allowAditionalExpenditure: data.allowAditionalExpenditure,
-      isDisposal: data.isDisposal,
-      grossGain:  data.grossGain
-      ? parseFloat(data.grossGain.toString().replace(/\,/g, "")).toFixed(2)
-      : 0,
-      realTimeTransactionTaxReturnForTheDisposal:
-        data.realTimeTransactionTaxReturnForTheDisposal,
-      qualifiedForBusinessAssetDisposalRelief:
-        data.qualifiedForBusinessAssetDisposalRelief,
-      connectedToPurchaseOrSeller: data.connectedToPurchaseOrSeller,
-      receiveAnyOtherReliefsOrElections: data.receiveAnyOtherReliefsOrElections,
-      isBasedOnEstimationOrValuation: data.isBasedOnEstimationOrValuation,
-    });
+    const response = axiosPrivate.put(
+      "https://tax.api.cyberozunu.com/api/v1.0/CapitalGain",
+      {
+        id: packageId,
+        orderId: params.orderId,
+        assetType: data.assetType,
+        description: data.description,
+        assetAcquiredDate: data.assetAcquiredDate,
+        initialCost: data.initialCost
+          ? parseFloat(data.initialCost.toString().replace(/\,/g, "")).toFixed(
+              2
+            )
+          : 0,
+        assetDisposedDate: data.assetDisposedDate,
+        valuation: data.valuation
+          ? parseFloat(data.valuation.toString().replace(/\,/g, "")).toFixed(2)
+          : 0,
+        // allowAditionalExpenditure: data.allowAditionalExpenditure,
+        isDisposal: data.isDisposal,
+        grossGain: data.grossGain
+          ? parseFloat(data.grossGain.toString().replace(/\,/g, "")).toFixed(2)
+          : 0,
+        expensesOnSale: data.expensesOnSale
+          ? parseFloat(
+              data.expensesOnSale.toString().replace(/\,/g, "")
+            ).toFixed(2)
+          : 0,
+        realTimeTransactionTaxReturnForTheDisposal:
+          data.realTimeTransactionTaxReturnForTheDisposal,
+        qualifiedForBusinessAssetDisposalRelief:
+          data.qualifiedForBusinessAssetDisposalRelief,
+        connectedToPurchaseOrSeller: data.connectedToPurchaseOrSeller,
+        receiveAnyOtherReliefsOrElections:
+          data.receiveAnyOtherReliefsOrElections,
+        isBasedOnEstimationOrValuation: data.isBasedOnEstimationOrValuation,
+      }
+    );
 
     return response;
   };
@@ -222,7 +249,7 @@ const CapitalGain = () => {
               {
                 oderId: cookies.order.oderId,
                 selectedPackages: [...filteredOther, ...filteredEmployement],
-                taxYear
+                taxYear,
               },
               {
                 path: "/",
@@ -287,7 +314,9 @@ const CapitalGain = () => {
     async (packageId) => {
       setLoading(true);
       try {
-        const response = await axiosPrivate.get(`https://tax.api.cyberozunu.com/api/v1.0/CapitalGain/${packageId}`);
+        const response = await axiosPrivate.get(
+          `https://tax.api.cyberozunu.com/api/v1.0/CapitalGain/${packageId}`
+        );
         const fields = [
           "assetType",
           "description",
@@ -303,18 +332,23 @@ const CapitalGain = () => {
           "connectedToPurchaseOrSeller",
           "receiveAnyOtherReliefsOrElections",
           "isBasedOnEstimationOrValuation",
+          "expensesOnSale",
         ];
 
         const packages = {
           assetType: response?.data?.result?.assetType,
           description: response?.data?.result?.description,
-          assetAcquiredDate: moment(response?.data?.result?.assetAcquiredDate).format("YYYY-MM-DD"),
+          assetAcquiredDate: moment(
+            response?.data?.result?.assetAcquiredDate
+          ).format("YYYY-MM-DD"),
           initialCost: response?.data?.result?.initialCost
             .toString()
             .replace(/[^\d.]/g, "")
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
             .replace(/(\.\d{1,2}).*/g, "$1"),
-          assetDisposedDate: moment(response?.data?.result?.assetDisposedDate).format("YYYY-MM-DD"),
+          assetDisposedDate: moment(
+            response?.data?.result?.assetDisposedDate
+          ).format("YYYY-MM-DD"),
           valuation: response?.data?.result?.valuation
             .toString()
             .replace(/[^\d.]/g, "")
@@ -324,6 +358,11 @@ const CapitalGain = () => {
             response?.data?.result?.allowAditionalExpenditure,
           isDisposal: response?.data?.result?.isDisposal,
           grossGain: response?.data?.result?.grossGain
+            .toString()
+            .replace(/[^\d.]/g, "")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/(\.\d{1,2}).*/g, "$1"),
+          expensesOnSale: response?.data?.result?.expensesOnSale
             .toString()
             .replace(/[^\d.]/g, "")
             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
@@ -362,6 +401,7 @@ const CapitalGain = () => {
         );
         setAllowAditionalExpenditure(packages.allowAditionalExpenditure);
         setIsDisposal(packages.isDisposal);
+        setExpensesOnSale(packages.expensesOnSale);
       } catch (err) {
         // console.log(err);
         setLoading(false);
@@ -377,6 +417,41 @@ const CapitalGain = () => {
       getPackage(packageId);
     }
   }, [packageId, getPackage]);
+
+  useEffect(() => {
+    if (valuation && initialCost && expensesOnSale) {
+      const initialCostCus = initialCost
+        ? parseFloat(initialCost.toString().replace(/\,/g, ""))
+        : 0;
+      const valuationCus = valuation
+        ? parseFloat(valuation.toString().replace(/\,/g, ""))
+        : 0;
+      const expensesOnSaleCus = expensesOnSale
+        ? parseFloat(expensesOnSale.toString().replace(/\,/g, ""))
+        : 0;
+      const grossGain = valuationCus - (initialCostCus + expensesOnSaleCus);
+      if (grossGain > 0) {
+        setValue(
+          "grossGain",
+          grossGain
+            .toString()
+            .replace(/[^\d.]/g, "")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/(\.\d{1,2}).*/g, "$1")
+        );
+        setGrossGain(
+          grossGain
+            .toString()
+            .replace(/[^\d.]/g, "")
+            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/(\.\d{1,2}).*/g, "$1")
+        );
+      } else {
+        setValue("grossGain", grossGain);
+        setGrossGain(grossGain);
+      }
+    }
+  }, [valuation, initialCost, expensesOnSale, setValue]);
 
   return (
     <div className="CapitalGain">
@@ -601,6 +676,37 @@ const CapitalGain = () => {
                     </Typography>
                   </Grid>
                   <Grid item xs={12} sm={12}>
+                    <InputLabel
+                      htmlFor="expensesOnSale"
+                      required
+                      sx={{ fontWeight: "bold" }}
+                    >
+                      Expenses on sale
+                    </InputLabel>
+                    <TextField
+                      required
+                      fullWidth
+                      id="expensesOnSale"
+                      name="expensesOnSale"
+                      onChange={(e) => {
+                        setValue(
+                          "expensesOnSale",
+                          (e.target.value = e.target.value
+                            .replace(/[^\d.]/g, "")
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                            .replace(/(\.\d{1,2}).*/g, "$1"))
+                        );
+                        setExpensesOnSale(e.target.value);
+                      }}
+                      value={expensesOnSale}
+                      // {...register("incomeFrom")}
+                      placeholder="Expenses on sale"
+                    />
+                    <Typography variant="body2" color="error" align="left">
+                      {errors.expensesOnSale?.message}
+                    </Typography>
+                  </Grid>
+                  {/* <Grid item xs={12} sm={12}>
                     <FormControlLabel
                       control={
                         <Checkbox
@@ -616,7 +722,7 @@ const CapitalGain = () => {
                       }
                       label="Any Additional Allowable Expenditure?"
                     />
-                  </Grid>
+                  </Grid> */}
                   <Grid item xs={12} sm={12}>
                     <FormControlLabel
                       control={
@@ -631,6 +737,7 @@ const CapitalGain = () => {
                       label="Was this disposal acquired under an Employee Shareholder Agreement?"
                     />
                   </Grid>
+
                   <Grid item xs={12} sm={12}>
                     <InputLabel
                       htmlFor="grossGain"
@@ -645,14 +752,15 @@ const CapitalGain = () => {
                       id="grossGain"
                       name="grossGain"
                       onChange={(e) => {
-                        setValue(
-                          "grossGain",
-                          (e.target.value = e.target.value
-                            .replace(/[^\d.]/g, "")
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-                            .replace(/(\.\d{1,2}).*/g, "$1"))
-                        );
-                        setGrossGain(e.target.value);
+                        e.preventDefault();
+                        // setValue(
+                        //   "grossGain",
+                        //   (e.target.value = e.target.value
+                        //     .replace(/[^\d.]/g, "")
+                        //     .replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        //     .replace(/(\.\d{1,2}).*/g, "$1"))
+                        // );
+                        // setGrossGain(e.target.value);
                       }}
                       value={grossGain}
                       // {...register("incomeFrom")}
@@ -771,7 +879,7 @@ const CapitalGain = () => {
                 disabled={isLoading}
               >
                 <SaveIcon />
-                {isLoading ? "Submitting" : "Edit"}
+                {isLoading ? "Submitting" : "Update"}
               </button>
             ) : (
               <>

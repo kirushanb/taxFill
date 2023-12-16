@@ -758,7 +758,7 @@ const EditPackage = () => {
                                       className="subtitle is-5 information-title"
                                     >
                                       {v + 1 + ". " + p.bankName}
-                                    </p>{" "}
+                                    </p>{" "}̀̀
                                     <div>
                                       {" "}
                                       <button

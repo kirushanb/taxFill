@@ -624,6 +624,7 @@ const RentalIncome = () => {
       const response = await axiosPrivate.get(
         `https://tax.api.cyberozunu.com/api/v1.1/RentalIncome/${packageId}`
       );
+      console.log(response);
       const fields = ["propertyName", "address", "totalTurnover"];
 
       const packages = {
@@ -1061,7 +1062,7 @@ const RentalIncome = () => {
                 disabled={isLoading}
               >
                 <SaveIcon />
-                {isLoading ? "Submitting" : "Edit"}
+                {isLoading ? "Submitting" : "Update"}
               </button>
             ) : (
               <>
